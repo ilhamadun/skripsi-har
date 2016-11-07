@@ -6,15 +6,21 @@ import java.util.List;
 public class Sensor {
 
     private List<Double> values;
+    private int sensorType;
 
-    protected Sensor(int numberOfAxis) {
+    protected Sensor(int SensorType, int numberOfAxis) {
+        this.sensorType = SensorType;
+
         Double[] initialData = new Double[numberOfAxis];
-
         values = Arrays.asList(initialData);
     }
 
     public int numberOfAxis() {
         return values.size();
+    }
+
+    public int sensorType() {
+        return sensorType;
     }
 
     public void setAxisValue(int axis, double value) {

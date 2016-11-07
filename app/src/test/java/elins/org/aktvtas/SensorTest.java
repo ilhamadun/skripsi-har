@@ -22,7 +22,7 @@ public class SensorTest {
 
     @Before
     public void setupSensorInstance() {
-        sensor = new Sensor(NUMBER_OF_AXIS);
+        sensor = new Sensor(android.hardware.Sensor.TYPE_ACCELEROMETER, NUMBER_OF_AXIS);
     }
 
     @Before
@@ -33,6 +33,11 @@ public class SensorTest {
         for (double v : axisValues) {
             sensorValues.add(v);
         }
+    }
+
+    @Test
+    public void sensorType_isAccelerometer() {
+        assertThat(sensor.sensorType(), is(android.hardware.Sensor.TYPE_ACCELEROMETER));
     }
 
     @Test
