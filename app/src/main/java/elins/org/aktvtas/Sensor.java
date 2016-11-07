@@ -61,4 +61,10 @@ public class Sensor {
     public List<Double> getValues() {
         return values;
     }
+
+    public void resetValues() {
+        for (int i = 0; i < values.size(); i++) {
+            values.set(i, 0d);
+        }
+    }
 }
