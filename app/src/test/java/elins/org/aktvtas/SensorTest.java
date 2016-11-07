@@ -11,18 +11,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SensorTest {
+    private static final int NUMBER_OF_AXIS = 3;
     private static final int AXIS_X = 0;
     private static final int AXIS_Y = 1;
     private static final int AXIS_Z = 2;
 
-    private final int numberOfAxis = 3;
     private Sensor sensor;
     private double axisValues[];
     private List<Double> sensorValues;
 
     @Before
     public void setupSensorInstance() {
-        sensor = new Sensor(numberOfAxis);
+        sensor = new Sensor(NUMBER_OF_AXIS);
     }
 
     @Before
@@ -37,7 +37,7 @@ public class SensorTest {
 
     @Test
     public void listSize_equals_numberOfAxis() {
-        assertThat(sensor.numberOfAxis(), is(numberOfAxis));
+        assertThat(sensor.numberOfAxis(), is(NUMBER_OF_AXIS));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class SensorTest {
     }
 
     private void assertSensorValues() {
-        assertThat(sensor.getValues().size(), is(numberOfAxis));
+        assertThat(sensor.getValues().size(), is(NUMBER_OF_AXIS));
         assertTrue(sensor.getValues().equals(sensorValues));
     }
 
