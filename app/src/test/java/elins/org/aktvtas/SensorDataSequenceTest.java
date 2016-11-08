@@ -8,6 +8,7 @@ import java.util.Random;
 
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -53,19 +54,31 @@ public class SensorDataSequenceTest {
             setSensorData();
         }
 
+        Double firstAccXValue = sensorDataSequence.getDataByIndex(0).get(0).getAxisValue(0);
+        Double secondAccXValue = sensorDataSequence.getDataByIndex(1).get(0).getAxisValue(0);
+
         assertTrue(sensorDataSequence.getLastData(accelerometer)
                 .getValues().equals(accelerometer.getValues()));
+        assertThat(firstAccXValue, is(not(secondAccXValue)));
     }
 
     @Test
     public void bufferIsEmptiedAfterCommit() {
         setSensorData();
 
-        List<Double> lastAccelerometer = sensorDataSequence.getLastData(accelerometer).getValues();
+        assertThat(sensorDataSequence.buffer.get(0).getValues().get(0) == null, is(true));
+        assertThat(sensorDataSequence.buffer.get(1).getValues().get(0) == null, is(true));
+    }
 
-        assertThat(lastAccelerometer.get(0), is(0d));
-        assertThat(lastAccelerometer.get(1), is(0d));
-        assertThat(lastAccelerometer.get(2), is(0d));
+    @Test
+    public void sequenceIsNotAffectedByBufferReset() {
+        setSensorData();
+
+        List<Double> accelerometer = sensorDataSequence.getDataByIndex(0).get(0).getValues();
+
+        assertThat(accelerometer.get(0), is(not(0d)));
+        assertThat(accelerometer.get(1), is(not(0d)));
+        assertThat(accelerometer.get(2), is(not(0d)));
     }
 
     @Test

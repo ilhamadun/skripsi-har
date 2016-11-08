@@ -19,22 +19,25 @@ public class SensorDataSequence {
 
     public SensorDataSequence setData(Sensor sensor) {
         int index = sensorOrder.get(sensor);
-        buffer.set(index, sensor);
+
+        Sensor newSensor = new Sensor(sensor.sensorType(), sensor.numberOfAxis());
+        newSensor.setValues(sensor.getValues());
+        buffer.set(index, newSensor);
 
         return this;
     }
 
     public void commit() {
         sequence.add(buffer);
-
         resetBuffer();
     }
 
     private void resetBuffer() {
-        for (int i = 0; i < buffer.size(); i++) {
-            Sensor sensor = buffer.get(i);
-            sensor.resetValues();
-            buffer.set(i, sensor);
+        List<Sensor> oldBuffer = buffer;
+        buffer = new ArrayList<>();
+
+        for (Sensor sensor : oldBuffer) {
+            buffer.add(new Sensor(sensor.sensorType(), sensor.numberOfAxis()));
         }
     }
 
