@@ -101,4 +101,16 @@ public class SensorDataSequenceTest {
         sensorDataSequence.setData(accelerometer).setData(gyroscope).commit();
         numberOfData++;
     }
+
+    @Test
+    public void flatten() {
+        for (int i = 0; i < 10; i++) {
+            setSensorData();
+        }
+
+        List<List<Double>> flattenedSequence = sensorDataSequence.flatten();
+
+        assertThat(flattenedSequence.size(), is(sensorDataSequence.size()));
+        assertThat(flattenedSequence.get(0).size(), is(6));
+    }
 }

@@ -38,6 +38,10 @@ public class SensorDataSequence {
         }
     }
 
+    public int size() {
+        return sequence.size();
+    }
+
     public Sensor getLastData(Sensor sensor) {
         int index = sensorOrder.get(sensor);
 
@@ -51,6 +55,27 @@ public class SensorDataSequence {
 
     public List<List<Sensor>> getAll() {
         return sequence;
+    }
+
+    public List<List<Double>> flatten() {
+        List<List<Double>> flattenedSequence = new ArrayList<>();
+
+        for (List<Sensor> sensors : sequence) {
+            List<Double> flattenedSensors = flattenSensors(sensors);
+            flattenedSequence.add(flattenedSensors);
+        }
+
+        return flattenedSequence;
+    }
+
+    private List<Double> flattenSensors(List<Sensor> sensors) {
+        List<Double> flattenedSensors = new ArrayList<>();
+
+        for (Sensor sensor : sensors) {
+            flattenedSensors.addAll(sensor.getValues());
+        }
+
+        return flattenedSensors;
     }
 
     public void clear() {
