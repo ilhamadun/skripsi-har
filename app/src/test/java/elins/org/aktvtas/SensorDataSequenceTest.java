@@ -54,8 +54,8 @@ public class SensorDataSequenceTest {
             setSensorData();
         }
 
-        Double firstAccXValue = sensorDataSequence.getDataByIndex(0).get(0).getAxisValue(0);
-        Double secondAccXValue = sensorDataSequence.getDataByIndex(1).get(0).getAxisValue(0);
+        Float firstAccXValue = sensorDataSequence.getDataByIndex(0).get(0).getAxisValue(0);
+        Float secondAccXValue = sensorDataSequence.getDataByIndex(1).get(0).getAxisValue(0);
 
         assertTrue(sensorDataSequence.getLastData(accelerometer)
                 .getValues().equals(accelerometer.getValues()));
@@ -74,11 +74,11 @@ public class SensorDataSequenceTest {
     public void sequenceIsNotAffectedByBufferReset() {
         setSensorData();
 
-        List<Double> accelerometer = sensorDataSequence.getDataByIndex(0).get(0).getValues();
+        List<Float> accelerometer = sensorDataSequence.getDataByIndex(0).get(0).getValues();
 
-        assertThat(accelerometer.get(0), is(not(0d)));
-        assertThat(accelerometer.get(1), is(not(0d)));
-        assertThat(accelerometer.get(2), is(not(0d)));
+        assertThat(accelerometer.get(0), is(not(0f)));
+        assertThat(accelerometer.get(1), is(not(0f)));
+        assertThat(accelerometer.get(2), is(not(0f)));
     }
 
     @Test
@@ -105,8 +105,8 @@ public class SensorDataSequenceTest {
 
     private void setSensorData() {
         Random r = new Random();
-        double[] accelerometerData = {r.nextDouble(), r.nextDouble(), r.nextDouble()};
-        double[] gyroscopeData = {r.nextDouble(), r.nextDouble(), r.nextDouble()};
+        Float[] accelerometerData = {r.nextFloat(), r.nextFloat(), r.nextFloat()};
+        Float[] gyroscopeData = {r.nextFloat(), r.nextFloat(), r.nextFloat()};
 
         accelerometer.setValues(accelerometerData);
         gyroscope.setValues(gyroscopeData);
@@ -121,7 +121,7 @@ public class SensorDataSequenceTest {
             setSensorData();
         }
 
-        List<List<Double>> flattenedSequence = sensorDataSequence.flatten();
+        List<List<Float>> flattenedSequence = sensorDataSequence.flatten();
 
         assertThat(flattenedSequence.size(), is(sensorDataSequence.size()));
         assertThat(flattenedSequence.get(0).size(), is(6));

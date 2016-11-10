@@ -36,8 +36,8 @@ public class SensorDataWriterTest {
         for (int i = 0; i < NUMBER_OF_SEQUENCE; i++)
         {
             Random r = new Random();
-            double[] accelerometerData = {r.nextDouble(), r.nextDouble(), r.nextDouble()};
-            double[] gyroscopeData = {r.nextDouble(), r.nextDouble(), r.nextDouble()};
+            Float[] accelerometerData = {r.nextFloat(), r.nextFloat(), r.nextFloat()};
+            Float[] gyroscopeData = {r.nextFloat(), r.nextFloat(), r.nextFloat()};
 
             accelerometer.setValues(accelerometerData);
             gyroscope.setValues(gyroscopeData);
@@ -96,7 +96,7 @@ public class SensorDataWriterTest {
             List<String[]> rows = reader.readAll();
             reader.close();
 
-            assertThat(Double.valueOf(rows.get(5)[2]),
+            assertThat(Float.valueOf(rows.get(5)[2]),
                     is(sensorDataSequence.getDataByIndex(5).get(0).getAxisValue(2)));
 
             sensorDataWriter.delete();

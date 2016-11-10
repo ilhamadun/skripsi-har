@@ -109,9 +109,9 @@ public class SensorDataWriter {
 
     protected List<String[]> convertToListOfString(SensorDataSequence sequence) {
         List<String[]> sequenceString = new ArrayList<>();
-        List<List<Double>> flattenedSequence = sequence.flatten();
+        List<List<Float>> flattenedSequence = sequence.flatten();
 
-        for (List<Double> sensorValue : flattenedSequence) {
+        for (List<Float> sensorValue : flattenedSequence) {
             String[] buffer = new String[sensorValue.size()];
             for (int i = 0; i < sensorValue.size(); i++) {
                 buffer[i] = sensorValue.get(i).toString();

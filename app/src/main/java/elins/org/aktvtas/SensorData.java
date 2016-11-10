@@ -5,13 +5,13 @@ import java.util.List;
 
 public class SensorData {
 
-    private List<Double> values;
+    private List<Float> values;
     private int sensorType;
 
     protected SensorData(int SensorType, int numberOfAxis) {
         this.sensorType = SensorType;
 
-        Double[] initialData = new Double[numberOfAxis];
+        Float[] initialData = new Float[numberOfAxis];
         values = Arrays.asList(initialData);
     }
 
@@ -23,11 +23,11 @@ public class SensorData {
         return sensorType;
     }
 
-    public void setAxisValue(int axis, double value) {
+    public void setAxisValue(int axis, Float value) {
         values.set(axis, value);
     }
 
-    public void setValues(List<Double> values) {
+    public void setValues(List<Float> values) {
         int inputNumberOfAxis = values.size();
         confirmNumberOfAxisMatchesWith(inputNumberOfAxis);
 
@@ -36,7 +36,7 @@ public class SensorData {
         }
     }
 
-    public void setValues(double[] values) {
+    public void setValues(Float[] values) {
         int inputNumberOfAxis = values.length;
         confirmNumberOfAxisMatchesWith(inputNumberOfAxis);
 
@@ -54,17 +54,17 @@ public class SensorData {
         }
     }
 
-    public double getAxisValue(int axis) {
+    public Float getAxisValue(int axis) {
         return values.get(axis);
     }
 
-    public List<Double> getValues() {
+    public List<Float> getValues() {
         return values;
     }
 
     public void resetValues() {
         for (int i = 0; i < values.size(); i++) {
-            values.set(i, 0d);
+            values.set(i, 0f);
         }
     }
 }

@@ -60,19 +60,19 @@ public class SensorDataSequence {
         return sequence;
     }
 
-    public List<List<Double>> flatten() {
-        List<List<Double>> flattenedSequence = new ArrayList<>();
+    public List<List<Float>> flatten() {
+        List<List<Float>> flattenedSequence = new ArrayList<>();
 
         for (List<SensorData> sensorDatas : sequence) {
-            List<Double> flattenedSensors = flattenSensors(sensorDatas);
+            List<Float> flattenedSensors = flattenSensors(sensorDatas);
             flattenedSequence.add(flattenedSensors);
         }
 
         return flattenedSequence;
     }
 
-    private List<Double> flattenSensors(List<SensorData> sensorDatas) {
-        List<Double> flattenedSensors = new ArrayList<>();
+    private List<Float> flattenSensors(List<SensorData> sensorDatas) {
+        List<Float> flattenedSensors = new ArrayList<>();
 
         for (SensorData sensorData : sensorDatas) {
             flattenedSensors.addAll(sensorData.getValues());

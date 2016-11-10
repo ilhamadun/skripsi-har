@@ -17,8 +17,8 @@ public class SensorDataTest {
     private static final int AXIS_Z = 2;
 
     private SensorData sensorData;
-    private double axisValues[];
-    private List<Double> sensorValues;
+    private Float[] axisValues;
+    private List<Float> sensorValues;
 
     @Before
     public void setupSensorInstance() {
@@ -27,10 +27,10 @@ public class SensorDataTest {
 
     @Before
     public void setupSensorValues() {
-        axisValues = new double[ ]{-4.26d, 1.25d, 0.126d};
+        axisValues = new Float[]{-4.26f, 1.25f, 0.126f};
         sensorValues = new ArrayList<>();
 
-        for (double v : axisValues) {
+        for (Float v : axisValues) {
             sensorValues.add(v);
         }
     }
@@ -75,14 +75,14 @@ public class SensorDataTest {
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void setValues_withBiggerNumberOfAxis() {
-        double[] values = {-4.26d, 1.25d};
+        Float[] values = {-4.26f, 1.25f};
         sensorData.setValues(values);
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void setValues_withSmallerNumberOfAxis() {
-        List<Double> values = new ArrayList<>(sensorValues);
-        values.add(6.48d);
+        List<Float> values = new ArrayList<>(sensorValues);
+        values.add(6.48f);
 
         sensorData.setValues(values);
     }
