@@ -1,4 +1,4 @@
-package elins.org.aktvtas;
+package elins.org.aktvtas.sensor;
 
 import org.junit.Before;
 import org.junit.Test;

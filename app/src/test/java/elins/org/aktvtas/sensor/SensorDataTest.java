@@ -1,4 +1,4 @@
-package elins.org.aktvtas;
+package elins.org.aktvtas.sensor;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -9,6 +9,8 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import elins.org.aktvtas.sensor.SensorData;
 
 public class SensorDataTest {
     private static final int NUMBER_OF_AXIS = 3;

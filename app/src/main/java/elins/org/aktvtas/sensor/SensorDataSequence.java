@@ -1,4 +1,4 @@
-package elins.org.aktvtas;
+package elins.org.aktvtas.sensor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
