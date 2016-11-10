@@ -45,6 +45,14 @@ public class SensorData {
         }
     }
 
+    public void setValues(float[] values) {
+        Float[] f = new Float[values.length];
+        for (int i = 0; i < this.values.size(); i++) {
+            f[i] = values[i];
+        }
+        setValues(f);
+    }
+
     private void confirmNumberOfAxisMatchesWith(int inputNumberOfAxis) {
         int expectedNumberOfAxis = values.size();
         if (inputNumberOfAxis > expectedNumberOfAxis) {
