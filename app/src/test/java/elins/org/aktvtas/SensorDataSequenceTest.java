@@ -15,14 +15,14 @@ import static org.junit.Assert.assertThat;
 public class SensorDataSequenceTest {
     private static final int NUMBER_OF_SENSOR = 2;
     private SensorDataSequence sensorDataSequence;
-    private Sensor accelerometer;
-    private Sensor gyroscope;
+    private SensorData accelerometer;
+    private SensorData gyroscope;
     private int numberOfData = 0;
 
     @Before
     public void initialize() {
-        accelerometer = new Sensor(android.hardware.Sensor.TYPE_ACCELEROMETER, 3);
-        gyroscope = new Sensor(android.hardware.Sensor.TYPE_GYROSCOPE, 3);
+        accelerometer = new SensorData(android.hardware.Sensor.TYPE_ACCELEROMETER, 3);
+        gyroscope = new SensorData(android.hardware.Sensor.TYPE_GYROSCOPE, 3);
 
         sensorDataSequence = new SensorDataSequence()
                 .registerSensor(accelerometer)

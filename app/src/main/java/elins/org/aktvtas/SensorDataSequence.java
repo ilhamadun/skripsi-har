@@ -5,24 +5,24 @@ import java.util.HashMap;
 import java.util.List;
 
 public class SensorDataSequence {
-    protected List<Sensor> buffer = new ArrayList<>();
-    private List<List<Sensor>> sequence = new ArrayList<>();
-    protected HashMap<Sensor, Integer> sensorOrder = new HashMap<>();
+    protected List<SensorData> buffer = new ArrayList<>();
+    private List<List<SensorData>> sequence = new ArrayList<>();
+    protected HashMap<SensorData, Integer> sensorOrder = new HashMap<>();
     private int registeredSensor = 0;
 
-    public SensorDataSequence registerSensor(Sensor sensor) {
-        sensorOrder.put(sensor, registeredSensor++);
-        buffer.add(sensor);
+    public SensorDataSequence registerSensor(SensorData sensorData) {
+        sensorOrder.put(sensorData, registeredSensor++);
+        buffer.add(sensorData);
 
         return this;
     }
 
-    public SensorDataSequence setData(Sensor sensor) {
-        int index = sensorOrder.get(sensor);
+    public SensorDataSequence setData(SensorData sensorData) {
+        int index = sensorOrder.get(sensorData);
 
-        Sensor newSensor = new Sensor(sensor.sensorType(), sensor.numberOfAxis());
-        newSensor.setValues(sensor.getValues());
-        buffer.set(index, newSensor);
+        SensorData newSensorData = new SensorData(sensorData.sensorType(), sensorData.numberOfAxis());
+        newSensorData.setValues(sensorData.getValues());
+        buffer.set(index, newSensorData);
 
         return this;
     }
@@ -33,11 +33,11 @@ public class SensorDataSequence {
     }
 
     private void resetBuffer() {
-        List<Sensor> oldBuffer = buffer;
+        List<SensorData> oldBuffer = buffer;
         buffer = new ArrayList<>();
 
-        for (Sensor sensor : oldBuffer) {
-            buffer.add(new Sensor(sensor.sensorType(), sensor.numberOfAxis()));
+        for (SensorData sensorData : oldBuffer) {
+            buffer.add(new SensorData(sensorData.sensorType(), sensorData.numberOfAxis()));
         }
     }
 
@@ -45,37 +45,37 @@ public class SensorDataSequence {
         return sequence.size();
     }
 
-    public Sensor getLastData(Sensor sensor) {
-        int index = sensorOrder.get(sensor);
+    public SensorData getLastData(SensorData sensorData) {
+        int index = sensorOrder.get(sensorData);
 
-        List<Sensor> lastData = sequence.get(sequence.size() - 1);
+        List<SensorData> lastData = sequence.get(sequence.size() - 1);
         return lastData.get(index);
     }
 
-    public List<Sensor> getDataByIndex(int index) {
+    public List<SensorData> getDataByIndex(int index) {
         return sequence.get(index);
     }
 
-    public List<List<Sensor>> getAll() {
+    public List<List<SensorData>> getAll() {
         return sequence;
     }
 
     public List<List<Double>> flatten() {
         List<List<Double>> flattenedSequence = new ArrayList<>();
 
-        for (List<Sensor> sensors : sequence) {
-            List<Double> flattenedSensors = flattenSensors(sensors);
+        for (List<SensorData> sensorDatas : sequence) {
+            List<Double> flattenedSensors = flattenSensors(sensorDatas);
             flattenedSequence.add(flattenedSensors);
         }
 
         return flattenedSequence;
     }
 
-    private List<Double> flattenSensors(List<Sensor> sensors) {
+    private List<Double> flattenSensors(List<SensorData> sensorDatas) {
         List<Double> flattenedSensors = new ArrayList<>();
 
-        for (Sensor sensor : sensors) {
-            flattenedSensors.addAll(sensor.getValues());
+        for (SensorData sensorData : sensorDatas) {
+            flattenedSensors.addAll(sensorData.getValues());
         }
 
         return flattenedSensors;

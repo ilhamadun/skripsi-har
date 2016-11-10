@@ -22,8 +22,8 @@ public class SensorDataWriterTest {
     public static final String FILE_NAME = "activity_stand.csv";
     public static final int NUMBER_OF_SEQUENCE = 100;
 
-    private Sensor accelerometer = new Sensor(android.hardware.Sensor.TYPE_ACCELEROMETER, 3);
-    private Sensor gyroscope = new Sensor(android.hardware.Sensor.TYPE_GYROSCOPE, 3);
+    private SensorData accelerometer = new SensorData(android.hardware.Sensor.TYPE_ACCELEROMETER, 3);
+    private SensorData gyroscope = new SensorData(android.hardware.Sensor.TYPE_GYROSCOPE, 3);
     private SensorDataSequence sensorDataSequence;
     private static SensorDataWriter sensorDataWriter;
 

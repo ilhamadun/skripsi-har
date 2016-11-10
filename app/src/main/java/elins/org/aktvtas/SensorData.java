@@ -3,12 +3,12 @@ package elins.org.aktvtas;
 import java.util.Arrays;
 import java.util.List;
 
-public class Sensor {
+public class SensorData {
 
     private List<Double> values;
     private int sensorType;
 
-    protected Sensor(int SensorType, int numberOfAxis) {
+    protected SensorData(int SensorType, int numberOfAxis) {
         this.sensorType = SensorType;
 
         Double[] initialData = new Double[numberOfAxis];
