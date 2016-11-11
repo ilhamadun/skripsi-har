@@ -1,5 +1,8 @@
 package elins.org.aktvtas;
 
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -29,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private Drawer setupNavigationDrawer(Toolbar toolbar) {
         AccountHeader accountHeader = new AccountHeaderBuilder().withActivity(this).build();
         PrimaryDrawerItem prediction = new PrimaryDrawerItem().withIdentifier(1)
-                .withName(R.string.prediciton);
+                .withName(R.string.prediction);
         PrimaryDrawerItem train = new PrimaryDrawerItem().withIdentifier(2)
                 .withName(R.string.train);
         SecondaryDrawerItem settings = new SecondaryDrawerItem().withIdentifier(3)
@@ -57,6 +60,21 @@ public class MainActivity extends AppCompatActivity {
         return new Drawer.OnDrawerItemClickListener() {
             @Override
             public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                if (drawerItem.equals(1)) {
+                    Snackbar.make(view, R.string.prediction, Snackbar.LENGTH_SHORT).show();
+                } else if (drawerItem.equals(2)) {
+                    Fragment trainingChooser = TrainingChooserFragment.newInstance();
+                    transaction.replace(R.id.content, trainingChooser).commit();
+                } else if (drawerItem.equals(3)) {
+                    Snackbar.make(view, R.string.settings, Snackbar.LENGTH_SHORT).show();
+                } else if (drawerItem.equals(4)) {
+                    Snackbar.make(view, R.string.help, Snackbar.LENGTH_SHORT).show();
+                } else if (drawerItem.equals(5)) {
+                    Snackbar.make(view, R.string.about, Snackbar.LENGTH_SHORT).show();
+                }
+
                 return false;
             }
         };
