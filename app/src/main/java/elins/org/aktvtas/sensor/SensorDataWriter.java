@@ -124,7 +124,9 @@ public class SensorDataWriter {
 
     public void close() {
         try {
-            csvWriter.close();
+            if (csvWriter != null) {
+                csvWriter.close();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
