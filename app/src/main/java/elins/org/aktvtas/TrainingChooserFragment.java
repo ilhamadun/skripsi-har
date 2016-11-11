@@ -70,9 +70,9 @@ public class TrainingChooserFragment extends Fragment {
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                DialogFragment dialog = TrainingChooserDialogFragment
-//                        .newInstance(id);
-//                dialog.show(getFragmentManager(), "TrainingChooserDialogFragment");
+                DialogFragment dialog = TrainingChooserDialogFragment
+                        .newInstance(id);
+                dialog.show(getFragmentManager(), "TrainingChooserDialogFragment");
             }
         });
     }
