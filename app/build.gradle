@@ -41,3 +41,7 @@ dependencies {
     androidTestCompile "com.crittercism.dexmaker:dexmaker-dx:1.4"
     androidTestCompile "com.crittercism.dexmaker:dexmaker-mockito:1.4"
 }
+
+configurations {
+    all*.exclude group: 'commons-logging', module: 'commons-logging'
+}
