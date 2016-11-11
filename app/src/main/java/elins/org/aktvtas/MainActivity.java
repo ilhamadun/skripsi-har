@@ -27,6 +27,10 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Drawer drawer = setupNavigationDrawer(toolbar);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        Fragment predictionFragment = PredictionFragment.newInstance();
+        transaction.add(R.id.content, predictionFragment).commit();
     }
 
     private Drawer setupNavigationDrawer(Toolbar toolbar) {
@@ -63,10 +67,11 @@ public class MainActivity extends AppCompatActivity {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
                 if (drawerItem.equals(1)) {
-                    Snackbar.make(view, R.string.prediction, Snackbar.LENGTH_SHORT).show();
+                    Fragment predictionFragment = PredictionFragment.newInstance();
+                    transaction.replace(R.id.content, predictionFragment).commit();
                 } else if (drawerItem.equals(2)) {
-                    Fragment trainingChooser = TrainingChooserFragment.newInstance();
-                    transaction.replace(R.id.content, trainingChooser).commit();
+                    Fragment trainingChooserFragment = TrainingChooserFragment.newInstance();
+                    transaction.replace(R.id.content, trainingChooserFragment).commit();
                 } else if (drawerItem.equals(3)) {
                     Snackbar.make(view, R.string.settings, Snackbar.LENGTH_SHORT).show();
                 } else if (drawerItem.equals(4)) {
