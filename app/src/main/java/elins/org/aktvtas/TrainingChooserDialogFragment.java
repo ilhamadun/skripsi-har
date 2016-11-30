@@ -45,12 +45,12 @@ public class TrainingChooserDialogFragment extends DialogFragment {
                 .setView(view)
                 .setPositiveButton(R.string.start, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-//                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-//
-//                        TrainerFragment trainer = TrainerFragment.newInstance(
-//                                getArguments().getInt("id"),
-//                                Integer.parseInt(trainingTimeArray[trainingTimePicker.getValue()]));
-//                        transaction.replace(R.id.content, trainer).commit();
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+                        TrainingFragment trainer = TrainingFragment.newInstance(
+                                getArguments().getInt("id"),
+                                Integer.parseInt(trainingTimeArray[trainingTimePicker.getValue()]));
+                        transaction.replace(R.id.content, trainer).commit();
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
