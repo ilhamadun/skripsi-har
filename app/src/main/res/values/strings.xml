@@ -1,3 +1,36 @@
 <resources>
     <string name="app_name">Aktvtas</string>
+    <string name="prediction">Prediction</string>
+    <string name="train">Train</string>
+    <string name="settings">Settings</string>
+    <string name="help">Help</string>
+    <string name="about">About</string>
+
+    <string name="choose_activity">Choose Activity</string>
+    <string name="training_duration">Training Duration</string>
+
+    <string name="stand">Stand</string>
+    <string name="sit">Sit</string>
+    <string name="walk">Walk</string>
+    <string name="run">Run</string>
+    <string name="walking_upstairs">Walking Upstairs</string>
+    <string name="walking_downstairs">Walking Downstairs</string>
+    <string name="lie">Lie</string>
+    <string name="biking">Biking</string>
+    <string name="drive">Drive</string>
+    <string name="ride">Ride</string>
+
+    <string name="start">Start</string>
+    <string name="cancel">Cancel</string>
+    <string name="training_activity">Training Activity</string>
+    <string name="time_left">Time Left</string>
+    <string name="stop">Stop</string>
+    <string name="starts_in">Starts in</string>
+
+    <string name="accelerometer">Accelerometer</string>
+    <string name="gyroscope">Gyroscope</string>
+    <string name="x">x</string>
+    <string name="y">y</string>
+    <string name="z">z</string>
+    <string name="sensor">Sensor</string>
 </resources>
