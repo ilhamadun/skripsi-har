@@ -10,11 +10,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SensorReader implements SensorEventListener {
+class SensorReader implements SensorEventListener {
 
-    private SensorManager sensorManager;
+    public interface SensorReaderEvent {
+        void onSensorDataReady();
+    }
+
+    private final SensorManager sensorManager;
     private List<Sensor> availableSensors = new ArrayList<>();
     private List<SensorData> sensorDataBuffer;
+    private SensorReaderEvent sensorReaderEvent;
 
     public SensorReader(Context context, List<Integer> sensorToRead) {
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
@@ -23,6 +28,10 @@ public class SensorReader implements SensorEventListener {
             registerSensorIfAvailable(sensorType);
         }
         resetBuffer();
+    }
+
+    public void enableEventCallback(SensorReaderEvent event) {
+        sensorReaderEvent = event;
     }
 
     private void registerSensorIfAvailable(int sensorType) {
@@ -38,6 +47,10 @@ public class SensorReader implements SensorEventListener {
         sensorDataBuffer = Arrays.asList(initialSensorDataBuffer);
     }
 
+    public void close() {
+        sensorManager.unregisterListener(this);
+    }
+
     public List<Sensor> getAvailableSensor() {
         return availableSensors;
     }
@@ -50,9 +63,13 @@ public class SensorReader implements SensorEventListener {
     @Override
     public final void onSensorChanged(SensorEvent event) {
         storeAvailableSensorDataToBuffer(event);
+
+        if (readyToRead() && sensorReaderEvent != null) {
+            sensorReaderEvent.onSensorDataReady();
+        }
     }
 
-    protected void storeAvailableSensorDataToBuffer(SensorEvent event) {
+    void storeAvailableSensorDataToBuffer(SensorEvent event) {
         if (availableSensors.contains(event.sensor)) {
             int bufferIndex = availableSensors.indexOf(event.sensor);
             SensorData sensorData = new SensorData(event.sensor.getType(), event.values.length);
@@ -72,11 +89,11 @@ public class SensorReader implements SensorEventListener {
 
     public List<SensorData> read() {
         if (readyToRead()) {
-            List<SensorData> sensorDatas = sensorDataBuffer;
+            List<SensorData> sensorDataList = new ArrayList<>(sensorDataBuffer);
             resetBuffer();
-            return sensorDatas;
+            return sensorDataList;
         } else {
-            return null;
+            return new ArrayList<>();
         }
     }
 }

@@ -91,7 +91,7 @@ public class SensorReaderTest {
     public void read_whenBufferNotReady() {
         setupTwoAvailableSensor();
         List<SensorData> sensorDatas = sensorReader.read();
-        assertEquals(sensorDatas, null);
+        assertEquals(sensorDatas.size(), 0);
     }
 
     @Test

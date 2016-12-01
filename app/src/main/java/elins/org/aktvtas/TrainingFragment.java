@@ -1,8 +1,14 @@
 package elins.org.aktvtas;
 
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.hardware.Sensor;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +21,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
+import elins.org.aktvtas.sensor.LogSensorService;
+import elins.org.aktvtas.sensor.SensorData;
 
 
 public class TrainingFragment extends Fragment {
@@ -23,16 +33,19 @@ public class TrainingFragment extends Fragment {
 
     private int activityId;
     private int trainingDuration;
+    private int[] sensorToRead = {Sensor.TYPE_ACCELEROMETER}; // TODO: Implement as intent extra
+
+    private LogSensorService logSensorService;
+    private boolean logSensorServiceBound = false;
 
     private CountDownTimer countDownTimer;
 
     private TextView activityName;
     private TextView timeLeftText;
     private TextView timerContainer;
-    private Button controlButton;
     private LinearLayout sensorMonitor;
 
-    List<View> sensorMonitorLayouts = new ArrayList<>();
+    private List<View> sensorMonitorLayouts = new ArrayList<>();
 
 
     public TrainingFragment() {
@@ -76,31 +89,45 @@ public class TrainingFragment extends Fragment {
         timeLeftText = (TextView) getActivity().findViewById(R.id.trainer_time_left);
         timerContainer = (TextView) getActivity().findViewById(R.id.trainer_duration);
         sensorMonitor = (LinearLayout) getActivity().findViewById(R.id.sensor_monitor);
-        controlButton = (Button) getActivity().findViewById(R.id.trainer_control_button);
 
-        addSensorMonitorLayout("Accelerometer");
-        addSensorMonitorLayout("Gyroscope");
+        for (int aSensorToRead : sensorToRead) {
+            addSensorMonitorLayout(aSensorToRead);
+        }
 
-        controlButton = (Button) getActivity().findViewById(R.id.trainer_control_button);
+        Button controlButton = (Button) getActivity().findViewById(R.id.trainer_control_button);
         controlButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 countDownTimer.cancel();
+                stopTraining();
             }
         });
     }
 
-    private int addSensorMonitorLayout(String name) {
+    private int addSensorMonitorLayout(int sensorId) {
         View layout = LayoutInflater.from(getActivity()).inflate(R.layout.sensor_monitor,
                 sensorMonitor, false);
 
+        String sensorName = getSensorName(sensorId);
+
         sensorMonitor.addView(layout);
         TextView title = (TextView) layout.findViewById(R.id.sensor_monitor_title);
-        title.setText(name);
+        title.setText(sensorName);
 
         sensorMonitorLayouts.add(layout);
 
         return sensorMonitorLayouts.size() - 1;
+    }
+
+    private String getSensorName(int sensorId) {
+        switch (sensorId) {
+            case Sensor.TYPE_ACCELEROMETER:
+                return getResources().getString(R.string.accelerometer);
+            case Sensor.TYPE_GYROSCOPE:
+                return getResources().getString(R.string.gyroscope);
+        }
+
+        return String.valueOf(sensorId);
     }
 
     private void startPreparationCountdown(long preparationTimeInMilliseconds) {
@@ -113,25 +140,93 @@ public class TrainingFragment extends Fragment {
             @Override
             public void onFinish() {
                 timeLeftText.setText(R.string.time_left);
-                startTrainingCountdown();
+                startTraining();
             }
         }.start();
     }
 
+    private void startTraining() {
+        Intent intent = new Intent(getActivity(), LogSensorService.class);
+        intent.putExtra(LogSensorService.LOG_DURATION, trainingDuration);
+        intent.putExtra(LogSensorService.SENSOR_TO_READ, sensorToRead);
+        getActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE);
+
+        startTrainingCountdown();
+    }
+
+    private final ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            LogSensorService.LogSensorBinder binder = (LogSensorService.LogSensorBinder) service;
+            logSensorService = binder.getService();
+            logSensorServiceBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            logSensorServiceBound = false;
+        }
+    };
+
     private void startTrainingCountdown() {
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("mm:ss");
-        countDownTimer = new CountDownTimer((trainingDuration * 60 * 1000) + 1000, 1000) {
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("mm:ss", Locale.getDefault());
+        countDownTimer = new CountDownTimer((trainingDuration * 60 * 1000) + 1000, 100) {
             @Override
             public void onTick(long millisUntilFinished) {
+                if (logSensorServiceBound) {
+                    updateSensorMonitor();
+                }
+
                 Date date = new Date(millisUntilFinished - 1000);
                 timerContainer.setText(dateFormat.format(date));
             }
 
             @Override
             public void onFinish() {
-
+                stopTraining();
             }
         }.start();
+    }
+
+    private void updateSensorMonitor() {
+        if (logSensorService == null) {
+            return;
+        }
+
+        List<SensorData> sensorDataList = logSensorService.getSensorData();
+
+        if (sensorDataList.size() > 0) {
+            for (SensorData sensorData : sensorDataList) {
+                View monitor;
+                if (sensorData.sensorType() == Sensor.TYPE_ACCELEROMETER) {
+                    monitor = sensorMonitorLayouts.get(0);
+                } else {
+                    monitor = sensorMonitorLayouts.get(1);
+                }
+
+                TextView x = (TextView) monitor.findViewById(R.id.sensor_monitor_x);
+                TextView y = (TextView) monitor.findViewById(R.id.sensor_monitor_y);
+                TextView z = (TextView) monitor.findViewById(R.id.sensor_monitor_z);
+
+                Locale locale = Locale.getDefault();
+                x.setText(String.format(locale, "%f", sensorData.getAxisValue(0)));
+                y.setText(String.format(locale, "%f", sensorData.getAxisValue(1)));
+                z.setText(String.format(locale, "%f", sensorData.getAxisValue(2)));
+            }
+        }
+    }
+
+    private void stopTraining() {
+        if (logSensorServiceBound) {
+            getActivity().unbindService(connection);
+            logSensorServiceBound = false;
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        stopTraining();
     }
 
 }

@@ -1,9 +1,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context="elins.org.aktvtas.SensorMonitorFragment">
+    android:layout_marginBottom="8dp">
 
     <TextView
         android:id="@+id/sensor_monitor_title"
@@ -51,21 +50,24 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:text="0" />
 
         <TextView
             android:id="@+id/sensor_monitor_y"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:text="0" />
 
         <TextView
             android:id="@+id/sensor_monitor_z"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:text="0" />
 
     </LinearLayout>
 
