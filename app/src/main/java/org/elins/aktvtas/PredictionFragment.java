@@ -1,4 +1,4 @@
-package elins.org.aktvtas;
+package org.elins.aktvtas;
 
 
 import android.os.Bundle;

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/activity_horizontal_margin"
-    tools:context="elins.org.aktvtas.TrainerFragment">
+    tools:context="org.elins.aktvtas.TrainingFragment">
 
     <TextView
         android:id="@+id/trainer_title"
@@ -25,7 +25,7 @@
         android:layout_marginBottom="20dp"
         android:textColor="@color/accent"
         android:layout_below="@id/trainer_title"
-        android:text="Stand"/>
+        android:text="@string/stand"/>
 
     <RelativeLayout
         android:id="@+id/trainer_timer"
@@ -49,8 +49,7 @@
             android:textAlignment="center"
             android:textSize="60sp"
             android:textStyle="bold"
-            android:layout_below="@id/trainer_time_left"
-            android:text="10:51"/>
+            android:layout_below="@id/trainer_time_left"/>
 
         <Button
             android:id="@+id/trainer_control_button"

@@ -1,4 +1,4 @@
-package elins.org.aktvtas;
+package org.elins.aktvtas;
 
 
 import android.content.ComponentName;
@@ -23,8 +23,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import elins.org.aktvtas.sensor.LogSensorService;
-import elins.org.aktvtas.sensor.SensorData;
+import org.elins.aktvtas.sensor.LogSensorService;
+import org.elins.aktvtas.sensor.SensorData;
 
 
 public class TrainingFragment extends Fragment {

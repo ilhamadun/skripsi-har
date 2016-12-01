@@ -27,7 +27,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="20dp">
+                android:layout_marginBottom="20dp"
+                android:baselineAligned="false">
 
                 <LinearLayout android:id="@+id/training_chooser_stand"
                     android:layout_width="0dp"
@@ -76,7 +77,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="20dp">
+                android:layout_marginBottom="20dp"
+                android:baselineAligned="false">
 
                 <LinearLayout  android:id="@+id/training_chooser_walk"
                     android:layout_width="0dp"
@@ -124,7 +126,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="20dp">
+                android:layout_marginBottom="20dp"
+                android:baselineAligned="false">
 
                 <LinearLayout  android:id="@+id/training_chooser_upstairs"
                     android:layout_width="0dp"
@@ -173,7 +176,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="20dp">
+                android:layout_marginBottom="20dp"
+                android:baselineAligned="false">
 
                 <LinearLayout  android:id="@+id/training_chooser_lie"
                     android:layout_width="0dp"
@@ -222,7 +226,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="20dp">
+                android:layout_marginBottom="20dp"
+                android:baselineAligned="false">
 
                 <LinearLayout  android:id="@+id/training_chooser_drive"
                     android:layout_width="0dp"

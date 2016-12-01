@@ -1,13 +1,13 @@
-package elins.org.aktvtas.sensor;
+package org.elins.aktvtas.sensor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class SensorDataSequence {
-    protected List<SensorData> buffer = new ArrayList<>();
+    List<SensorData> buffer = new ArrayList<>();
     private List<List<SensorData>> sequence = new ArrayList<>();
-    protected HashMap<SensorData, Integer> sensorOrder = new HashMap<>();
+    HashMap<SensorData, Integer> sensorOrder = new HashMap<>();
     private int registeredSensor = 0;
 
     public SensorDataSequence registerSensor(SensorData sensorData) {
@@ -43,6 +43,10 @@ public class SensorDataSequence {
 
     public int size() {
         return sequence.size();
+    }
+
+    public List<SensorData> getLastData() {
+        return sequence.get(sequence.size() - 1);
     }
 
     public SensorData getLastData(SensorData sensorData) {

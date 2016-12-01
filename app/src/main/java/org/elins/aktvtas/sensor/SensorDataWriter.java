@@ -1,4 +1,4 @@
-package elins.org.aktvtas.sensor;
+package org.elins.aktvtas.sensor;
 
 import com.opencsv.CSVWriter;
 

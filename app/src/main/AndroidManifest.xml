@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="elins.org.aktvtas">
+    package="org.elins.aktvtas">
 
     <application
         android:allowBackup="true"
@@ -9,11 +9,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <service
-            android:name=".sensor.LogSensorService"
+            android:name="org.elins.aktvtas.sensor.LogSensorService"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name="org.elins.aktvtas.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
