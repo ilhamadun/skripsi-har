@@ -36,8 +36,8 @@ public class SensorDataSequenceTest {
 
     @Test
     public void defaultOrder_isCorrect() {
-        assertThat(sensorDataSequence.sensorOrder.get(accelerometer), is(0));
-        assertThat(sensorDataSequence.sensorOrder.get(gyroscope), is(1));
+        assertThat(sensorDataSequence.sensorOrder.get(accelerometer.sensorType()), is(0));
+        assertThat(sensorDataSequence.sensorOrder.get(gyroscope.sensorType()), is(1));
     }
 
     @Test

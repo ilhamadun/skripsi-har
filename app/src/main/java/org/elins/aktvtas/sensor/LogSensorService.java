@@ -18,8 +18,8 @@ public class LogSensorService extends Service implements SensorReader.SensorRead
     String activity;
     long logDurationInSeconds;
     private SensorReader sensorReader;
-    private SensorDataSequence sensorDataSequence;
-    private SensorDataWriter sensorDataWriter;
+    protected SensorDataSequence sensorDataSequence;
+    protected SensorDataWriter sensorDataWriter;
 
     private final IBinder binder = new LogSensorBinder();
 
@@ -39,6 +39,8 @@ public class LogSensorService extends Service implements SensorReader.SensorRead
         for (int sensor : sensors) {
             sensorToRead.add(sensor);
         }
+        createSensorDataSequence(sensorToRead);
+        sensorDataWriter = createSensorDataWriter();
         sensorReader = new SensorReader(this, sensorToRead);
         sensorReader.enableEventCallback(this);
 
@@ -67,22 +69,24 @@ public class LogSensorService extends Service implements SensorReader.SensorRead
         // TODO: 12/1/2016 Implement sensor data logging.
     }
 
-    private SensorDataWriter createSensorDataWriter() {
-        String basePath = getFilesDir().getAbsolutePath();
+    protected SensorDataWriter createSensorDataWriter() {
+        String basePath = getExternalFilesDir(null).getAbsolutePath();
         String filePath = basePath + "/" + activity + ".csv";
         return new SensorDataWriter(filePath);
     }
 
-    private SensorDataSequence createSensorDataSequence() {
-        while (! sensorReader.readyToRead()) {
-            // Wait to read first sensor data
-        }
-        List<SensorData> sensorDatas = sensorReader.read();
-        SensorDataSequence sensorDataSequence = new SensorDataSequence();
-        for (SensorData sensorData : sensorDatas) {
+    protected void createSensorDataSequence(List<Integer> sensorToRead) {
+        sensorDataSequence = new SensorDataSequence();
+        for (int sensor : sensorToRead) {
+            SensorData sensorData = new SensorData(sensor, 3);
+            // TODO: 12/3/2016 Number of axis as extra
             sensorDataSequence.registerSensor(sensorData);
         }
+    }
 
-        return sensorDataSequence;
+    protected void writeLog() {
+        sensorDataWriter.open();
+        sensorDataWriter.write(sensorDataSequence);
+        sensorDataWriter.close();
     }
 }

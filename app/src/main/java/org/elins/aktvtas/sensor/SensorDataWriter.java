@@ -13,6 +13,7 @@ import java.util.List;
 public class SensorDataWriter {
     protected String filePath;
     private CSVWriter csvWriter;
+    private boolean fileOpened = false;
 
     public SensorDataWriter(String filePath) {
         filePath = confirmFileExtensionIsCsv(filePath);
@@ -97,6 +98,7 @@ public class SensorDataWriter {
         try {
             FileWriter fileWriter = new FileWriter(filePath, true);
             csvWriter = new CSVWriter(fileWriter);
+            fileOpened = true;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -122,10 +124,17 @@ public class SensorDataWriter {
         return sequenceString;
     }
 
+    public void open() {
+        if (! fileOpened) {
+            createWriter(filePath);
+        }
+    }
+
     public void close() {
         try {
             if (csvWriter != null) {
                 csvWriter.close();
+                fileOpened = false;
             }
         } catch (Exception e) {
             e.printStackTrace();

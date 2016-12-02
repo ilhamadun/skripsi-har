@@ -7,18 +7,18 @@ import java.util.List;
 public class SensorDataSequence {
     List<SensorData> buffer = new ArrayList<>();
     private List<List<SensorData>> sequence = new ArrayList<>();
-    HashMap<SensorData, Integer> sensorOrder = new HashMap<>();
+    HashMap<Integer, Integer> sensorOrder = new HashMap<>();
     private int registeredSensor = 0;
 
     public SensorDataSequence registerSensor(SensorData sensorData) {
-        sensorOrder.put(sensorData, registeredSensor++);
+        sensorOrder.put(sensorData.sensorType(), registeredSensor++);
         buffer.add(sensorData);
 
         return this;
     }
 
     public SensorDataSequence setData(SensorData sensorData) {
-        int index = sensorOrder.get(sensorData);
+        int index = sensorOrder.get(sensorData.sensorType());
 
         SensorData newSensorData = new SensorData(sensorData.sensorType(), sensorData.numberOfAxis());
         newSensorData.setValues(sensorData.getValues());
@@ -50,7 +50,7 @@ public class SensorDataSequence {
     }
 
     public SensorData getLastData(SensorData sensorData) {
-        int index = sensorOrder.get(sensorData);
+        int index = sensorOrder.get(sensorData.sensorType());
 
         List<SensorData> lastData = sequence.get(sequence.size() - 1);
         return lastData.get(index);
