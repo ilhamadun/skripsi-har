@@ -9,13 +9,16 @@ import android.hardware.Sensor;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
-import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,7 +30,7 @@ import org.elins.aktvtas.sensor.LogSensorService;
 import org.elins.aktvtas.sensor.SensorData;
 
 
-public class TrainingFragment extends Fragment {
+public class TrainingActivity extends AppCompatActivity {
     private static final String ACTIVITY_ID = "activity_id";
     private static final String TRAINING_DURATION = "training_duration";
 
@@ -48,53 +51,44 @@ public class TrainingFragment extends Fragment {
     private List<View> sensorMonitorLayouts = new ArrayList<>();
 
 
-    public TrainingFragment() {
+    public TrainingActivity() {
         // Required empty public constructor
     }
 
-    public static TrainingFragment newInstance(int activityId, int trainingDuration) {
-        TrainingFragment fragment = new TrainingFragment();
-        Bundle args = new Bundle();
-        args.putInt(ACTIVITY_ID, activityId);
-        args.putInt(TRAINING_DURATION, trainingDuration);
-        fragment.setArguments(args);
-        return fragment;
+    public static void startActivity(Context context, int activityId, int trainingDuration) {
+        Intent intent = new Intent(context, TrainingActivity.class);
+        intent.putExtra(ACTIVITY_ID, activityId);
+        intent.putExtra(TRAINING_DURATION, trainingDuration);
+        context.startActivity(intent);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            activityId = getArguments().getInt(ACTIVITY_ID);
-            trainingDuration = getArguments().getInt(TRAINING_DURATION);
-        }
-    }
+        Intent intent = getIntent();
+        activityId = intent.getIntExtra(ACTIVITY_ID, 0);
+        trainingDuration = intent.getIntExtra(TRAINING_DURATION, 10);
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_training, container, false);
-    }
+        setContentView(R.layout.activity_training);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
         registerViewComponents();
         activityName.setText(activityId);
         startPreparationCountdown(10000);
-
     }
 
     private void registerViewComponents() {
-        activityName = (TextView) getActivity().findViewById(R.id.trainer_activity_name);
-        timeLeftText = (TextView) getActivity().findViewById(R.id.trainer_time_left);
-        timerContainer = (TextView) getActivity().findViewById(R.id.trainer_duration);
-        sensorMonitor = (LinearLayout) getActivity().findViewById(R.id.sensor_monitor);
+        activityName = (TextView) findViewById(R.id.trainer_activity_name);
+        timeLeftText = (TextView) findViewById(R.id.trainer_time_left);
+        timerContainer = (TextView) findViewById(R.id.trainer_duration);
+        sensorMonitor = (LinearLayout) findViewById(R.id.sensor_monitor);
 
         for (int aSensorToRead : sensorToRead) {
             addSensorMonitorLayout(aSensorToRead);
         }
 
-        Button controlButton = (Button) getActivity().findViewById(R.id.trainer_control_button);
+        Button controlButton = (Button) findViewById(R.id.trainer_control_button);
         controlButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,7 +99,7 @@ public class TrainingFragment extends Fragment {
     }
 
     private int addSensorMonitorLayout(int sensorId) {
-        View layout = LayoutInflater.from(getActivity()).inflate(R.layout.sensor_monitor,
+        View layout = LayoutInflater.from(this).inflate(R.layout.sensor_monitor,
                 sensorMonitor, false);
 
         String sensorName = getSensorName(sensorId);
@@ -146,10 +140,10 @@ public class TrainingFragment extends Fragment {
     }
 
     private void startTraining() {
-        Intent intent = new Intent(getActivity(), LogSensorService.class);
+        Intent intent = new Intent(this, LogSensorService.class);
         intent.putExtra(LogSensorService.LOG_DURATION, trainingDuration);
         intent.putExtra(LogSensorService.SENSOR_TO_READ, sensorToRead);
-        getActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
         startTrainingCountdown();
     }
@@ -218,7 +212,7 @@ public class TrainingFragment extends Fragment {
 
     private void stopTraining() {
         if (logSensorServiceBound) {
-            getActivity().unbindService(connection);
+            unbindService(connection);
             logSensorServiceBound = false;
         }
     }
