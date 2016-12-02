@@ -19,9 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.DrawerBuilder;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -145,6 +142,7 @@ public class TrainingActivity extends AppCompatActivity {
 
     private void startTraining() {
         Intent intent = new Intent(this, LogSensorService.class);
+        intent.putExtra(LogSensorService.ACTIVITY, getResources().getString(activityId));
         intent.putExtra(LogSensorService.LOG_DURATION, trainingDuration);
         intent.putExtra(LogSensorService.SENSOR_TO_READ, sensorToRead);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
@@ -191,7 +189,7 @@ public class TrainingActivity extends AppCompatActivity {
             return;
         }
 
-        List<SensorData> sensorDataList = logSensorService.getSensorData();
+        List<SensorData> sensorDataList = logSensorService.getLastSensorData();
 
         if (sensorDataList.size() > 0) {
             for (SensorData sensorData : sensorDataList) {

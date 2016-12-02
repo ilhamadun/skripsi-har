@@ -18,6 +18,7 @@ public class LogSensorService extends Service implements SensorReader.SensorRead
     String activity;
     long logDurationInSeconds;
     private SensorReader sensorReader;
+    private List<SensorData> buffer;
     protected SensorDataSequence sensorDataSequence;
     protected SensorDataWriter sensorDataWriter;
 
@@ -60,13 +61,28 @@ public class LogSensorService extends Service implements SensorReader.SensorRead
         sensorReader.close();
     }
 
-    public List<SensorData> getSensorData() {
-        return sensorReader.read();
+    public List<SensorData> getLastSensorData() {
+        if (sensorDataSequence.size() > 0) {
+            return sensorDataSequence.getLastData();
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     @Override
     public void onSensorDataReady() {
-        // TODO: 12/1/2016 Implement sensor data logging.
+        buffer = sensorReader.read();
+        if (buffer != null) {
+            for (SensorData data : buffer) {
+                sensorDataSequence.setData(data);
+            }
+            sensorDataSequence.commit();
+
+            if (sensorDataSequence.size() % 1500 == 0) {
+                writeLog();
+                sensorDataSequence.clear();
+            }
+        }
     }
 
     protected SensorDataWriter createSensorDataWriter() {
