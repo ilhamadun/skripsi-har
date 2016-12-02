@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.hardware.Sensor;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
@@ -40,6 +42,7 @@ public class TrainingActivity extends AppCompatActivity {
 
     private LogSensorService logSensorService;
     private boolean logSensorServiceBound = false;
+    private boolean doubleBackToExitPressedOnce;
 
     private CountDownTimer countDownTimer;
 
@@ -94,6 +97,7 @@ public class TrainingActivity extends AppCompatActivity {
             public void onClick(View v) {
                 countDownTimer.cancel();
                 stopTraining();
+                finish();
             }
         });
     }
@@ -215,6 +219,25 @@ public class TrainingActivity extends AppCompatActivity {
             unbindService(connection);
             logSensorServiceBound = false;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            stopTraining();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, R.string.press_back_again_to_stop_training, Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce = false;
+            }
+        }, 2000);
     }
 
     @Override
