@@ -30,12 +30,13 @@ import org.elins.aktvtas.sensor.SensorData;
 
 
 public class TrainingActivity extends AppCompatActivity {
-    private static final String ACTIVITY_ID = "activity_id";
-    private static final String TRAINING_DURATION = "training_duration";
+    public static final String ACTIVITY_ID = "org.elins.aktvtas.extra.ACTIVITY_ID";
+    public static final String TRAINING_DURATION = "org.elins.aktvtas.extra.TRAINING_DURATION";
 
     private int activityId;
-    private int trainingDuration;
+    private int trainingDurationSecond;
     private int[] sensorToRead = {Sensor.TYPE_ACCELEROMETER}; // TODO: Implement as intent extra
+    private HumanActivity humanActivity;
 
     private LogSensorService logSensorService;
     private boolean logSensorServiceBound = false;
@@ -65,16 +66,19 @@ public class TrainingActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        humanActivity = new HumanActivity(this);
+
         Intent intent = getIntent();
         activityId = intent.getIntExtra(ACTIVITY_ID, 0);
-        trainingDuration = intent.getIntExtra(TRAINING_DURATION, 10);
+        trainingDurationSecond = intent.getIntExtra(TRAINING_DURATION, 600);
 
         setContentView(R.layout.activity_training);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         registerViewComponents();
-        activityName.setText(activityId);
+
+        activityName.setText(humanActivity.name(activityId));
         startPreparationCountdown(10000);
     }
 
@@ -142,8 +146,8 @@ public class TrainingActivity extends AppCompatActivity {
 
     private void startTraining() {
         Intent intent = new Intent(this, LogSensorService.class);
-        intent.putExtra(LogSensorService.ACTIVITY, getResources().getString(activityId));
-        intent.putExtra(LogSensorService.LOG_DURATION, trainingDuration);
+        intent.putExtra(LogSensorService.ACTIVITY_ID, activityId);
+        intent.putExtra(LogSensorService.LOG_DURATION_SECOND, trainingDurationSecond);
         intent.putExtra(LogSensorService.SENSOR_TO_READ, sensorToRead);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
@@ -166,11 +170,12 @@ public class TrainingActivity extends AppCompatActivity {
 
     private void startTrainingCountdown() {
         final SimpleDateFormat dateFormat = new SimpleDateFormat("mm:ss", Locale.getDefault());
-        countDownTimer = new CountDownTimer((trainingDuration * 60 * 1000) + 1000, 100) {
+        countDownTimer = new CountDownTimer((trainingDurationSecond * 1000) + 1000, 200) {
             @Override
             public void onTick(long millisUntilFinished) {
                 if (logSensorServiceBound) {
                     updateSensorMonitor();
+                    logSensorService.updateNotification(millisUntilFinished);
                 }
 
                 Date date = new Date(millisUntilFinished - 1000);

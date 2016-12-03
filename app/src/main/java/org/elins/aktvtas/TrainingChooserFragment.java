@@ -52,16 +52,16 @@ public class TrainingChooserFragment extends Fragment {
         LinearLayout drive = (LinearLayout) getActivity().findViewById(R.id.training_chooser_drive);
         LinearLayout ride = (LinearLayout) getActivity().findViewById(R.id.training_chooser_ride);
 
-        setOnClickListener(stand, R.string.stand);
-        setOnClickListener(sit, R.string.sit);
-        setOnClickListener(walk, R.string.walk);
-        setOnClickListener(run, R.string.run);
-        setOnClickListener(upstairs, R.string.walking_upstairs);
-        setOnClickListener(downstairs, R.string.walking_downstairs);
-        setOnClickListener(lie, R.string.lie);
-        setOnClickListener(bike, R.string.biking);
-        setOnClickListener(drive, R.string.drive);
-        setOnClickListener(ride, R.string.ride);
+        setOnClickListener(stand, HumanActivity.STAND);
+        setOnClickListener(sit, HumanActivity.SIT);
+        setOnClickListener(walk, HumanActivity.WALK);
+        setOnClickListener(run, HumanActivity.RUN);
+        setOnClickListener(upstairs, HumanActivity.WALK_UPSTAIRS);
+        setOnClickListener(downstairs, HumanActivity.WALK_DOWNSTAIRS);
+        setOnClickListener(lie, HumanActivity.LIE);
+        setOnClickListener(bike, HumanActivity.BIKE);
+        setOnClickListener(drive, HumanActivity.DRIVE);
+        setOnClickListener(ride, HumanActivity.RIDE);
     }
 
     private void setOnClickListener(LinearLayout layout, final int id) {

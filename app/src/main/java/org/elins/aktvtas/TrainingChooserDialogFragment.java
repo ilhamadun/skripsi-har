@@ -46,7 +46,7 @@ public class TrainingChooserDialogFragment extends DialogFragment {
                         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
                         TrainingActivity.startActivity(getActivity(), getArguments().getInt("id"),
-                                Integer.parseInt(trainingTimeArray[trainingTimePicker.getValue()]));
+                                Integer.parseInt(trainingTimeArray[trainingTimePicker.getValue()]) * 60);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

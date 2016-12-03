@@ -39,7 +39,7 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_stand"
+                        android:src="@drawable/ic_stand_circle"
                         android:layout_marginBottom="8dp"/>
 
                     <TextView
@@ -59,7 +59,7 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_sit"
+                        android:src="@drawable/ic_sit_circle"
                         android:layout_marginBottom="8dp"/>
 
                     <TextView
@@ -89,7 +89,7 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_walk"
+                        android:src="@drawable/ic_walk_circle"
                         android:layout_marginBottom="8dp"/>
 
                     <TextView
@@ -109,7 +109,7 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_run"
+                        android:src="@drawable/ic_run_cricle"
                         android:layout_marginBottom="8dp"/>
 
                     <TextView
@@ -138,7 +138,7 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_upstairs"
+                        android:src="@drawable/ic_upstairs_circle"
                         android:layout_marginBottom="8dp"/>
 
                     <TextView
@@ -158,7 +158,7 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_downstairs"
+                        android:src="@drawable/ic_downstairs_circle"
                         android:layout_marginBottom="8dp"/>
 
                     <TextView
@@ -188,7 +188,7 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_lie"
+                        android:src="@drawable/ic_lie_circle"
                         android:layout_marginBottom="8dp"/>
 
                     <TextView
@@ -208,7 +208,7 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_bike"
+                        android:src="@drawable/ic_bike_circle"
                         android:layout_marginBottom="8dp"/>
 
                     <TextView
@@ -238,7 +238,7 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_car"
+                        android:src="@drawable/ic_car_circle"
                         android:layout_marginBottom="8dp"/>
 
                     <TextView
@@ -258,7 +258,7 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_motorcycle"
+                        android:src="@drawable/ic_motorcycle_circle"
                         android:layout_marginBottom="8dp"/>
 
                     <TextView

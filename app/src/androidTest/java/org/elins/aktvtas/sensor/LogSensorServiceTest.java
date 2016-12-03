@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.opencsv.CSVReader;
 
+import org.elins.aktvtas.HumanActivity;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -45,14 +46,13 @@ public class LogSensorServiceTest {
     @BeforeClass
     public static void bindLogSensorService() throws TimeoutException {
         long logDuration = 10;
-        String activity = "stand";
         int[] sensorToRead = {Sensor.TYPE_ACCELEROMETER, Sensor.TYPE_GYROSCOPE};
 
         Intent serviceIntent = new Intent(InstrumentationRegistry.getTargetContext(),
                 LogSensorService.class);
 
-        serviceIntent.putExtra(LogSensorService.ACTIVITY, activity);
-        serviceIntent.putExtra(LogSensorService.LOG_DURATION, logDuration);
+        serviceIntent.putExtra(LogSensorService.ACTIVITY_ID, HumanActivity.STAND);
+        serviceIntent.putExtra(LogSensorService.LOG_DURATION_SECOND, logDuration);
         serviceIntent.putExtra(LogSensorService.SENSOR_TO_READ, sensorToRead);
 
         IBinder binder = serviceRule.bindService(serviceIntent);
@@ -73,7 +73,7 @@ public class LogSensorServiceTest {
     @Test
     public void logFileCreated() throws TimeoutException {
         String expectedPath = Environment.getExternalStorageDirectory().getAbsolutePath() +
-                "/Android/data/org.elins.aktvtas/files/stand.csv";
+                "/Android/data/org.elins.aktvtas/files/Stand.csv";
 
         File file = new File(expectedPath);
 

@@ -13,10 +13,11 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name="org.elins.aktvtas.MainActivity">
+        <activity
+            android:name="org.elins.aktvtas.MainActivity"
+            android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
