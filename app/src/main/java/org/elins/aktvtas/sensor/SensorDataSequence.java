@@ -28,8 +28,22 @@ public class SensorDataSequence {
     }
 
     public void commit() {
-        sequence.add(buffer);
+        if (! dataCorrupted()) {
+            sequence.add(buffer);
+        }
         resetBuffer();
+    }
+
+    private boolean dataCorrupted() {
+        for (SensorData sensorData : buffer) {
+            for (Float data : sensorData.getValues()) {
+                if (data == null) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private void resetBuffer() {
