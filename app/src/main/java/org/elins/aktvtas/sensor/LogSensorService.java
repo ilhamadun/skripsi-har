@@ -7,7 +7,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 
-import org.elins.aktvtas.HumanActivity;
+import org.elins.aktvtas.HumanActivityRegister;
 import org.elins.aktvtas.R;
 import org.elins.aktvtas.TrainingActivity;
 
@@ -24,7 +24,7 @@ public class LogSensorService extends Service implements SensorReader.SensorRead
     private static final int DEFAULT_LOG_DURATION = 600;
     private  static final int NOTIFICATION_ID = 1;
 
-    int activityId;
+    HumanActivityRegister.ActivityId activityId;
     String activityName;
     int activityIcon;
     int logDurationInSecond;
@@ -45,8 +45,8 @@ public class LogSensorService extends Service implements SensorReader.SensorRead
 
     @Override
     public IBinder onBind(Intent intent) {
-        activityId = intent.getIntExtra(ACTIVITY_ID, 0);
-        HumanActivity humanActivity = new HumanActivity(this);
+        activityId = HumanActivityRegister.ActivityId.values()[intent.getIntExtra(ACTIVITY_ID, 0)];
+        HumanActivityRegister humanActivity = new HumanActivityRegister(this);
         activityName = humanActivity.name(activityId);
         activityIcon = humanActivity.icon(activityId);
         logDurationInSecond = intent.getIntExtra(LOG_DURATION_SECOND, DEFAULT_LOG_DURATION);

@@ -52,16 +52,16 @@ public class TrainingChooserFragment extends Fragment {
         LinearLayout drive = (LinearLayout) getActivity().findViewById(R.id.training_chooser_drive);
         LinearLayout ride = (LinearLayout) getActivity().findViewById(R.id.training_chooser_ride);
 
-        setOnClickListener(stand, HumanActivity.STAND);
-        setOnClickListener(sit, HumanActivity.SIT);
-        setOnClickListener(walk, HumanActivity.WALK);
-        setOnClickListener(run, HumanActivity.RUN);
-        setOnClickListener(upstairs, HumanActivity.WALK_UPSTAIRS);
-        setOnClickListener(downstairs, HumanActivity.WALK_DOWNSTAIRS);
-        setOnClickListener(lie, HumanActivity.LIE);
-        setOnClickListener(bike, HumanActivity.BIKE);
-        setOnClickListener(drive, HumanActivity.DRIVE);
-        setOnClickListener(ride, HumanActivity.RIDE);
+        setOnClickListener(stand, HumanActivityRegister.ActivityId.STAND.ordinal());
+        setOnClickListener(sit, HumanActivityRegister.ActivityId.SIT.ordinal());
+        setOnClickListener(walk, HumanActivityRegister.ActivityId.WALK.ordinal());
+        setOnClickListener(run, HumanActivityRegister.ActivityId.RUN.ordinal());
+        setOnClickListener(upstairs, HumanActivityRegister.ActivityId.WALK_UPSTAIRS.ordinal());
+        setOnClickListener(downstairs, HumanActivityRegister.ActivityId.WALK_DOWNSTAIRS.ordinal());
+        setOnClickListener(lie, HumanActivityRegister.ActivityId.LIE.ordinal());
+        setOnClickListener(bike, HumanActivityRegister.ActivityId.BIKE.ordinal());
+        setOnClickListener(drive, HumanActivityRegister.ActivityId.DRIVE.ordinal());
+        setOnClickListener(ride, HumanActivityRegister.ActivityId.RIDE.ordinal());
     }
 
     private void setOnClickListener(LinearLayout layout, final int id) {

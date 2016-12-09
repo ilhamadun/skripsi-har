@@ -33,10 +33,10 @@ public class TrainingActivity extends AppCompatActivity {
     public static final String ACTIVITY_ID = "org.elins.aktvtas.extra.ACTIVITY_ID";
     public static final String TRAINING_DURATION = "org.elins.aktvtas.extra.TRAINING_DURATION";
 
-    private int activityId;
+    private HumanActivityRegister.ActivityId activityId;
     private int trainingDurationSecond;
     private int[] sensorToRead = {Sensor.TYPE_ACCELEROMETER}; // TODO: Implement as intent extra
-    private HumanActivity humanActivity;
+    private HumanActivityRegister humanActivity;
 
     private LogSensorService logSensorService;
     private boolean logSensorServiceBound = false;
@@ -66,10 +66,10 @@ public class TrainingActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        humanActivity = new HumanActivity(this);
+        humanActivity = new HumanActivityRegister(this);
 
         Intent intent = getIntent();
-        activityId = intent.getIntExtra(ACTIVITY_ID, 0);
+        activityId = HumanActivityRegister.ActivityId.values()[intent.getIntExtra(ACTIVITY_ID, 0)];
         trainingDurationSecond = intent.getIntExtra(TRAINING_DURATION, 600);
 
         setContentView(R.layout.activity_training);
