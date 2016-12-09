@@ -38,4 +38,6 @@
     <string name="minutes">Minutes</string>
     <string name="seconds">Seconds</string>
     <string name="press_back_again_to_stop_training">Press back again to stop training.</string>
+    <string name="activity_history">Activity History</string>
+    <string name="not_recognized">Not Recognized</string>
 </resources>
