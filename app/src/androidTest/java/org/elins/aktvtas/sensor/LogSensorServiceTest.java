@@ -51,7 +51,7 @@ public class LogSensorServiceTest {
         Intent serviceIntent = new Intent(InstrumentationRegistry.getTargetContext(),
                 LogSensorService.class);
 
-        serviceIntent.putExtra(LogSensorService.ACTIVITY_ID, HumanActivityRegister.STAND);
+        serviceIntent.putExtra(LogSensorService.ACTIVITY_ID, HumanActivityRegister.ActivityId.STAND);
         serviceIntent.putExtra(LogSensorService.LOG_DURATION_SECOND, logDuration);
         serviceIntent.putExtra(LogSensorService.SENSOR_TO_READ, sensorToRead);
 
