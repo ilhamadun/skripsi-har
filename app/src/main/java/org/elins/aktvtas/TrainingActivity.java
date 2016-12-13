@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.elins.aktvtas.human.HumanActivityRegister;
 import org.elins.aktvtas.sensor.LogSensorService;
 import org.elins.aktvtas.sensor.SensorData;
 

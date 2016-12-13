@@ -1,7 +1,9 @@
-package org.elins.aktvtas;
+package org.elins.aktvtas.human;
 
 import android.content.Context;
 import android.content.res.Resources;
+
+import org.elins.aktvtas.R;
 
 import java.util.HashMap;
 

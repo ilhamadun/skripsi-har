@@ -7,7 +7,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 
-import org.elins.aktvtas.HumanActivityRegister;
+import org.elins.aktvtas.human.HumanActivityRegister;
 import org.elins.aktvtas.R;
 import org.elins.aktvtas.TrainingActivity;
 

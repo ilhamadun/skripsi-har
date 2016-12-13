@@ -1,4 +1,4 @@
-package org.elins.aktvtas;
+package org.elins.aktvtas.human;
 
 import android.content.Context;
 

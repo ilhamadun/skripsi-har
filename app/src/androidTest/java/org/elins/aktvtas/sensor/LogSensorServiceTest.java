@@ -12,7 +12,7 @@ import android.util.Log;
 
 import com.opencsv.CSVReader;
 
-import org.elins.aktvtas.HumanActivityRegister;
+import org.elins.aktvtas.human.HumanActivityRegister;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;

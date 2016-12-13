@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import org.elins.aktvtas.human.HumanActivityRegister;
+
 public class TrainingChooserFragment extends Fragment {
 
     public TrainingChooserFragment() {
