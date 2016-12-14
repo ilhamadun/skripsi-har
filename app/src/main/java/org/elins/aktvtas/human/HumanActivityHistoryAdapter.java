@@ -10,16 +10,13 @@ import android.widget.TextView;
 
 import org.elins.aktvtas.R;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class HumanActivityHistoryAdapter
         extends RecyclerView.Adapter<HumanActivityHistoryAdapter.ActivityViewHolder> {
 
-    List<HumanActivity> humanActivities = new ArrayList<>();
+    private List<HumanActivityHistory> histories = new ArrayList<>();
 
     public static class ActivityViewHolder extends RecyclerView.ViewHolder {
         FrameLayout frame;
@@ -40,7 +37,7 @@ public class HumanActivityHistoryAdapter
 
     @Override
     public int getItemCount() {
-        return humanActivities.size();
+        return histories.size();
     }
 
     @Override
@@ -53,30 +50,25 @@ public class HumanActivityHistoryAdapter
 
     @Override
     public void onBindViewHolder(final ActivityViewHolder activityViewHolder, int i) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm", Locale.getDefault());
-        HumanActivity activity = humanActivities.get(i);
+        HumanActivityHistory history = histories.get(i);
 
-        final Date startTime = activity.getStartTime().getTime();
-        final Date endTime = activity.getEndTime().getTime();
-
-        activityViewHolder.activityIcon.setImageResource(humanActivities.get(i).getIcon());
-        activityViewHolder.activityName.setText(humanActivities.get(i).getName());
-        activityViewHolder.activityInfo
-                .setText(String.format("%s - %s", dateFormat.format(startTime), dateFormat.format(endTime)));
+        activityViewHolder.activityIcon.setImageResource(history.icon());
+        activityViewHolder.activityName.setText(history.name());
+        activityViewHolder.activityInfo.setText(history.time());
         activityViewHolder.wrongButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int position = activityViewHolder.getAdapterPosition();
-                humanActivities.remove(position);
+                histories.remove(position);
                 notifyItemRemoved(position);
             }
         });
     }
 
-    public int addItem(HumanActivity humanActivity) {
-        humanActivities.add(humanActivity);
-        notifyItemInserted(humanActivities.size() - 1);
+    public int addItem(HumanActivityHistory history) {
+        histories.add(history);
+        notifyItemInserted(histories.size() - 1);
 
-        return humanActivities.size();
+        return histories.size();
     }
 }

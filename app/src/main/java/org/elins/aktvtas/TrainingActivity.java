@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import org.elins.aktvtas.human.HumanActivityRegister;
+import org.elins.aktvtas.human.HumanActivity;
 import org.elins.aktvtas.sensor.LogSensorService;
 import org.elins.aktvtas.sensor.SensorData;
 
@@ -34,10 +34,9 @@ public class TrainingActivity extends AppCompatActivity {
     public static final String ACTIVITY_ID = "org.elins.aktvtas.extra.ACTIVITY_ID";
     public static final String TRAINING_DURATION = "org.elins.aktvtas.extra.TRAINING_DURATION";
 
-    private HumanActivityRegister.ActivityId activityId;
+    private HumanActivity.Id activityId;
     private int trainingDurationSecond;
     private int[] sensorToRead = {Sensor.TYPE_ACCELEROMETER}; // TODO: Implement as intent extra
-    private HumanActivityRegister humanActivity;
 
     private LogSensorService logSensorService;
     private boolean logSensorServiceBound = false;
@@ -67,10 +66,9 @@ public class TrainingActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        humanActivity = new HumanActivityRegister(this);
 
         Intent intent = getIntent();
-        activityId = HumanActivityRegister.ActivityId.values()[intent.getIntExtra(ACTIVITY_ID, 0)];
+        activityId = HumanActivity.Id.valueOf(intent.getIntExtra(ACTIVITY_ID, 0));
         trainingDurationSecond = intent.getIntExtra(TRAINING_DURATION, 600);
 
         setContentView(R.layout.activity_training);
@@ -79,7 +77,8 @@ public class TrainingActivity extends AppCompatActivity {
 
         registerViewComponents();
 
-        activityName.setText(humanActivity.name(activityId));
+        HumanActivity humanActivity = new HumanActivity(activityId);
+        activityName.setText(humanActivity.name());
         startPreparationCountdown(10000);
     }
 
