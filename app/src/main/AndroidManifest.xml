@@ -24,12 +24,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".TrainingActivity" />
+        <activity
+            android:name=".TrainingActivity"
+            android:launchMode="singleInstance"/>
         <activity
             android:name=".PredictionActivity"
             android:launchMode="singleInstance">
             <intent-filter>
-                <action android:name="android.intent.action.RUN"></action>
+                <action android:name="android.intent.action.RUN" />
             </intent-filter>
         </activity>
 

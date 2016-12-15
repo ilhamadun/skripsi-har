@@ -10,12 +10,12 @@ import android.view.ViewGroup;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link PredictionFragment#newInstance} factory method to
+ * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PredictionFragment extends Fragment {
+public class HomeFragment extends Fragment {
 
-    public PredictionFragment() {
+    public HomeFragment() {
         // Required empty public constructor
     }
 
@@ -23,10 +23,10 @@ public class PredictionFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment PredictionFragment.
+     * @return A new instance of fragment HomeFragment.
      */
-    public static PredictionFragment newInstance() {
-        PredictionFragment fragment = new PredictionFragment();
+    public static HomeFragment newInstance() {
+        HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
