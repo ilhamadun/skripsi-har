@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import org.elins.aktvtas.human.HumanActivityRegister;
+import org.elins.aktvtas.human.HumanActivity;
 
 public class TrainingChooserFragment extends Fragment {
 
@@ -54,16 +54,16 @@ public class TrainingChooserFragment extends Fragment {
         LinearLayout drive = (LinearLayout) getActivity().findViewById(R.id.training_chooser_drive);
         LinearLayout ride = (LinearLayout) getActivity().findViewById(R.id.training_chooser_ride);
 
-        setOnClickListener(stand, HumanActivityRegister.ActivityId.STAND.ordinal());
-        setOnClickListener(sit, HumanActivityRegister.ActivityId.SIT.ordinal());
-        setOnClickListener(walk, HumanActivityRegister.ActivityId.WALK.ordinal());
-        setOnClickListener(run, HumanActivityRegister.ActivityId.RUN.ordinal());
-        setOnClickListener(upstairs, HumanActivityRegister.ActivityId.WALK_UPSTAIRS.ordinal());
-        setOnClickListener(downstairs, HumanActivityRegister.ActivityId.WALK_DOWNSTAIRS.ordinal());
-        setOnClickListener(lie, HumanActivityRegister.ActivityId.LIE.ordinal());
-        setOnClickListener(bike, HumanActivityRegister.ActivityId.BIKE.ordinal());
-        setOnClickListener(drive, HumanActivityRegister.ActivityId.DRIVE.ordinal());
-        setOnClickListener(ride, HumanActivityRegister.ActivityId.RIDE.ordinal());
+        setOnClickListener(stand, HumanActivity.Id.STAND.ordinal());
+        setOnClickListener(sit, HumanActivity.Id.SIT.ordinal());
+        setOnClickListener(walk, HumanActivity.Id.WALK.ordinal());
+        setOnClickListener(run, HumanActivity.Id.RUN.ordinal());
+        setOnClickListener(upstairs, HumanActivity.Id.WALK_UPSTAIRS.ordinal());
+        setOnClickListener(downstairs, HumanActivity.Id.WALK_DOWNSTAIRS.ordinal());
+        setOnClickListener(lie, HumanActivity.Id.LIE.ordinal());
+        setOnClickListener(bike, HumanActivity.Id.BIKE.ordinal());
+        setOnClickListener(drive, HumanActivity.Id.DRIVE.ordinal());
+        setOnClickListener(ride, HumanActivity.Id.RIDE.ordinal());
     }
 
     private void setOnClickListener(LinearLayout layout, final int id) {

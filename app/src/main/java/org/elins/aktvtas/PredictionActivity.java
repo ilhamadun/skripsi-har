@@ -8,9 +8,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
-import org.elins.aktvtas.human.HumanActivity;
+import org.elins.aktvtas.human.HumanActivityHistory;
 import org.elins.aktvtas.human.HumanActivityHistoryAdapter;
-import org.elins.aktvtas.human.HumanActivityRegister;
 
 public class PredictionActivity extends AppCompatActivity {
 
@@ -35,9 +34,5 @@ public class PredictionActivity extends AppCompatActivity {
 
         HumanActivityHistoryAdapter adapter = new HumanActivityHistoryAdapter();
         activityHistory.setAdapter(adapter);
-
-        adapter.addItem(new HumanActivity(this, HumanActivityRegister.ActivityId.DRIVE));
-        adapter.addItem(new HumanActivity(this, HumanActivityRegister.ActivityId.STAND));
-        adapter.addItem(new HumanActivity(this, HumanActivityRegister.ActivityId.RIDE));
     }
 }

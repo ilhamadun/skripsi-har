@@ -12,7 +12,7 @@ import android.util.Log;
 
 import com.opencsv.CSVReader;
 
-import org.elins.aktvtas.human.HumanActivityRegister;
+import org.elins.aktvtas.human.HumanActivity;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -51,7 +51,7 @@ public class LogSensorServiceTest {
         Intent serviceIntent = new Intent(InstrumentationRegistry.getTargetContext(),
                 LogSensorService.class);
 
-        serviceIntent.putExtra(LogSensorService.ACTIVITY_ID, HumanActivityRegister.ActivityId.STAND);
+        serviceIntent.putExtra(LogSensorService.ACTIVITY_ID, HumanActivity.Id.STAND);
         serviceIntent.putExtra(LogSensorService.LOG_DURATION_SECOND, logDuration);
         serviceIntent.putExtra(LogSensorService.SENSOR_TO_READ, sensorToRead);
 
