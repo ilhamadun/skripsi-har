@@ -15,7 +15,7 @@ import java.util.List;
 public class HumanActivityHistoryAdapter
         extends RecyclerView.Adapter<HumanActivityHistoryAdapter.ActivityViewHolder> {
 
-    private List<HumanActivityHistory> histories = HumanActivityHistory.getNewest(10);
+    private List<HumanActivityHistory> histories;
 
     public static class ActivityViewHolder extends RecyclerView.ViewHolder {
         FrameLayout frame;
@@ -32,6 +32,11 @@ public class HumanActivityHistoryAdapter
             activityInfo = (TextView) view.findViewById(R.id.activity_history_info);
             wrongButton = (ImageView) view.findViewById(R.id.activity_history_wrong_button);
         }
+    }
+
+    public HumanActivityHistoryAdapter(int historyLimit) {
+        super();
+        histories = HumanActivityHistory.getNewest(historyLimit);
     }
 
     @Override

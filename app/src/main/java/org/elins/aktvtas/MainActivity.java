@@ -36,8 +36,8 @@ public class MainActivity extends AppCompatActivity {
         Drawer drawer = setupNavigationDrawer(toolbar);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        Fragment predictionFragment = HomeFragment.newInstance();
-        transaction.add(R.id.content, predictionFragment).commit();
+        Fragment homeFragment = HomeFragment.newInstance();
+        transaction.add(R.id.content, homeFragment).commit();
     }
 
     private Drawer setupNavigationDrawer(Toolbar toolbar) {

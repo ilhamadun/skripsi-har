@@ -2,6 +2,8 @@ package org.elins.aktvtas;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,13 +28,8 @@ public class PredictionActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        RecyclerView activityHistory = (RecyclerView) findViewById(R.id.human_activity_history);
-        activityHistory.setHasFixedSize(true);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        activityHistory.setLayoutManager(layoutManager);
-
-        HumanActivityHistoryAdapter adapter = new HumanActivityHistoryAdapter();
-        activityHistory.setAdapter(adapter);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        Fragment activityHistoryFragment = ActivityHistoryFragment.newInstance(10);
+        transaction.add(R.id.activity_prediction_history, activityHistoryFragment).commit();
     }
 }

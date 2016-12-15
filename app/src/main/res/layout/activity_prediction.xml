@@ -54,14 +54,9 @@
         android:textStyle="bold"
         android:text="@string/activity_history"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/human_activity_history"
-        android:scrollbars="vertical"
+    <FrameLayout
+        android:id="@+id/activity_prediction_history"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+        android:layout_height="match_parent" />
 
 </LinearLayout>
