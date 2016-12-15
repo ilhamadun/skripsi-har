@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
+import org.elins.aktvtas.human.HumanActivityHistory;
 import org.elins.aktvtas.human.HumanActivityHistoryAdapter;
 
 public class PredictionActivity extends AppCompatActivity {

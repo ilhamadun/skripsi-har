@@ -40,6 +40,19 @@ public class SensorLog extends Model {
     @Column
     public Date timestamp;
 
+    public SensorLog() {
+        super();
+    }
+
+    public SensorLog(String logType, int numberOfSensors, int totalSensorAxis, int numberOfEntry,
+                     String logPath) {
+        this.logType = logType;
+        this.numberOfSensors = numberOfSensors;
+        this.totalSensorAxis = totalSensorAxis;
+        this.numberOfEntry = numberOfEntry;
+        this.logPath = logPath;
+    }
+
     public SensorDataSequence getLog(int row_start, int window_size, float overlap,
                                      int number_of_windows) {
         throw new UnsupportedOperationException("Not yet implemented.");

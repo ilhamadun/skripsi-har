@@ -10,13 +10,12 @@ import android.widget.TextView;
 
 import org.elins.aktvtas.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class HumanActivityHistoryAdapter
         extends RecyclerView.Adapter<HumanActivityHistoryAdapter.ActivityViewHolder> {
 
-    private List<HumanActivityHistory> histories = new ArrayList<>();
+    private List<HumanActivityHistory> histories = HumanActivityHistory.getNewest(10);
 
     public static class ActivityViewHolder extends RecyclerView.ViewHolder {
         FrameLayout frame;

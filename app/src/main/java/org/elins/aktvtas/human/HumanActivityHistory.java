@@ -11,6 +11,7 @@ import org.elins.aktvtas.sensor.SensorDataSequence;
 import org.elins.aktvtas.sensor.SensorLog;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -34,10 +35,10 @@ public class HumanActivityHistory extends Model {
     public int numberOfWindows;
 
     @Column(name = "recognized_activity_id")
-    public HumanActivity recognizedActivityId;
+    public HumanActivity recognizedActivity;
 
     @Column(name = "actual_activity_id")
-    public HumanActivity actualActivityId;
+    public HumanActivity actualActivity;
 
     @Column
     public float confidence;
@@ -48,8 +49,26 @@ public class HumanActivityHistory extends Model {
     @Column(name = "end_time")
     public Date endTime;
 
+    public HumanActivityHistory() {
+        super();
+    }
+
+    public HumanActivityHistory(SensorLog sensorLog, int logRowStart, int windowSize, float overlap,
+                                int numberOfWindows, HumanActivity recognizedActivity,
+                                float confidence, Date startTime, Date endTime) {
+        this.sensorLog = sensorLog;
+        this.logRowStart = logRowStart;
+        this.windowSize = windowSize;
+        this.overlap = overlap;
+        this.numberOfWindows = numberOfWindows;
+        this.recognizedActivity = recognizedActivity;
+        this.confidence = confidence;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
     public boolean isCorrect() {
-        return recognizedActivityId.equals(actualActivityId);
+        return recognizedActivity.equals(actualActivity);
     }
 
     public SensorDataSequence getLog() {
@@ -57,15 +76,15 @@ public class HumanActivityHistory extends Model {
     }
 
     public int name() {
-        return actualActivityId.name();
+        return actualActivity.name();
     }
 
     public String nameString(Context context) {
-        return actualActivityId.nameString(context);
+        return actualActivity.nameString(context);
     }
 
     public int icon() {
-        return actualActivityId.icon();
+        return actualActivity.icon();
     }
 
     public String time() {
@@ -75,8 +94,16 @@ public class HumanActivityHistory extends Model {
     }
 
     public static List<HumanActivityHistory> getNewest(int limit) {
-        return new Select().from(HumanActivityHistory.class).orderBy("start_time DESC").limit(limit)
+        List<HumanActivityHistory> histories = new Select().from(HumanActivityHistory.class)
+                .orderBy("start_time DESC")
+                .limit(limit)
                 .execute();
+
+        if (histories != null) {
+            return histories;
+        } else {
+            return new ArrayList<>();
+        }
     }
 
 }
