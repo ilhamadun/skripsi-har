@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -36,7 +37,7 @@ public class TrainingActivity extends AppCompatActivity {
 
     private HumanActivity.Id activityId;
     private int trainingDurationSecond;
-    private int[] sensorToRead = {Sensor.TYPE_ACCELEROMETER}; // TODO: Implement as intent extra
+    private int[] sensorToRead = {Sensor.TYPE_ACCELEROMETER, Sensor.TYPE_GYROSCOPE}; // TODO: Implement as intent extra
 
     private LogSensorService logSensorService;
     private boolean logSensorServiceBound = false;
@@ -71,6 +72,8 @@ public class TrainingActivity extends AppCompatActivity {
         activityId = HumanActivity.Id.valueOf(intent.getIntExtra(ACTIVITY_ID, 0));
         trainingDurationSecond = intent.getIntExtra(TRAINING_DURATION, 600);
 
+        filterUnavailableSensor();
+
         setContentView(R.layout.activity_training);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -79,7 +82,26 @@ public class TrainingActivity extends AppCompatActivity {
 
         HumanActivity humanActivity = new HumanActivity(activityId);
         activityName.setText(humanActivity.name());
-        startPreparationCountdown(10000);
+
+        if (! logSensorServiceBound) {
+            startPreparationCountdown(10000);
+        }
+    }
+
+    private void filterUnavailableSensor() {
+        List<Integer> filtered = new ArrayList<>();
+        SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        for (int aSensorToRead : sensorToRead) {
+            if (sensorManager.getDefaultSensor(aSensorToRead) != null) {
+                filtered.add(aSensorToRead);
+            }
+        }
+
+        sensorToRead = new int[filtered.size()];
+
+        for (int i = 0; i < filtered.size(); i++) {
+            sensorToRead[i] = filtered.get(i);
+        }
     }
 
     private void registerViewComponents() {
