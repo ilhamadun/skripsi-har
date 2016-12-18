@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Aktvtas</string>
+    <string name="home">Home</string>
     <string name="prediction">Prediction</string>
     <string name="train">Train</string>
     <string name="settings">Settings</string>
@@ -8,15 +9,16 @@
 
     <string name="choose_activity">Choose Activity</string>
     <string name="training_duration">Training Duration</string>
+    <string name="set_training_time">Set training time in minutes:</string>
 
     <string name="stand">Stand</string>
     <string name="sit">Sit</string>
     <string name="walk">Walk</string>
     <string name="run">Run</string>
-    <string name="walking_upstairs">Walking Upstairs</string>
-    <string name="walking_downstairs">Walking Downstairs</string>
-    <string name="lie">Lie</string>
-    <string name="biking">Biking</string>
+    <string name="walking_upstairs">Walk Upstairs</string>
+    <string name="walking_downstairs">Walk Downstairs</string>
+    <string name="lie">Lie Down</string>
+    <string name="biking">Bike</string>
     <string name="drive">Drive</string>
     <string name="ride">Ride</string>
 
@@ -29,13 +31,15 @@
 
     <string name="accelerometer">Accelerometer</string>
     <string name="gyroscope">Gyroscope</string>
-    <string name="x">x</string>
-    <string name="y">y</string>
-    <string name="z">z</string>
+    <string name="x" translatable="false">x</string>
+    <string name="y" translatable="false">y</string>
+    <string name="z" translatable="false">z</string>
     <string name="sensor">Sensor</string>
 
     <string name="training_in_progress">Training in progress</string>
     <string name="minutes">Minutes</string>
     <string name="seconds">Seconds</string>
     <string name="press_back_again_to_stop_training">Press back again to stop training.</string>
+    <string name="activity_history">Activity History</string>
+    <string name="not_recognized">Not Recognized</string>
 </resources>

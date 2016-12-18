@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -25,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.elins.aktvtas.human.HumanActivity;
 import org.elins.aktvtas.sensor.LogSensorService;
 import org.elins.aktvtas.sensor.SensorData;
 
@@ -33,10 +35,9 @@ public class TrainingActivity extends AppCompatActivity {
     public static final String ACTIVITY_ID = "org.elins.aktvtas.extra.ACTIVITY_ID";
     public static final String TRAINING_DURATION = "org.elins.aktvtas.extra.TRAINING_DURATION";
 
-    private int activityId;
+    private HumanActivity.Id activityId;
     private int trainingDurationSecond;
-    private int[] sensorToRead = {Sensor.TYPE_ACCELEROMETER}; // TODO: Implement as intent extra
-    private HumanActivity humanActivity;
+    private int[] sensorToRead = {Sensor.TYPE_ACCELEROMETER, Sensor.TYPE_GYROSCOPE}; // TODO: Implement as intent extra
 
     private LogSensorService logSensorService;
     private boolean logSensorServiceBound = false;
@@ -66,11 +67,12 @@ public class TrainingActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        humanActivity = new HumanActivity(this);
 
         Intent intent = getIntent();
-        activityId = intent.getIntExtra(ACTIVITY_ID, 0);
+        activityId = HumanActivity.Id.valueOf(intent.getIntExtra(ACTIVITY_ID, 0));
         trainingDurationSecond = intent.getIntExtra(TRAINING_DURATION, 600);
+
+        filterUnavailableSensor();
 
         setContentView(R.layout.activity_training);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -78,8 +80,28 @@ public class TrainingActivity extends AppCompatActivity {
 
         registerViewComponents();
 
-        activityName.setText(humanActivity.name(activityId));
-        startPreparationCountdown(10000);
+        HumanActivity humanActivity = new HumanActivity(activityId);
+        activityName.setText(humanActivity.name());
+
+        if (! logSensorServiceBound) {
+            startPreparationCountdown(10000);
+        }
+    }
+
+    private void filterUnavailableSensor() {
+        List<Integer> filtered = new ArrayList<>();
+        SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        for (int aSensorToRead : sensorToRead) {
+            if (sensorManager.getDefaultSensor(aSensorToRead) != null) {
+                filtered.add(aSensorToRead);
+            }
+        }
+
+        sensorToRead = new int[filtered.size()];
+
+        for (int i = 0; i < filtered.size(); i++) {
+            sensorToRead[i] = filtered.get(i);
+        }
     }
 
     private void registerViewComponents() {
@@ -146,7 +168,7 @@ public class TrainingActivity extends AppCompatActivity {
 
     private void startTraining() {
         Intent intent = new Intent(this, LogSensorService.class);
-        intent.putExtra(LogSensorService.ACTIVITY_ID, activityId);
+        intent.putExtra(LogSensorService.ACTIVITY_ID, activityId.ordinal());
         intent.putExtra(LogSensorService.LOG_DURATION_SECOND, trainingDurationSecond);
         intent.putExtra(LogSensorService.SENSOR_TO_READ, sensorToRead);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);

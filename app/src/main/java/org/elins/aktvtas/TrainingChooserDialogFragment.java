@@ -15,7 +15,7 @@ public class TrainingChooserDialogFragment extends DialogFragment {
 
     NumberPicker trainingTimePicker;
     String[] trainingTimeArray = new String[]{
-            "10", "15", "20", "25", "30", "35", "40", "45", "50", "55", "60"};
+            "5", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55", "60"};
 
     public static TrainingChooserDialogFragment newInstance(int id) {
         TrainingChooserDialogFragment fragment = new TrainingChooserDialogFragment();
@@ -39,7 +39,7 @@ public class TrainingChooserDialogFragment extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.training_duration)
-                .setMessage("Set training time in minutes:")
+                .setMessage(R.string.set_training_time)
                 .setView(view)
                 .setPositiveButton(R.string.start, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
