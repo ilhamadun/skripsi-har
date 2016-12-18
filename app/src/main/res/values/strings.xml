@@ -9,6 +9,7 @@
 
     <string name="choose_activity">Choose Activity</string>
     <string name="training_duration">Training Duration</string>
+    <string name="set_training_time">Set training time in minutes:</string>
 
     <string name="stand">Stand</string>
     <string name="sit">Sit</string>
