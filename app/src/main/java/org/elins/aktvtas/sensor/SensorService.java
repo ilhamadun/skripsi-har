@@ -25,6 +25,7 @@ public class SensorService extends Service implements SensorReader.SensorReaderE
     protected SensorDataSequence sensorDataSequence;
     protected SensorDataWriter sensorDataWriter;
 
+    private String filePath;
     private List<SensorData> buffer;
 
     @Override
@@ -84,7 +85,7 @@ public class SensorService extends Service implements SensorReader.SensorReaderE
 
     protected void createSensorDataWriter(String filename) {
         String basePath = getExternalFilesDir(null).getAbsolutePath();
-        String filePath = basePath + "/" + filename + ".csv";
+        filePath = basePath + "/" + filename + ".csv";
         sensorDataWriter = new SensorDataWriter(filePath);
     }
 
@@ -98,5 +99,9 @@ public class SensorService extends Service implements SensorReader.SensorReaderE
         sensorDataWriter.open();
         sensorDataWriter.write(logType, numberOfSensors, totalSensorAxis, sensorDataSequence);
         sensorDataWriter.close();
+    }
+
+    public String getFilePath() {
+        return filePath;
     }
 }

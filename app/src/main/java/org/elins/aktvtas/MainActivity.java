@@ -1,5 +1,6 @@
 package org.elins.aktvtas;
 
+import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -7,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Toast;
 
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -16,6 +18,8 @@ import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+
+import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
     private static final int DRAWER_ID_HOME = 0;
@@ -94,5 +98,34 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         };
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == TrainingActivity.REQUEST_CODE_TRAINING_ACTIVITY) {
+            if (resultCode == RESULT_OK) {
+                final String filePath = data.getStringExtra(TrainingActivity.RESULT);
+                Snackbar.make(findViewById(R.id.content), R.string.training_data_saved,
+                        Snackbar.LENGTH_LONG)
+                        .setAction(R.string.delete, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                deleteLogFile(filePath);
+                            }
+                        })
+                        .show();
+            }
+        }
+    }
+
+    public boolean deleteLogFile(String filePath) {
+        try {
+            File file = new File(filePath);
+            Toast.makeText(this, R.string.training_data_deleted, Toast.LENGTH_SHORT).show();
+            return file.delete();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

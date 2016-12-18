@@ -1,6 +1,7 @@
 package org.elins.aktvtas;
 
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -34,10 +36,14 @@ import org.elins.aktvtas.sensor.SensorData;
 public class TrainingActivity extends AppCompatActivity {
     public static final String ACTIVITY_ID = "org.elins.aktvtas.extra.ACTIVITY_ID";
     public static final String TRAINING_DURATION = "org.elins.aktvtas.extra.TRAINING_DURATION";
+    public static final String RESULT = "org.elins.aktvtas.extra.TRAINING_RESULT";
+
+    public static final int REQUEST_CODE_TRAINING_ACTIVITY = 1;
 
     private HumanActivity.Id activityId;
     private int trainingDurationSecond;
     private int[] sensorToRead = {Sensor.TYPE_ACCELEROMETER, Sensor.TYPE_GYROSCOPE}; // TODO: Implement as intent extra
+    private String filePath = null;
 
     private LogSensorService logSensorService;
     private boolean logSensorServiceBound = false;
@@ -55,13 +61,6 @@ public class TrainingActivity extends AppCompatActivity {
 
     public TrainingActivity() {
         // Required empty public constructor
-    }
-
-    public static void startActivity(Context context, int activityId, int trainingDuration) {
-        Intent intent = new Intent(context, TrainingActivity.class);
-        intent.putExtra(ACTIVITY_ID, activityId);
-        intent.putExtra(TRAINING_DURATION, trainingDuration);
-        context.startActivity(intent);
     }
 
     @Override
@@ -120,7 +119,6 @@ public class TrainingActivity extends AppCompatActivity {
             public void onClick(View v) {
                 countDownTimer.cancel();
                 stopTraining();
-                finish();
             }
         });
     }
@@ -182,6 +180,8 @@ public class TrainingActivity extends AppCompatActivity {
             LogSensorService.LogSensorBinder binder = (LogSensorService.LogSensorBinder) service;
             logSensorService = binder.getService();
             logSensorServiceBound = true;
+
+            filePath = logSensorService.getFilePath();
         }
 
         @Override
@@ -243,6 +243,19 @@ public class TrainingActivity extends AppCompatActivity {
         if (logSensorServiceBound) {
             unbindService(connection);
             logSensorServiceBound = false;
+            createResultIntent();
+            finish();
+        }
+    }
+
+    private void createResultIntent() {
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra(RESULT, filePath);
+
+        if (filePath == null) {
+            setResult(RESULT_CANCELED, returnIntent);
+        } else {
+            setResult(Activity.RESULT_OK, returnIntent);
         }
     }
 

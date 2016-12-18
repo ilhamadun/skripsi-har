@@ -2,6 +2,7 @@ package org.elins.aktvtas;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
@@ -45,8 +46,7 @@ public class TrainingChooserDialogFragment extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-                        TrainingActivity.startActivity(getActivity(), getArguments().getInt("id"),
-                                Integer.parseInt(trainingTimeArray[trainingTimePicker.getValue()]) * 60);
+                        startTrainingActivity();
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -58,4 +58,15 @@ public class TrainingChooserDialogFragment extends DialogFragment {
         return builder.show();
     }
 
+    public void startTrainingActivity() {
+        int activityId = getArguments().getInt("id");
+        int trainingDuration = Integer.parseInt(
+                trainingTimeArray[trainingTimePicker.getValue()]) * 60;
+
+        Intent intent = new Intent(getActivity(), TrainingActivity.class);
+        intent.putExtra(TrainingActivity.ACTIVITY_ID, activityId);
+        intent.putExtra(TrainingActivity.TRAINING_DURATION, trainingDuration);
+        getActivity().startActivityForResult(intent,
+                TrainingActivity.REQUEST_CODE_TRAINING_ACTIVITY);
+    }
 }

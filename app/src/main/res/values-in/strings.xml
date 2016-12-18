@@ -35,4 +35,7 @@
     <string name="walking_downstairs">Menuruni Tangga</string>
     <string name="walking_upstairs">Menaiki Tangga</string>
     <string name="set_training_time">Atur lama latihan dalam menit:</string>
+    <string name="training_data_deleted">Data latihan dihapus</string>
+    <string name="training_data_saved">Data latihan disimpan.</string>
+    <string name="delete">Hapus</string>
 </resources>
