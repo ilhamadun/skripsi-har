@@ -21,12 +21,13 @@
             android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".TrainingActivity"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".PredictionActivity"
             android:launchMode="singleInstance">
@@ -35,12 +36,24 @@
             </intent-filter>
         </activity>
 
-        <meta-data android:name="AA_DB_NAME" android:value="Aktvtas.db" />
-        <meta-data android:name="AA_DB_VERSION" android:value="1" />
+        <meta-data
+            android:name="AA_DB_NAME"
+            android:value="Aktvtas.db" />
+        <meta-data
+            android:name="AA_DB_VERSION"
+            android:value="1" />
         <meta-data
             android:name="AA_MODELS"
-            android:value="org.elins.aktvtas.human.HumanActivityHistory,
-                           org.elins.aktvtas.sensor.SensorLog" />
+            android:value="org.elins.aktvtas.human.HumanActivityHistory,                            org.elins.aktvtas.sensor.SensorLog" />
+
+        <service
+            android:name=".PredictionService"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".sensor.SensorService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>
