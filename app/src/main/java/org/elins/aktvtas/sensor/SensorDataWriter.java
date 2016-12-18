@@ -11,9 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SensorDataWriter {
+    public static final int METADATA_TYPE = 0;
+    public static final int METADATA_NUMBER_OF_SENSORS = 1;
+    public static final int METADATA_TOTAL_SENSOR_AXIS = 2;
+    public static final int METADATA_NUMBER_OF_ENTRY = 3;
+
     protected String filePath;
     private CSVWriter csvWriter;
     private boolean fileOpened = false;
+    private long entryCounter = 0;
 
     public SensorDataWriter(String filePath) {
         filePath = confirmFileExtensionIsCsv(filePath);
@@ -107,6 +113,29 @@ public class SensorDataWriter {
     public void write(SensorDataSequence sequence) {
         List<String[]> sequenceStrings = convertToListOfString(sequence);
         csvWriter.writeAll(sequenceStrings);
+
+        entryCounter += sequenceStrings.size();
+    }
+
+    public void write(String type, int numberOfSensor, int totalSensorAxis,
+                      SensorDataSequence sequence) {
+        writeMetadata(type, numberOfSensor, totalSensorAxis, sequence.size());
+
+        List<String[]> sequenceStrings = convertToListOfString(sequence);
+        csvWriter.writeAll(sequenceStrings, false);
+
+        entryCounter += sequenceStrings.size();
+    }
+
+    private void writeMetadata(String type, int numberOfSensor, int totalSensorAxis,
+                               int numberOfEntry) {
+        String[] metadata = new String[4];
+        metadata[METADATA_TYPE] = type;
+        metadata[METADATA_NUMBER_OF_SENSORS] = String.valueOf(numberOfSensor);
+        metadata[METADATA_TOTAL_SENSOR_AXIS] = String.valueOf(totalSensorAxis);
+        metadata[METADATA_NUMBER_OF_ENTRY] = String.valueOf(numberOfEntry);
+
+        csvWriter.writeNext(metadata, false);
     }
 
     protected List<String[]> convertToListOfString(SensorDataSequence sequence) {

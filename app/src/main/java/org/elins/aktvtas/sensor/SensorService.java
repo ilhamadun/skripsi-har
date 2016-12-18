@@ -19,6 +19,8 @@ public class SensorService extends Service implements SensorReader.SensorReaderE
     protected List<Integer> sensorToRead = new ArrayList<>();
     protected List<Integer> numberOfAxis = new ArrayList<>();
 
+    protected String logType = "BASE";
+
     protected SensorReader sensorReader;
     protected SensorDataSequence sensorDataSequence;
     protected SensorDataWriter sensorDataWriter;
@@ -28,6 +30,12 @@ public class SensorService extends Service implements SensorReader.SensorReaderE
     @Override
     public IBinder onBind(Intent intent) {
         throw new UnsupportedOperationException("Should be used as base class only");
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        writeBuffer();
+        return false;
     }
 
     @Override
@@ -42,10 +50,8 @@ public class SensorService extends Service implements SensorReader.SensorReaderE
     }
 
     protected void writeBuffer() {
-        if (sensorDataSequence.size() % 1500 == 0) {
-            writeLog();
-            sensorDataSequence.clear();
-        }
+        writeLog();
+        sensorDataSequence.clear();
     }
 
     public List<SensorData> getLastSensorData() {
@@ -83,8 +89,14 @@ public class SensorService extends Service implements SensorReader.SensorReaderE
     }
 
     protected void writeLog() {
+        int numberOfSensors = sensorToRead.size();
+        int totalSensorAxis = 0;
+        for (Integer s : numberOfAxis) {
+            totalSensorAxis += s;
+        }
+
         sensorDataWriter.open();
-        sensorDataWriter.write(sensorDataSequence);
+        sensorDataWriter.write(logType, numberOfSensors, totalSensorAxis, sensorDataSequence);
         sensorDataWriter.close();
     }
 }

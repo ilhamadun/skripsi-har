@@ -146,7 +146,7 @@ public class TrainingActivity extends AppCompatActivity {
 
     private void startTraining() {
         Intent intent = new Intent(this, LogSensorService.class);
-        intent.putExtra(LogSensorService.ACTIVITY_ID, activityId);
+        intent.putExtra(LogSensorService.ACTIVITY_ID, activityId.ordinal());
         intent.putExtra(LogSensorService.LOG_DURATION_SECOND, trainingDurationSecond);
         intent.putExtra(LogSensorService.SENSOR_TO_READ, sensorToRead);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
