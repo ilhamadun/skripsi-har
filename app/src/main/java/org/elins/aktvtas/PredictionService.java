@@ -38,6 +38,8 @@ public class PredictionService extends SensorService {
 
     @Override
     public IBinder onBind(Intent intent) {
+        logType = "PREDICTION";
+
         windowSize = intent.getIntExtra(WINDOW_SIZE, DEFAULT_WINDOW_SIZE);
         overlap = intent.getFloatExtra(OVERLAP, DEFAULT_OVERLAP);
         int[] sensors = intent.getIntArrayExtra(SENSOR_TO_READ);

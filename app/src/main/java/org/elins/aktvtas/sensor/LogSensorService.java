@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import org.elins.aktvtas.human.HumanActivity;
 import org.elins.aktvtas.R;
@@ -42,8 +43,14 @@ public class LogSensorService extends SensorService {
         HumanActivity.Id activityId = HumanActivity.Id.valueOf(intent.getIntExtra(ACTIVITY_ID, 0));
         HumanActivity humanActivity = new HumanActivity(activityId);
 
+        logType = "TRAINING_" + String.valueOf(activityId);
+
         activityName = humanActivity.nameString(this);
         activityIcon = humanActivity.icon();
+
+        Log.v("LogSensorService", "Activity ID: " + String.valueOf(activityId));
+        Log.v("LogSensorService", "Activity name: " + activityName);
+
         logDurationInSecond = intent.getIntExtra(LOG_DURATION_SECOND, DEFAULT_LOG_DURATION);
         int[] sensors = intent.getIntArrayExtra(SENSOR_TO_READ);
 
@@ -58,22 +65,11 @@ public class LogSensorService extends SensorService {
     }
 
     @Override
-    public boolean onUnbind(Intent intent) {
-        return false;
-    }
-
-    @Override
     public void onDestroy() {
         if (sensorDataWriter != null) {
             sensorDataWriter.close();
         }
         sensorReader.close();
-    }
-
-    @Override
-    public void onSensorDataReady() {
-        super.onSensorDataReady();
-        writeBuffer();
     }
 
     private void foregroundServiceSetup() {

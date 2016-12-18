@@ -109,9 +109,17 @@ public class LogSensorServiceTest {
             Log.i("LogSensorServiceTest", "File length: " + file.length());
 
             assertThat(file.length() > 0, is(true));
-            assertEquals(rows.size(), 1);
-            assertThat(rows.get(0).length, is(6));
-            assertThat(Float.valueOf(rows.get(0)[0]), is(accelerometerData[0]));
+            assertEquals(rows.size(), 2);
+
+            String[] metadata = rows.get(0);
+            assertThat(metadata[SensorDataWriter.METADATA_TYPE],
+                    is("TRAINING_" + String.valueOf(HumanActivity.Id.STAND)));
+            assertThat(Integer.valueOf(metadata[SensorDataWriter.METADATA_NUMBER_OF_SENSORS]),
+                    is(2));
+            assertThat(Integer.valueOf(metadata[SensorDataWriter.METADATA_NUMBER_OF_ENTRY]),is(1));
+
+            assertThat(rows.get(1).length, is(6));
+            assertThat(Float.valueOf(rows.get(1)[0]), is(accelerometerData[0]));
         } catch (IOException e) {
             e.printStackTrace();
         }
