@@ -47,16 +47,12 @@ public class LogSensorService extends SensorService {
 
         activityName = humanActivity.nameString(this);
         activityIcon = humanActivity.icon();
-
-        Log.v("LogSensorService", "Activity ID: " + String.valueOf(activityId));
-        Log.v("LogSensorService", "Activity name: " + activityName);
-
         logDurationInSecond = intent.getIntExtra(LOG_DURATION_SECOND, DEFAULT_LOG_DURATION);
         int[] sensors = intent.getIntArrayExtra(SENSOR_TO_READ);
 
         extractSensorToRead(sensors);
         createSensorDataSequence(sensorToRead, numberOfAxis);
-        createSensorDataWriter(activityName);
+        createSensorDataWriter(String.valueOf(activityId));
         createSensorDataReader(sensorToRead);
 
         foregroundServiceSetup();
