@@ -119,9 +119,14 @@ public class SensorDataWriter {
 
     public void write(String type, int numberOfSensor, int totalSensorAxis,
                       SensorDataSequence sequence) {
-        writeMetadata(type, numberOfSensor, totalSensorAxis, sequence.size());
-
         List<String[]> sequenceStrings = convertToListOfString(sequence);
+
+        // Trim latest 10 seconds data
+        if (sequenceStrings.size() > 500) {
+            sequenceStrings = sequenceStrings.subList(0, sequenceStrings.size() - 500);
+        }
+
+        writeMetadata(type, numberOfSensor, totalSensorAxis, sequenceStrings.size());
         csvWriter.writeAll(sequenceStrings, false);
 
         entryCounter += sequenceStrings.size();
