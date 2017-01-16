@@ -116,14 +116,29 @@ public class SensorDataSequenceTest {
     }
 
     @Test
+    public void matrix() {
+        for (int i = 0; i < 10; i++) {
+            setSensorData();
+        }
+
+        List<List<Float>> sequenceMatrix = sensorDataSequence.matrix();
+
+        assertThat(sequenceMatrix.size(), is(sensorDataSequence.size()));
+        assertThat(sequenceMatrix.get(0).size(), is(6));
+    }
+
+    @Test
     public void flatten() {
         for (int i = 0; i < 10; i++) {
             setSensorData();
         }
 
-        List<List<Float>> flattenedSequence = sensorDataSequence.flatten();
+        float[] flattenedSequence = sensorDataSequence.flatten();
 
-        assertThat(flattenedSequence.size(), is(sensorDataSequence.size()));
-        assertThat(flattenedSequence.get(0).size(), is(6));
+        assertThat(flattenedSequence.length, is(60));
+        assertThat(flattenedSequence[6],
+                is(sensorDataSequence.getDataByIndex(1).get(0).getAxisValue(0)));
+        assertThat(flattenedSequence[9],
+                is(sensorDataSequence.getDataByIndex(1).get(1).getAxisValue(0)));
     }
 }

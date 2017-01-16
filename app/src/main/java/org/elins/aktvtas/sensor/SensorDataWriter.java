@@ -147,7 +147,7 @@ public class SensorDataWriter {
 
     protected List<String[]> convertToListOfString(SensorDataSequence sequence) {
         List<String[]> sequenceString = new ArrayList<>();
-        List<List<Float>> flattenedSequence = sequence.flatten();
+        List<List<Float>> flattenedSequence = sequence.matrix();
 
         for (List<Float> sensorValue : flattenedSequence) {
             String[] buffer = new String[sensorValue.size()];

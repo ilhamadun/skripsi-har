@@ -78,7 +78,21 @@ public class SensorDataSequence {
         return sequence;
     }
 
-    public List<List<Float>> flatten() {
+    public float[] flatten() {
+        List<List<Float>> sequenceMatrix = matrix();
+        float[] flattenedSequence = new float[sequenceMatrix.size() * sequenceMatrix.get(0).size()];
+
+        int idx = 0;
+        for (List<Float> values : sequenceMatrix) {
+            for (Float v : values) {
+                flattenedSequence[idx++] = v;
+            }
+        }
+
+        return  flattenedSequence;
+    }
+
+    public List<List<Float>> matrix() {
         List<List<Float>> flattenedSequence = new ArrayList<>();
 
         for (List<SensorData> sensorDatas : sequence) {
