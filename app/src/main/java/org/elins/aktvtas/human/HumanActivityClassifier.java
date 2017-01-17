@@ -2,6 +2,7 @@ package org.elins.aktvtas.human;
 
 
 import android.content.res.AssetManager;
+import android.util.Log;
 
 import org.elins.aktvtas.sensor.SensorDataSequence;
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
@@ -12,7 +13,8 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 public class HumanActivityClassifier {
-    private static final String MODEL_FILE = "file:///android_asset/activity_recognition_graph.pb";
+    private static final String MODEL_FILE =
+            "file:///android_asset/human_activity_recognition_graph.pb";
 
     private static final String INPUT_NAME = "input:0";
     private static final String OUTPUT_NAME = "output:0";
@@ -53,6 +55,10 @@ public class HumanActivityClassifier {
             );
 
         for (int i = 0; i < outputNode.length; i++) {
+
+            Log.i("HumanActivityClassifier", String.format("Confidence of #%d: %f", i,
+                    outputNode[i]));
+
             if (outputNode[i] > THRESHOLD) {
                 queue.add(new Recognition(i, outputNode[i]));
             }
