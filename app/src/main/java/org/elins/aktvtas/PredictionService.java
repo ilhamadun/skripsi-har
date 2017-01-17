@@ -4,13 +4,13 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
-import org.elins.aktvtas.human.HumanActivity;
 import org.elins.aktvtas.human.HumanActivityClassifier;
-import org.elins.aktvtas.sensor.SensorDataSequence;
+import org.elins.aktvtas.human.HumanActivityClassifier.Recognition;
 import org.elins.aktvtas.sensor.SensorService;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class PredictionService extends SensorService {
@@ -32,7 +32,7 @@ public class PredictionService extends SensorService {
     private int windowSize;
     private float overlap;
 
-    private HumanActivityClassifier classifier = new HumanActivityClassifier();
+    private HumanActivityClassifier classifier = new HumanActivityClassifier(getAssets());
     
     private final IBinder binder = new PredictionBinder();
 
@@ -60,30 +60,33 @@ public class PredictionService extends SensorService {
     @Override
     public void onSensorDataReady() {
         super.onSensorDataReady();
-        classify();
-        writeBuffer();
+
+        if (sensorDataSequence.size() == windowSize) {
+            List<Recognition> recognitions = classifier.classify(sensorDataSequence);
+            predictionEvent.onNewPredictionReady(recognitions);
+
+            writeBuffer();
+        }
+    }
+
+    @Override
+    protected void writeBuffer() {
+        writeLog();
+        rearrangeSequence();
+    }
+
+    private void rearrangeSequence() {
+        int fromIndex = Math.round(windowSize * (1 - overlap));
+        sensorDataSequence.slice(fromIndex, windowSize);
     }
 
     public interface  PredictionEvent {
-        void onNewPredictionReady(HumanActivity.Id activityId);
+        void onNewPredictionReady(List<Recognition> recognitions);
     }
 
     private PredictionEvent predictionEvent;
 
     public void enableEventCallback(PredictionEvent event) {
         predictionEvent = event;
-    }
-
-    private void classify() {
-        if (sensorDataSequence.size() % windowSize == 0) {
-            SensorDataSequence sequence = createPredictionWindow();
-            int activity = classifier.classify(sequence);
-            predictionEvent.onNewPredictionReady(HumanActivity.Id.valueOf(activity));
-        }
-    }
-
-    private SensorDataSequence createPredictionWindow() {
-        // TODO: 12/18/2016 Implement method to create a sensor data window for predicting activity
-        return new SensorDataSequence();
     }
 }
