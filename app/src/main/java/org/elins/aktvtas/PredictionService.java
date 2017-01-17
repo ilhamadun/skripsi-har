@@ -3,9 +3,10 @@ package org.elins.aktvtas;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 
 import org.elins.aktvtas.human.HumanActivityClassifier;
-import org.elins.aktvtas.human.HumanActivityClassifier.Recognition;
+import org.elins.aktvtas.human.Recognition;
 import org.elins.aktvtas.sensor.SensorService;
 
 import java.text.SimpleDateFormat;
@@ -16,6 +17,10 @@ import java.util.Locale;
 public class PredictionService extends SensorService {
     public static final String WINDOW_SIZE = "org.elins.aktvtas.extra.WINDOW_SIZE";
     public static final String OVERLAP = "org.elins.aktvtas.extra.OVERLAP";
+    public static final String BROADCAST_ACTION =
+            "org.elins.aktvtas.human.BROADCAST_PREDICTION_SERVICE";
+    public static final String PREDICTION_RESULT =
+            "org.elins.aktvtas.human.PREDICTION_SERVICE_RESULT";
     
     private static final int DEFAULT_WINDOW_SIZE = 100;
     private static final float DEFAULT_OVERLAP = 0.5f;
@@ -32,7 +37,8 @@ public class PredictionService extends SensorService {
     private int windowSize;
     private float overlap;
 
-    private HumanActivityClassifier classifier = new HumanActivityClassifier(getAssets());
+    private HumanActivityClassifier classifier;
+    private List<Recognition> lastRecognitions;
     
     private final IBinder binder = new PredictionBinder();
 
@@ -48,6 +54,8 @@ public class PredictionService extends SensorService {
         createSensorDataSequence(sensorToRead, numberOfAxis);
         createSensorDataWriter(generateFilename(new Date()));
         createSensorDataReader(sensorToRead);
+
+        classifier = new HumanActivityClassifier(getAssets());
         
         return binder;
     }
@@ -63,7 +71,11 @@ public class PredictionService extends SensorService {
 
         if (sensorDataSequence.size() == windowSize) {
             List<Recognition> recognitions = classifier.classify(sensorDataSequence);
-            predictionEvent.onNewPredictionReady(recognitions);
+
+            if (! recognitions.equals(lastRecognitions)) {
+                reportPredictions(recognitions);
+                lastRecognitions = recognitions;
+            }
 
             writeBuffer();
         }
@@ -80,13 +92,9 @@ public class PredictionService extends SensorService {
         sensorDataSequence.slice(fromIndex, windowSize);
     }
 
-    public interface  PredictionEvent {
-        void onNewPredictionReady(List<Recognition> recognitions);
-    }
-
-    private PredictionEvent predictionEvent;
-
-    public void enableEventCallback(PredictionEvent event) {
-        predictionEvent = event;
+    private void reportPredictions(List<Recognition> recognitions) {
+        Intent intent = new Intent(BROADCAST_ACTION)
+                .putExtra(PREDICTION_RESULT, recognitions.toArray());
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }
