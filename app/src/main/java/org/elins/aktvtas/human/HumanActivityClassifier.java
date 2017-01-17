@@ -23,30 +23,6 @@ public class HumanActivityClassifier {
     private float[] outputs = new float[HumanActivity.Id.values().length];
     private TensorFlowInferenceInterface inferenceInterface = new TensorFlowInferenceInterface();
 
-    public class Recognition {
-        private final int id;
-        private final Float confidence;
-        private final HumanActivity humanActivity;
-
-        public Recognition(final int id, final Float confidence) {
-            this.id = id;
-            this.humanActivity = new HumanActivity(HumanActivity.Id.valueOf(id));
-            this.confidence = confidence;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public int getName() {
-            return humanActivity.name();
-        }
-
-        public Float getConfidence() {
-            return confidence;
-        }
-    }
-
     public HumanActivityClassifier(AssetManager assetManager) {
         final int status = inferenceInterface.initializeTensorFlow(assetManager, MODEL_FILE);
         if (status != 0) {
