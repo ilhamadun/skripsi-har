@@ -73,7 +73,7 @@ public class LogSensorServiceTest {
     @Test
     public void logFileCreated() throws TimeoutException {
         String expectedPath = Environment.getExternalStorageDirectory().getAbsolutePath() +
-                "/Android/data/org.elins.aktvtas/files/Stand.csv";
+                "/Android/data/org.elins.aktvtas/files/STAND.csv";
 
         File file = new File(expectedPath);
 
