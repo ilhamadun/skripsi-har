@@ -116,4 +116,8 @@ public class SensorDataSequence {
     public void clear() {
         sequence.clear();
     }
+
+    public void slice(int fromIndex, int toIndex) {
+        sequence = sequence.subList(fromIndex, toIndex);
+    }
 }

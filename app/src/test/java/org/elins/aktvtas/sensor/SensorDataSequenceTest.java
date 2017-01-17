@@ -141,4 +141,18 @@ public class SensorDataSequenceTest {
         assertThat(flattenedSequence[9],
                 is(sensorDataSequence.getDataByIndex(1).get(1).getAxisValue(0)));
     }
+
+    @Test
+    public void slice() {
+        for (int i = 0; i < 10; i++) {
+            setSensorData();
+        }
+
+        List<SensorData> fifthElement = sensorDataSequence.getDataByIndex(4);
+
+        sensorDataSequence.slice(4, 9);
+        assertThat(sensorDataSequence.size(), is(5));
+        assertThat(sensorDataSequence.getDataByIndex(0).get(0).getAxisValue(0),
+                is(fifthElement.get(0).getAxisValue(0)));
+    }
 }
