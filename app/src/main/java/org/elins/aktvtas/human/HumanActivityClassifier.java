@@ -2,7 +2,6 @@ package org.elins.aktvtas.human;
 
 
 import android.content.res.AssetManager;
-import android.util.Log;
 
 import org.elins.aktvtas.sensor.SensorDataSequence;
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
@@ -16,8 +15,9 @@ public class HumanActivityClassifier {
     private static final String MODEL_FILE =
             "file:///android_asset/human_activity_recognition_graph.pb";
 
-    private static final String INPUT_NAME = "input:0";
-    private static final String OUTPUT_NAME = "output:0";
+    private static final String INPUT_NAME = "inputs_placeholder:0";
+    private static final String KEEP_PROB = "keep_prob:0";
+    private static final String OUTPUT_NAME = "output_node:0";
 
     private static final float THRESHOLD = 0.1f;
     private static final int MAX_RESULT = 3;
@@ -35,7 +35,8 @@ public class HumanActivityClassifier {
     public List<Recognition> classify(SensorDataSequence sequence) {
         float inputNode[] = sequence.flatten();
 
-        inferenceInterface.fillNodeFloat(INPUT_NAME, new int[] {1, 100, 6, 1}, inputNode);
+        inferenceInterface.fillNodeFloat(INPUT_NAME, new int[] {600}, inputNode);
+        inferenceInterface.fillNodeFloat(KEEP_PROB, new int[] {1}, new float[] {1.0f});
         inferenceInterface.runInference(new String[] {OUTPUT_NAME});
         inferenceInterface.readNodeFloat(OUTPUT_NAME, outputs);
 
@@ -55,10 +56,6 @@ public class HumanActivityClassifier {
             );
 
         for (int i = 0; i < outputNode.length; i++) {
-
-            Log.i("HumanActivityClassifier", String.format("Confidence of #%d: %f", i,
-                    outputNode[i]));
-
             if (outputNode[i] > THRESHOLD) {
                 queue.add(new Recognition(i, outputNode[i]));
             }

@@ -19,8 +19,10 @@ public class PredictionService extends SensorService {
     public static final String OVERLAP = "org.elins.aktvtas.extra.OVERLAP";
     public static final String BROADCAST_ACTION =
             "org.elins.aktvtas.human.BROADCAST_PREDICTION_SERVICE";
-    public static final String PREDICTION_RESULT =
-            "org.elins.aktvtas.human.PREDICTION_SERVICE_RESULT";
+    public static final String PREDICTION_RESULT_ID =
+            "org.elins.aktvtas.human.PREDICTION_SERVICE_RESULT_ID";
+    public static final String PREDICTION_RESULT_CONFIDENCE =
+            "org.elins.aktvtas.human.PREDICTION_SERVICE_RESULT_CONFIDENCE";
     
     private static final int DEFAULT_WINDOW_SIZE = 100;
     private static final float DEFAULT_OVERLAP = 0.5f;
@@ -93,8 +95,17 @@ public class PredictionService extends SensorService {
     }
 
     private void reportPredictions(List<Recognition> recognitions) {
+        int ids[] = new int[recognitions.size()];
+        float confidences[] = new float[recognitions.size()];
+
+        for (int i = 0; i < recognitions.size(); i++) {
+            ids[i] = recognitions.get(i).getId();
+            confidences[i] = recognitions.get(i).getConfidence();
+        }
+
         Intent intent = new Intent(BROADCAST_ACTION)
-                .putExtra(PREDICTION_RESULT, recognitions.toArray());
+                .putExtra(PREDICTION_RESULT_ID, ids)
+                .putExtra(PREDICTION_RESULT_CONFIDENCE, confidences);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

@@ -16,12 +16,16 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.elins.aktvtas.human.HumanActivityHistory;
 import org.elins.aktvtas.human.HumanActivityHistoryAdapter;
 import org.elins.aktvtas.human.Recognition;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class PredictionActivity extends AppCompatActivity {
@@ -39,8 +43,14 @@ public class PredictionActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(PredictionService.BROADCAST_ACTION)) {
-                Recognition recognitions[] = (Recognition[]) intent.getParcelableArrayExtra(
-                        PredictionService.PREDICTION_RESULT);
+                int ids[] = intent.getIntArrayExtra(PredictionService.PREDICTION_RESULT_ID);
+                float confidences[] = intent.getFloatArrayExtra(
+                        PredictionService.PREDICTION_RESULT_CONFIDENCE);
+
+                List<Recognition> recognitions = new ArrayList<>();
+                for (int i = 0; i < ids.length; i++) {
+                    recognitions.add(new Recognition(ids[i], confidences[i]));
+                }
 
                 updatePrediction(recognitions);
             }
@@ -109,12 +119,12 @@ public class PredictionActivity extends AppCompatActivity {
         }
     }
 
-    public void updatePrediction(Recognition[] recognitions) {
-        if (recognitions == null || recognitions.length == 0) {
+    public void updatePrediction(List<Recognition> recognitions) {
+        if (recognitions == null || recognitions.size() == 0) {
             predictionIcon.setImageResource(R.drawable.ic_not_recognized);
             predictionName.setText(R.string.not_recognized);
         } else  {
-            Recognition best = recognitions[0];
+            Recognition best = recognitions.get(0);
             predictionIcon.setImageResource(best.getIcon());
             predictionName.setText(best.getName());
         }
