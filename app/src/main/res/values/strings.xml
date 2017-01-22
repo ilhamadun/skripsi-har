@@ -8,7 +8,7 @@
     <string name="about">About</string>
 
     <string name="choose_activity">Choose Activity</string>
-    <string name="training_duration">Training Duration</string>
+    <string name="training_options">Training Options</string>
     <string name="set_training_time">Set training time in minutes:</string>
 
     <string name="stand">Stand</string>
@@ -45,4 +45,16 @@
     <string name="training_data_saved">Training data saved.</string>
     <string name="training_data_deleted">Training data deleted.</string>
     <string name="delete">Delete</string>
+    <string name="training_time_in_minutes">Training Time in Minutes</string>
+    <string name="device_placement">Device Placement</string>
+
+    <string-array name="training_position_array">
+        <item>Right Pants Pocket</item>
+        <item>Left Pants Pocket</item>
+        <item>Right Jacket Pocket</item>
+        <item>Left Jacket Pocket</item>
+        <item>Handheld</item>
+        <item>Backpack</item>
+        <item>Sling Bag</item>
+    </string-array>
 </resources>

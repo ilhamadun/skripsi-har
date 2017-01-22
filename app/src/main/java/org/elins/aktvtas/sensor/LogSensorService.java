@@ -18,6 +18,7 @@ import java.util.Locale;
 
 public class LogSensorService extends SensorService {
     public static final String ACTIVITY_ID = "org.elins.aktvtas.extra.ACTIVITY_ID";
+    public static final String SENSOR_POSITION = "org.elins.aktvtas.extra.SENSOR_POSITION";
     public static final String LOG_DURATION_SECOND = "org.elins.aktvtas.extra.LOG_DURATION_SECOND";
 
     private static final int DEFAULT_LOG_DURATION = 600;
@@ -42,8 +43,9 @@ public class LogSensorService extends SensorService {
     public IBinder onBind(Intent intent) {
         HumanActivity.Id activityId = HumanActivity.Id.valueOf(intent.getIntExtra(ACTIVITY_ID, 0));
         HumanActivity humanActivity = new HumanActivity(activityId);
+        CharSequence sensorPosition = intent.getCharSequenceExtra(SENSOR_POSITION);
 
-        logType = "TRAINING_" + String.valueOf(activityId);
+        logType = "TRAINING_" + String.valueOf(activityId) + "_" + sensorPosition.toString();
 
         activityName = humanActivity.nameString(this);
         activityIcon = humanActivity.icon();

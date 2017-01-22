@@ -48,10 +48,13 @@ public class LogSensorServiceTest {
         long logDuration = 10;
         int[] sensorToRead = {Sensor.TYPE_ACCELEROMETER, Sensor.TYPE_GYROSCOPE};
 
+        clearFiles();
+
         Intent serviceIntent = new Intent(InstrumentationRegistry.getTargetContext(),
                 LogSensorService.class);
 
         serviceIntent.putExtra(LogSensorService.ACTIVITY_ID, HumanActivity.Id.STAND);
+        serviceIntent.putExtra(LogSensorService.SENSOR_POSITION, "Handheld");
         serviceIntent.putExtra(LogSensorService.LOG_DURATION_SECOND, logDuration);
         serviceIntent.putExtra(LogSensorService.SENSOR_TO_READ, sensorToRead);
 
@@ -113,7 +116,7 @@ public class LogSensorServiceTest {
 
             String[] metadata = rows.get(0);
             assertThat(metadata[SensorDataWriter.METADATA_TYPE],
-                    is("TRAINING_" + String.valueOf(HumanActivity.Id.STAND)));
+                    is("TRAINING_" + String.valueOf(HumanActivity.Id.STAND) + "_Handheld"));
             assertThat(Integer.valueOf(metadata[SensorDataWriter.METADATA_NUMBER_OF_SENSORS]),
                     is(2));
             assertThat(Integer.valueOf(metadata[SensorDataWriter.METADATA_NUMBER_OF_ENTRY]),is(1));

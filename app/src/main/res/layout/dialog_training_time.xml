@@ -2,13 +2,43 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingStart="?dialogPreferredPadding"
+    android:paddingLeft="?dialogPreferredPadding"
+    android:paddingEnd="?dialogPreferredPadding"
+    android:paddingRight="?dialogPreferredPadding">
+
+    <TextView
+        android:id="@+id/training_position_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/device_placement"/>
+
+    <Spinner
+        android:id="@+id/training_position"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/training_position_text"/>
+
+    <TextView
+        android:id="@+id/training_time_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/training_position"
+        android:layout_marginTop="20dp"
+        android:text="@string/training_time_in_minutes"/>
 
     <NumberPicker
         android:id="@+id/training_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAlignment="center"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/training_time_text"
         android:layout_centerInParent="true"/>
+
+
 
 </RelativeLayout>

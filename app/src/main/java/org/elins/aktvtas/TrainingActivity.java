@@ -35,12 +35,14 @@ import org.elins.aktvtas.sensor.SensorData;
 
 public class TrainingActivity extends AppCompatActivity {
     public static final String ACTIVITY_ID = "org.elins.aktvtas.extra.ACTIVITY_ID";
+    public static final String TRAINING_POSITION = "org.elins.aktvtas.extra.TRAINING_POSITION";
     public static final String TRAINING_DURATION = "org.elins.aktvtas.extra.TRAINING_DURATION";
     public static final String RESULT = "org.elins.aktvtas.extra.TRAINING_RESULT";
 
     public static final int REQUEST_CODE_TRAINING_ACTIVITY = 1;
 
     private HumanActivity.Id activityId;
+    private CharSequence trainingPosition;
     private int trainingDurationSecond;
     private int[] sensorToRead = {Sensor.TYPE_ACCELEROMETER, Sensor.TYPE_GYROSCOPE}; // TODO: Implement as intent extra
     private String filePath = null;
@@ -69,6 +71,7 @@ public class TrainingActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         activityId = HumanActivity.Id.valueOf(intent.getIntExtra(ACTIVITY_ID, 0));
+        trainingPosition = intent.getCharSequenceExtra(TRAINING_POSITION);
         trainingDurationSecond = intent.getIntExtra(TRAINING_DURATION, 600);
 
         filterUnavailableSensor();
@@ -167,6 +170,7 @@ public class TrainingActivity extends AppCompatActivity {
     private void startTraining() {
         Intent intent = new Intent(this, LogSensorService.class);
         intent.putExtra(LogSensorService.ACTIVITY_ID, activityId.ordinal());
+        intent.putExtra(LogSensorService.SENSOR_POSITION, trainingPosition);
         intent.putExtra(LogSensorService.LOG_DURATION_SECOND, trainingDurationSecond);
         intent.putExtra(LogSensorService.SENSOR_TO_READ, sensorToRead);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
