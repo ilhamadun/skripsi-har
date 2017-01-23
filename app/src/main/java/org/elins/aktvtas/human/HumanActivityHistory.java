@@ -2,10 +2,8 @@ package org.elins.aktvtas.human;
 
 import android.content.Context;
 
-import com.activeandroid.Model;
-import com.activeandroid.annotation.Column;
-import com.activeandroid.annotation.Table;
-import com.activeandroid.query.Select;
+
+import com.orm.SugarRecord;
 
 import org.elins.aktvtas.sensor.SensorDataSequence;
 import org.elins.aktvtas.sensor.SensorLog;
@@ -16,41 +14,20 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-@Table(name = "human_activity_history")
-public class HumanActivityHistory extends Model {
+public class HumanActivityHistory extends SugarRecord {
 
-    @Column(name = "sensor_log")
-    public SensorLog sensorLog;
-
-    @Column(name = "log_row_start")
-    public int logRowStart;
-
-    @Column(name = "window_size")
-    public int windowSize;
-
-    @Column
-    public float overlap;
-
-    @Column(name = "number_of_windows")
-    public int numberOfWindows;
-
-    @Column(name = "recognized_activity_id")
-    public HumanActivity recognizedActivity;
-
-    @Column(name = "actual_activity_id")
-    public HumanActivity actualActivity;
-
-    @Column
-    public float confidence;
-
-    @Column(name = "start_time")
-    public Date startTime;
-
-    @Column(name = "end_time")
-    public Date endTime;
+    SensorLog sensorLog;
+    int logRowStart;
+    int windowSize;
+    float overlap;
+    int numberOfWindows;
+    HumanActivity recognizedActivity;
+    HumanActivity actualActivity;
+    float confidence;
+    Date startTime;
+    Date endTime;
 
     public HumanActivityHistory() {
-        super();
     }
 
     public HumanActivityHistory(SensorLog sensorLog, int logRowStart, int windowSize, float overlap,
@@ -93,11 +70,9 @@ public class HumanActivityHistory extends Model {
         return String.format("%s - %s", dateFormat.format(startTime), dateFormat.format(endTime));
     }
 
-    public static List<HumanActivityHistory> getNewest(int limit) {
-        List<HumanActivityHistory> histories = new Select().from(HumanActivityHistory.class)
-                .orderBy("start_time DESC")
-                .limit(limit)
-                .execute();
+    public static List<HumanActivityHistory> last(int limit) {
+        List<HumanActivityHistory> histories = HumanActivityHistory.find(HumanActivityHistory.class,
+                null, null, null, "start_time DESC", Integer.toString(limit));
 
         if (histories != null) {
             return histories;

@@ -36,7 +36,7 @@ public class HumanActivityHistoryAdapter
 
     public HumanActivityHistoryAdapter(int historyLimit) {
         super();
-        histories = HumanActivityHistory.getNewest(historyLimit);
+        histories = HumanActivityHistory.last(historyLimit);
     }
 
     @Override
