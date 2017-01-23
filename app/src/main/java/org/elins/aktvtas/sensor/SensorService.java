@@ -20,12 +20,13 @@ public class SensorService extends Service implements SensorReader.SensorReaderE
     protected List<Integer> numberOfAxis = new ArrayList<>();
 
     protected String logType = "BASE";
+    protected int entryCounter = 0;
 
     protected SensorReader sensorReader;
     protected SensorDataSequence sensorDataSequence;
     protected SensorDataWriter sensorDataWriter;
 
-    private String filePath;
+    protected String filePath;
     private List<SensorData> buffer;
 
     @Override
@@ -47,6 +48,7 @@ public class SensorService extends Service implements SensorReader.SensorReaderE
                 sensorDataSequence.setData(data);
             }
             sensorDataSequence.commit();
+            entryCounter++;
         }
     }
 

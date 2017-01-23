@@ -26,6 +26,7 @@ public class LogSensorService extends SensorService {
 
     String activityName;
     int activityIcon;
+    protected CharSequence sensorPosition;
     int logDurationInSecond;
 
 
@@ -43,7 +44,7 @@ public class LogSensorService extends SensorService {
     public IBinder onBind(Intent intent) {
         HumanActivity.Id activityId = HumanActivity.Id.valueOf(intent.getIntExtra(ACTIVITY_ID, 0));
         HumanActivity humanActivity = new HumanActivity(activityId);
-        CharSequence sensorPosition = intent.getCharSequenceExtra(SENSOR_POSITION);
+        sensorPosition = intent.getCharSequenceExtra(SENSOR_POSITION);
 
         logType = "TRAINING_" + String.valueOf(activityId) + "_" + sensorPosition.toString();
 
@@ -66,8 +67,20 @@ public class LogSensorService extends SensorService {
     public void onDestroy() {
         if (sensorDataWriter != null) {
             sensorDataWriter.close();
+            writeToDatabase();
         }
         sensorReader.close();
+    }
+
+    protected void writeToDatabase() {
+        int totalSensorAxis = 0;
+        for (Integer axis : numberOfAxis) {
+            totalSensorAxis = totalSensorAxis + axis;
+        }
+
+        SensorLog sensorLog = new SensorLog(this.logType, sensorToRead.size(), totalSensorAxis,
+                sensorPosition.toString(), entryCounter, filePath);
+        sensorLog.save();
     }
 
     private void foregroundServiceSetup() {

@@ -13,8 +13,8 @@ import android.util.Log;
 import com.opencsv.CSVReader;
 
 import org.elins.aktvtas.human.HumanActivity;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +23,7 @@ import org.mockito.Mock;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeoutException;
@@ -43,12 +44,13 @@ public class LogSensorServiceTest {
     @ClassRule
     public static final ServiceTestRule serviceRule = new ServiceTestRule();
 
-    @BeforeClass
-    public static void bindLogSensorService() throws TimeoutException {
+    @Before
+    public void bindLogSensorService() throws TimeoutException {
         long logDuration = 10;
         int[] sensorToRead = {Sensor.TYPE_ACCELEROMETER, Sensor.TYPE_GYROSCOPE};
 
         clearFiles();
+        clearDatabase();
 
         Intent serviceIntent = new Intent(InstrumentationRegistry.getTargetContext(),
                 LogSensorService.class);
@@ -62,15 +64,23 @@ public class LogSensorServiceTest {
         service = ((LogSensorService.LogSensorBinder) binder).getService();
     }
 
-    @AfterClass
-    public static void clearFiles() {
+    @After
+    public void clearFiles() {
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() +
                 "/Android/data/org.elins.aktvtas/files";
-        try {
-            FileUtils.cleanDirectory(new File(path));
-        } catch (IOException e) {
+        File f = new File(path);
+        if (f.isDirectory()) {
+            try {
+                FileUtils.cleanDirectory(f);
+            } catch (IOException e) {
 
+            }
         }
+    }
+
+    @After
+    public void clearDatabase() {
+        SensorLog.deleteAll(SensorLog.class);
     }
 
     @Test
@@ -126,5 +136,21 @@ public class LogSensorServiceTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void writeDatabase() {
+        service.writeToDatabase();
+        SensorLog last = SensorLog.last();
+
+        assertThat(SensorLog.listAll(SensorLog.class).size(), is(1));
+        assertThat(last.logType, is("TRAINING_STAND_Handheld"));
+        assertThat(last.numberOfSensors, is(2));
+        assertThat(last.totalSensorAxis, is(6));
+        assertThat(last.sensorPosition, is("Handheld"));
+        assertThat(last.numberOfEntry, is(1));
+        assertThat(last.logPath, is(Environment.getExternalStorageDirectory().getAbsolutePath() +
+                "/Android/data/org.elins.aktvtas/files/STAND.csv"));
+        assertThat(last.status, is("PENDING"));
     }
 }
