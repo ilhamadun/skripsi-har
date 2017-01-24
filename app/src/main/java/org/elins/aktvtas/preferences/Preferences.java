@@ -27,4 +27,14 @@ public class Preferences {
 
         return deviceIdentifier;
     }
+
+    public static boolean deviceIsRegistered(Context context) {
+        DeviceIdentifier deviceIdentifier = getDeviceIdentifier(context);
+
+        if (deviceIdentifier.getDevice().equals("") || deviceIdentifier.getToken().equals("")) {
+            return false;
+        }
+
+        return true;
+    }
 }

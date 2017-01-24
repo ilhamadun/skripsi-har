@@ -20,6 +20,8 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
+import org.elins.aktvtas.preferences.Preferences;
+
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,6 +41,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (! Preferences.deviceIsRegistered(this)) {
+            RegisterActivity.startActivity(this);
+        }
+
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

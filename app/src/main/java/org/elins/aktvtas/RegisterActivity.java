@@ -1,5 +1,7 @@
 package org.elins.aktvtas;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,6 +28,12 @@ public class RegisterActivity extends AppCompatActivity implements
     Button continueButton;
 
     String gender;
+
+    public static void startActivity(Context context) {
+        Intent intent = new Intent(context, RegisterActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
