@@ -8,6 +8,7 @@ import android.hardware.SensorManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 class SensorReader implements SensorEventListener {
@@ -95,5 +96,64 @@ class SensorReader implements SensorEventListener {
         } else {
             return new ArrayList<>();
         }
+    }
+
+    public static HashMap<String, Boolean> listAllAvailableSensor(Context context) {
+        SensorManager sensorManager = (SensorManager) context.getSystemService(
+                Context.SENSOR_SERVICE);
+
+        List<Sensor> deviceSensors = sensorManager.getSensorList(Sensor.TYPE_ALL);
+        HashMap<String, Boolean> sensorMap = new HashMap<>();
+
+        sensorMap.put("accelerometer", false);
+        sensorMap.put("ambient_temperature", false);
+        sensorMap.put("gravity", false);
+        sensorMap.put("gyroscope", false);
+        sensorMap.put("light", false);
+        sensorMap.put("linear_accelerometer", false);
+        sensorMap.put("magnetic_field", false);
+        sensorMap.put("orientation", false);
+        sensorMap.put("pressure", false);
+        sensorMap.put("proximity", false);
+        sensorMap.put("relative_humidity", false);
+        sensorMap.put("rotation_vector", false);
+        sensorMap.put("temperature", false);
+
+        for (Sensor sensor : deviceSensors) {
+            switch (sensor.getType()) {
+                case Sensor.TYPE_ACCELEROMETER:
+                    sensorMap.put("accelerometer", true);
+                    break;
+                case Sensor.TYPE_AMBIENT_TEMPERATURE:
+                    sensorMap.put("ambient_temperature", true);
+                    break;
+                case Sensor.TYPE_GRAVITY:
+                    sensorMap.put("gravity", true);
+                    break;
+                case Sensor.TYPE_LIGHT:
+                    sensorMap.put("light", true);
+                    break;
+                case Sensor.TYPE_LINEAR_ACCELERATION:
+                    sensorMap.put("linear_accelerometer", true);
+                    break;
+                case Sensor.TYPE_MAGNETIC_FIELD:
+                    sensorMap.put("magnetic_field", true);
+                    break;
+                case Sensor.TYPE_PRESSURE:
+                    sensorMap.put("pressure", true);
+                    break;
+                case Sensor.TYPE_PROXIMITY:
+                    sensorMap.put("proximity", true);
+                    break;
+                case Sensor.TYPE_RELATIVE_HUMIDITY:
+                    sensorMap.put("relative_humidity", true);
+                    break;
+                case Sensor.TYPE_ROTATION_VECTOR:
+                    sensorMap.put("rotation_vector", true);
+                    break;
+            }
+        }
+
+        return sensorMap;
     }
 }
