@@ -110,12 +110,9 @@ public class RegisterActivity extends AppCompatActivity implements
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-        String[] genderStrings = getResources().getStringArray(R.array.gender_array);
-        CharSequence genderInput = (CharSequence) parent.getItemAtPosition(pos);
-
-        if (genderInput == genderStrings[0]) {
+        if (pos == 0) {
             gender = "Male";
-        } else if (genderInput == genderStrings[1]) {
+        } else if (pos == 1) {
             gender = "Female";
         } else {
             gender = "Unspecified";
