@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -29,8 +28,10 @@ import java.util.List;
 import java.util.Locale;
 
 import org.elins.aktvtas.human.HumanActivity;
+import org.elins.aktvtas.network.NetworkManager;
 import org.elins.aktvtas.sensor.LogSensorService;
 import org.elins.aktvtas.sensor.SensorData;
+import org.elins.aktvtas.sensor.SensorLog;
 
 
 public class TrainingActivity extends AppCompatActivity {
@@ -247,9 +248,15 @@ public class TrainingActivity extends AppCompatActivity {
         if (logSensorServiceBound) {
             unbindService(connection);
             logSensorServiceBound = false;
+            uploadPendingLogs();
             createResultIntent();
             finish();
         }
+    }
+
+    private void uploadPendingLogs() {
+        List<SensorLog> pendingLogs = SensorLog.getPendingLogs();
+        NetworkManager.upload(getApplicationContext(), pendingLogs);
     }
 
     private void createResultIntent() {

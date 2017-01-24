@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.orm.SugarRecord;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -47,6 +48,10 @@ public class SensorLog extends SugarRecord {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
+    public static List<SensorLog> getPendingLogs() {
+        return SensorLog.find(SensorLog.class, "status = ?", STATUS_PENDING);
+    }
+
     public static SensorLog last() {
         return SensorLog.find(SensorLog.class, null, null, null, "timestamp DESC", "1").get(0);
     }
@@ -69,7 +74,8 @@ public class SensorLog extends SugarRecord {
             ZipOutputStream zos = new ZipOutputStream(fos);
 
             for (SensorLog sensorLog : sensorLogs) {
-                ZipEntry ze = new ZipEntry(sensorLog.logPath);
+                File file = new File(sensorLog.logPath);
+                ZipEntry ze = new ZipEntry(file.getName());
                 zos.putNextEntry(ze);
 
                 FileInputStream in = new FileInputStream(sensorLog.logPath);

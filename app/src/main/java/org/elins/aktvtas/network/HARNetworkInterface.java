@@ -3,6 +3,7 @@ package org.elins.aktvtas.network;
 import org.elins.aktvtas.network.response.RegisterResponse;
 import org.elins.aktvtas.network.response.ResponseMessage;
 
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -35,8 +36,8 @@ public interface HARNetworkInterface {
     @Multipart
     @POST("/log/upload")
     Call<ResponseMessage> upload(
-            @Field("device") RequestBody device,
-            @Field("token") RequestBody token,
-            @Part("file") RequestBody log
+            @Part("device") RequestBody device,
+            @Part("token") RequestBody token,
+            @Part MultipartBody.Part archive
     );
 }

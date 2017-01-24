@@ -1,6 +1,7 @@
 package org.elins.aktvtas.network;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import org.elins.aktvtas.network.response.RegisterResponse;
 import org.elins.aktvtas.network.response.ResponseMessage;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -22,7 +24,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NetworkManager {
-    private static final String BASE_URL = "http://har.elins.org/";
+    private static final String BASE_URL = "http://192.168.33.10:5000/";
 
     public static final int REGISTER_SUCCESS = 0;
     public static final int NETWORK_ERROR = -1;
@@ -73,7 +75,7 @@ public class NetworkManager {
     }
 
 
-    public static void upload(Context context, final List<SensorLog> sensorLogs) {
+    public static void upload(final Context context, final List<SensorLog> sensorLogs) {
         DeviceIdentifier deviceIdentifier = Preferences.getDeviceIdentifier(context);
         String archivePath = SensorLog.makeArchive(context, sensorLogs);
         final File archive = new File(archivePath);
@@ -82,16 +84,19 @@ public class NetworkManager {
                 deviceIdentifier.getDevice());
         RequestBody token = RequestBody.create(MediaType.parse("text/plan"),
                 deviceIdentifier.getToken());
-        RequestBody file = RequestBody.create(MediaType.parse("application/zip"), archive);
+        RequestBody requestFile = RequestBody.create(MediaType.parse("application/zip"), archive);
+        MultipartBody.Part fileBody = MultipartBody.Part.createFormData("file",
+                archive.getName(), requestFile);
 
         HARNetworkInterface service = createService();
-        Call<ResponseMessage> call = service.upload(device, token, file);
+        Call<ResponseMessage> call = service.upload(device, token, fileBody);
 
         call.enqueue(new Callback<ResponseMessage>() {
             @Override
             public void onResponse(Call<ResponseMessage> call, Response<ResponseMessage> response) {
                 if (response.code() == 201) {
                     SensorLog.updateStatus(sensorLogs, SensorLog.STATUS_SENT);
+                    Toast.makeText(context, "Log files sent to server.", Toast.LENGTH_SHORT).show();
                 }
                 archive.delete();
             }
@@ -99,6 +104,7 @@ public class NetworkManager {
             @Override
             public void onFailure(Call<ResponseMessage> call, Throwable t) {
                 archive.delete();
+                Toast.makeText(context, "Failed to send log files.", Toast.LENGTH_SHORT).show();
             }
         });
     }
