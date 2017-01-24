@@ -47,6 +47,11 @@
     <string name="delete">Delete</string>
     <string name="training_time_in_minutes">Training Time in Minutes</string>
     <string name="device_placement">Device Placement</string>
+    <string name="age">Age</string>
+    <string name="continue_text">Continue</string>
+    <string name="you_need_to_fill_your_age">You need to fill your age.</string>
+    <string name="network_error">Network Error.</string>
+    <string name="failed_to_register_device">Failed to register device.</string>
 
     <string-array name="training_position_array">
         <item>Right Pants Pocket</item>
@@ -56,5 +61,10 @@
         <item>Handheld</item>
         <item>Backpack</item>
         <item>Sling Bag</item>
+    </string-array>
+    
+    <string-array name="gender_array">
+        <item>Male</item>
+        <item>Female</item>
     </string-array>
 </resources>

@@ -40,6 +40,11 @@
     <string name="training_options">Pengaturan Latihan</string>
     <string name="training_time_in_minutes">Durasi Latihan dalam Menit</string>
     <string name="device_placement">Penempatan Perangkat</string>
+    <string name="age">Usia</string>
+    <string name="continue_text">Lanjutkan</string>
+    <string name="you_need_to_fill_your_age">Usia Anda harus diisi.</string>
+    <string name="network_error">Kesalahan dalam jaringan.</string>
+    <string name="failed_to_register_device">Gagal mendaftarkan perangkat.</string>
 
     <string-array name="training_position_array">
         <item>Saku Kanan Celana</item>
@@ -49,5 +54,10 @@
         <item>Digenggam</item>
         <item>Ransel</item>
         <item>Tas Selempang</item>
+    </string-array>
+
+    <string-array name="gender_array">
+        <item>Pria</item>
+        <item>Wanita</item>
     </string-array>
 </resources>

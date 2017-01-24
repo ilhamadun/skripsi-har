@@ -1,5 +1,6 @@
 package org.elins.aktvtas;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -28,6 +29,12 @@ public class MainActivity extends AppCompatActivity {
     private static final int DRAWER_ID_SETTINGS = 3;
     private static final int DRAWER_ID_HELP = 4;
     private static final int DRAWER_ID_ABOUT = 5;
+
+    public static void startActivity(Context context) {
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -3,20 +3,28 @@
     package="org.elins.aktvtas">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:name="com.orm.SugarApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="true"
         android:screenOrientation="portrait"
+        android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-
-        <meta-data android:name="DATABASE" android:value="aktvtas.db" />
-        <meta-data android:name="VERSION" android:value="1" />
-        <meta-data android:name="QUERY_LOG" android:value="true" />
-        <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="org.elins" />
+        <meta-data
+            android:name="DATABASE"
+            android:value="aktvtas.db" />
+        <meta-data
+            android:name="VERSION"
+            android:value="1" />
+        <meta-data
+            android:name="QUERY_LOG"
+            android:value="true" />
+        <meta-data
+            android:name="DOMAIN_PACKAGE_NAME"
+            android:value="org.elins" />
 
         <service
             android:name=".sensor.LogSensorService"
@@ -32,15 +40,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".TrainingActivity"
             android:launchMode="singleInstance" />
+
         <activity
             android:name=".PredictionActivity"
             android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.RUN" />
             </intent-filter>
+        </activity>
+
+        <activity android:name=".RegisterActivity"
+            android:launchMode="singleInstance">
+            <intent-filter>
+                <action android:name="android.intent.action.RUN" />
+            </intent-filter>>
         </activity>
 
         <service
@@ -51,6 +68,8 @@
             android:name=".sensor.SensorService"
             android:enabled="true"
             android:exported="true" />
+
+
     </application>
 
 </manifest>

@@ -9,6 +9,7 @@ import org.elins.aktvtas.preferences.Preferences;
 import org.elins.aktvtas.sensor.SensorLog;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,6 +24,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class NetworkManager {
     private static final String BASE_URL = "http://har.elins.org/";
 
+    public static final int REGISTER_SUCCESS = 0;
+    public static final int NETWORK_ERROR = -1;
+    public static final int REGISTER_FAILED = -2;
+
     private static HARNetworkInterface createService() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -32,7 +37,7 @@ public class NetworkManager {
         return retrofit.create(HARNetworkInterface.class);
     }
 
-    public static void register(final Context context, String gender, int age,
+    public static int register(final Context context, String gender, int age,
                                 HashMap<String, Boolean> deviceSensors) {
         HARNetworkInterface service = createService();
         Call<RegisterResponse> call = service.register(gender, age,
@@ -50,20 +55,21 @@ public class NetworkManager {
                 deviceSensors.get("rotation_vector"),
                 deviceSensors.get("temperature"));
 
-        call.enqueue(new Callback<RegisterResponse>() {
-            @Override
-            public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
-                if (response.code() == 201) {
-                    RegisterResponse message = response.body();
-                    Preferences.registerDevice(context, message.getDevice(), message.getToken());
-                }
-            }
+        int returnCode = REGISTER_FAILED;
 
-            @Override
-            public void onFailure(Call<RegisterResponse> call, Throwable t) {
+        try {
+            Response<RegisterResponse> response = call.execute();
+            if (response.code() == 201) {
+                RegisterResponse message = response.body();
+                Preferences.registerDevice(context, message.getDevice(), message.getToken());
 
+                returnCode = REGISTER_SUCCESS;
             }
-        });
+        } catch (IOException e) {
+            returnCode = NETWORK_ERROR;
+        }
+
+        return returnCode;
     }
 
 

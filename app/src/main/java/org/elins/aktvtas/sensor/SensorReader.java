@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-class SensorReader implements SensorEventListener {
+public class SensorReader implements SensorEventListener {
 
     public interface SensorReaderEvent {
         void onSensorDataReady();
