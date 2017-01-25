@@ -23,7 +23,6 @@ import org.mockito.Mock;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeoutException;
@@ -56,7 +55,8 @@ public class LogSensorServiceTest {
                 LogSensorService.class);
 
         serviceIntent.putExtra(LogSensorService.ACTIVITY_ID, HumanActivity.Id.STAND);
-        serviceIntent.putExtra(LogSensorService.SENSOR_POSITION, "Handheld");
+        serviceIntent.putExtra(LogSensorService.SENSOR_PLACEMENT,
+                SensorPlacement.HANDHELD.ordinal());
         serviceIntent.putExtra(LogSensorService.LOG_DURATION_SECOND, logDuration);
         serviceIntent.putExtra(LogSensorService.SENSOR_TO_READ, sensorToRead);
 
@@ -126,7 +126,7 @@ public class LogSensorServiceTest {
 
             String[] metadata = rows.get(0);
             assertThat(metadata[SensorDataWriter.METADATA_TYPE],
-                    is("TRAINING_" + String.valueOf(HumanActivity.Id.STAND) + "_Handheld"));
+                    is("TRAINING#" + String.valueOf(HumanActivity.Id.STAND) + "#Handheld"));
             assertThat(Integer.valueOf(metadata[SensorDataWriter.METADATA_NUMBER_OF_SENSORS]),
                     is(2));
             assertThat(Integer.valueOf(metadata[SensorDataWriter.METADATA_NUMBER_OF_ENTRY]),is(1));
@@ -144,10 +144,10 @@ public class LogSensorServiceTest {
         SensorLog last = SensorLog.last();
 
         assertThat(SensorLog.listAll(SensorLog.class).size(), is(1));
-        assertThat(last.logType, is("TRAINING_STAND_Handheld"));
+        assertThat(last.logType, is("TRAINING#STAND#HANDHELD"));
         assertThat(last.numberOfSensors, is(2));
         assertThat(last.totalSensorAxis, is(6));
-        assertThat(last.sensorPosition, is("Handheld"));
+        assertThat(last.sensorPosition, is("HANDHELD"));
         assertThat(last.numberOfEntry, is(1));
         assertThat(last.logPath, is(Environment.getExternalStorageDirectory().getAbsolutePath() +
                 "/Android/data/org.elins.aktvtas/files/STAND.csv"));

@@ -5,20 +5,17 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import org.elins.aktvtas.human.HumanActivity;
 import org.elins.aktvtas.R;
 import org.elins.aktvtas.TrainingActivity;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 public class LogSensorService extends SensorService {
     public static final String ACTIVITY_ID = "org.elins.aktvtas.extra.ACTIVITY_ID";
-    public static final String SENSOR_POSITION = "org.elins.aktvtas.extra.SENSOR_POSITION";
+    public static final String SENSOR_PLACEMENT = "org.elins.aktvtas.extra.SENSOR_PLACEMENT";
     public static final String LOG_DURATION_SECOND = "org.elins.aktvtas.extra.LOG_DURATION_SECOND";
 
     private static final int DEFAULT_LOG_DURATION = 600;
@@ -26,7 +23,7 @@ public class LogSensorService extends SensorService {
 
     String activityName;
     int activityIcon;
-    protected CharSequence sensorPosition;
+    protected int sensorPlacement;
     int logDurationInSecond;
 
 
@@ -44,9 +41,10 @@ public class LogSensorService extends SensorService {
     public IBinder onBind(Intent intent) {
         HumanActivity.Id activityId = HumanActivity.Id.valueOf(intent.getIntExtra(ACTIVITY_ID, 0));
         HumanActivity humanActivity = new HumanActivity(activityId);
-        sensorPosition = intent.getCharSequenceExtra(SENSOR_POSITION);
+        sensorPlacement = intent.getIntExtra(SENSOR_PLACEMENT, 0);
 
-        logType = "TRAINING_" + String.valueOf(activityId) + "_" + sensorPosition.toString();
+        logType = "TRAINING#" + String.valueOf(activityId) +
+                "#" + SensorPlacement.toString(sensorPlacement);
 
         activityName = humanActivity.nameString(this);
         activityIcon = humanActivity.icon();
@@ -79,7 +77,7 @@ public class LogSensorService extends SensorService {
         }
 
         SensorLog sensorLog = new SensorLog(this.logType, sensorToRead.size(), totalSensorAxis,
-                sensorPosition.toString(), entryCounter, filePath);
+                SensorPlacement.toString(sensorPlacement), entryCounter, filePath);
         sensorLog.save();
     }
 

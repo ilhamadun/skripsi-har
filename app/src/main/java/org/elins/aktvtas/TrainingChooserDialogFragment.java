@@ -23,7 +23,7 @@ public class TrainingChooserDialogFragment extends DialogFragment implements
             "5", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55", "60"};
 
     Spinner trainingPositionSpinner;
-    CharSequence trainingPosition;
+    int sensorPlacement;
 
     public static TrainingChooserDialogFragment newInstance(int id) {
         TrainingChooserDialogFragment fragment = new TrainingChooserDialogFragment();
@@ -78,7 +78,7 @@ public class TrainingChooserDialogFragment extends DialogFragment implements
 
         Intent intent = new Intent(getActivity(), TrainingActivity.class);
         intent.putExtra(TrainingActivity.ACTIVITY_ID, activityId);
-        intent.putExtra(TrainingActivity.TRAINING_POSITION, trainingPosition);
+        intent.putExtra(TrainingActivity.SENSOR_PLACEMENT, sensorPlacement);
         intent.putExtra(TrainingActivity.TRAINING_DURATION, trainingDuration);
         getActivity().startActivityForResult(intent,
                 TrainingActivity.REQUEST_CODE_TRAINING_ACTIVITY);
@@ -86,11 +86,11 @@ public class TrainingChooserDialogFragment extends DialogFragment implements
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-        trainingPosition = (CharSequence) parent.getItemAtPosition(pos);
+        sensorPlacement = pos;
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-        trainingPosition = (CharSequence) parent.getItemAtPosition(0);
+        sensorPlacement = 0;
     }
 }
