@@ -125,6 +125,7 @@ public class SensorDataWriter {
             // Trim latest 10 seconds data
             if (sequenceStrings.size() > 500) {
                 sequenceStrings = sequenceStrings.subList(0, sequenceStrings.size() - 500);
+                entryCounter = entryCounter - 500;
             }
 
             writeMetadata(type, numberOfSensor, totalSensorAxis, sequenceStrings.size());
