@@ -111,11 +111,11 @@ public class RegisterActivity extends AppCompatActivity implements
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
         if (pos == 0) {
-            gender = "Male";
+            gender = "M";
         } else if (pos == 1) {
-            gender = "Female";
+            gender = "F";
         } else {
-            gender = "Unspecified";
+            gender = "-";
         }
     }
 

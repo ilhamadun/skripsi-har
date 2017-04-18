@@ -2,6 +2,7 @@ package org.elins.aktvtas.human;
 
 
 import android.content.res.AssetManager;
+import android.util.Log;
 
 import org.elins.aktvtas.sensor.SensorDataSequence;
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
@@ -12,12 +13,13 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 public class HumanActivityClassifier {
+    private static final String TAG = "HumanActivityClassifier";
+
     private static final String MODEL_FILE =
             "file:///android_asset/human_activity_recognition_graph.pb";
 
-    private static final String INPUT_NAME = "inputs_placeholder:0";
-    private static final String KEEP_PROB = "keep_prob:0";
-    private static final String OUTPUT_NAME = "output_node:0";
+    private static final String INPUT_NAME = "input:0";
+    private static final String OUTPUT_NAME = "output/add:0";
 
     private static final float THRESHOLD = 0.1f;
     private static final int MAX_RESULT = 3;
@@ -34,11 +36,24 @@ public class HumanActivityClassifier {
 
     public List<Recognition> classify(SensorDataSequence sequence) {
         float inputNode[] = sequence.flatten();
+        String sensorString = "";
 
-        inferenceInterface.fillNodeFloat(INPUT_NAME, new int[] {600}, inputNode);
-        inferenceInterface.fillNodeFloat(KEEP_PROB, new int[] {1}, new float[] {1.0f});
+        for (int i = 0; i < inputNode.length; i++) {
+            sensorString += String.format("%f,", inputNode[i]);
+        }
+        Log.i(TAG, String.valueOf(inputNode.length));
+        Log.i(TAG, sensorString);
+
+        inferenceInterface.fillNodeFloat(INPUT_NAME, new int[] {900}, inputNode);
         inferenceInterface.runInference(new String[] {OUTPUT_NAME});
         inferenceInterface.readNodeFloat(OUTPUT_NAME, outputs);
+
+        String outputString = "";
+        for (int i = 0; i < outputs.length; i++) {
+            outputString += String.format("%f, ", outputs[i]);
+        }
+        Log.i(TAG, String.valueOf(outputs.length));
+        Log.i(TAG, outputString);
 
         return findBestClassification(outputs);
     }

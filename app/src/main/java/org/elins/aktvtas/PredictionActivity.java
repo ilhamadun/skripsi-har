@@ -31,7 +31,8 @@ import java.util.List;
 public class PredictionActivity extends AppCompatActivity {
     private static final int WINDOW_SIZE = 100;
     private static final float OVERLAP = 0.5f;
-    private static final int[] SENSOR_TO_READ = {Sensor.TYPE_ACCELEROMETER, Sensor.TYPE_GYROSCOPE};
+    private static final int[] SENSOR_TO_READ = {Sensor.TYPE_ACCELEROMETER, Sensor.TYPE_GYROSCOPE,
+                                                 Sensor.TYPE_LINEAR_ACCELERATION};
 
     private ImageView predictionIcon;
     private TextView predictionName;
@@ -127,6 +128,7 @@ public class PredictionActivity extends AppCompatActivity {
             Recognition best = recognitions.get(0);
             predictionIcon.setImageResource(best.getIcon());
             predictionName.setText(best.getName());
+            Log.i("PredictionService", String.format("Activity: %s\tConfidence: %f", getString(best.getName()), best.getConfidence()));
         }
     }
 

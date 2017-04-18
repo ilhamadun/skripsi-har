@@ -45,7 +45,8 @@ public class TrainingActivity extends AppCompatActivity {
     private HumanActivity.Id activityId;
     private int sensorPlacement;
     private int trainingDurationSecond;
-    private int[] sensorToRead = {Sensor.TYPE_ACCELEROMETER, Sensor.TYPE_GYROSCOPE}; // TODO: Implement as intent extra
+    private int[] sensorToRead = {Sensor.TYPE_ACCELEROMETER, Sensor.TYPE_GYROSCOPE,
+                                  Sensor.TYPE_LINEAR_ACCELERATION}; // TODO: Implement as intent extra
     private String filePath = null;
 
     private LogSensorService logSensorService;

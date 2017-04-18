@@ -24,7 +24,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NetworkManager {
-    private static final String BASE_URL = "http://192.168.33.10:5000/";
+    private static final String BASE_URL = "http://139.59.239.47/";
 
     public static final int REGISTER_SUCCESS = 0;
     public static final int NETWORK_ERROR = -1;
