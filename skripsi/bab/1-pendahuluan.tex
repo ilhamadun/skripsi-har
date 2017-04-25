@@ -1,0 +1,32 @@
+\chapter{PENDAHULUAN}
+
+\section{Latar Belakang Masalah}
+Pengenalan aktivitas manusia adalah salah satu bidang yang penting dalam pengembangan lingkungan cerdas. Manfaatnya berpotensi untuk meningkatkan kemampuan lingkungan cerdas dalam membantu aktivitas manusia. Salah satu metode untuk mengenali aktivitas adalah menggunakan sensor pada tubuh manusia untuk membaca gerakan tubuh.
+
+Berbagai penelitian dilakukan untuk mengenali aktivitas dari gerakan tubuh. Pada awalnya pengambilan data dilakukan dengan sensor yang digunakan pada beberapa bagian tubuh yang berbeda, seperti pergelangan tangan, lengan, dada, paha, dan pergelangan kaki. Proses pembelajaran mesin dilakukan pada komputer yang terpisah untuk mengklasifikasikan data sensor menjadi aktivitas. Namun pendekatan tersebut memiliki kesulitan untuk diimplementasikan pada masyarakat luas karena pengguna perlu menggunakan beberapa perangkat eksternal.
+
+Seiring dengan berkembangnya teknologi, berbagai penelitian pun dilakukan dengan memanfaatkan sensor-sensor yang tertanam pada ponsel cerdas. Ponsel cerdas dilengkapi dengan beberapa sensor seperti akselerometer, giroskop, GPS dan kamera yang dapat dimanfaatkan untuk mengumpulkan informasi mengenai perangkat dan konteksnya. Selain itu ponsel cerdas juga memiliki kemampan komputasi yang tinggi dan kemampuan komunikasi yang memungkinkan kita untuk memproses tugas komputasi secara lokal dan berinteraksi dengan \emph{remote server} secara efisien \citep{wang-2016}.
+
+Beberapa metode \emph{machine learning} telah digunakan dan menghasilkan klasifikasi aktivitas yang cukup baik. Penelitian yang dilakukan oleh \citet{Chiang-201413} menghasilkan tingkat akurasi terbaik ketika menggunakan metode \emph{Support Vector Machine (SVM)}, sedangkan penelitian yang dilakukan oleh \citet{shoaib-2013} menunjukkan bahwa metode terbaik berbeda-beda untuk setiap aktivitas. Perbedaan ini terjadi karena masing-masing peneliti memilih representasi data yang berbeda, sedangkan performa suatu algoritma sangat bergantung pada representasi dari data yang digunakan \citep{goodfellow-2016}. Selain itu salah satu kesulitan dalam klasifikasi aktivitas adalah setiap orang melakukan aktivitas dengan cara yang beragam. Penelitain yang dilakukan oleh \citet{tapia-2007} menghasilkan tingkat akurasi 94,6\% pada pelatihan yang bergantung pada subjek, namun menurun drastis menjadi 56,3\% pada pelatihan yang independen terhadap subjek.
+
+\emph{Deep learning} adalah salah satu bidang pembelajaran mesin yang populer dalam beberapa tahun terakhir. Berbagai masalah yang semula sulit bagi metode pembelajaran mesin tradisional kini dapat diselesaikan dengan baik menggunakan \emph{deep learning}. Berbeda dengan metode pembelajaran mesin tradisional yang memerlukan pemilihan representasi data secara manual, \emph{deep learning} mampu mencari representasi data secara otomatis. \emph{Deep learning} merepresentasikan suatu konsep yang kompleks sebagai rangkaian konsep-konsep yang lebih sederhana. Kemampuan ini menjadi salah satu alasan \emph{deep learning} memiliki performa yang lebih baik dari metode pembelajaran mesin lainnya.
+
+Dalam penelitian ini dirancang sebuah sistem pengenalan aktivitas manusia yang melengkapi kekurangan penelitian-penelitian sebelumnya. Pengenalan aktivitas dilakukan berdasarkan sensor akselerometer dan giroskop yang tertanam pada ponsel cerdas. Data sensor tersebut diklasifikasi dengan \emph{Convolutional Neural Network (CNN)} dan \emph{Long Short Term Memory (LSTM)} untuk mengenali tujuh aktivitas sederhana, yaitu duduk, berdiri, berjalan, berlari, menaiki tangga, menuruni tangga dan bersepeda.
+
+\section{Rumusan Masalah}
+Berdasarkan latar belakang di atas, dirumuskan bagaimana cara melakukan pengenalan aktivitas manusia berdasarkan data sensor dari ponsel cerdas.
+
+\section{Tujuan Penelitian}
+Penelitian ini bertujuan untuk membuat purwarupa sistem yang dapat melakukan pembelajaran dengan CNN dan LSTM untuk mengenali aktivitas manusia berdasarkan sensor akselerometer dan giroskop yang tertanam pada ponsel cerdas.
+
+\section{Manfaat Penelitian}
+Manfaat penelitian ini adalah menghasilkan sebuah model klasifikasi aktivitas manusia yang dapat digunakan untuk mengingkatkan kemampuan lingkungan cerdas dalam memantau dan membantu aktivitas manusia.
+
+\section{Batasan Masalah}
+Penelitian ini memiliki batasan masalah sebagai berikut:
+
+\begin{enumerate}
+\item Ponsel cerdas yang digunakan bersistem operasi Android, memiliki sensor akselerometer dan giroskop serta dapat terhubung dengan internet.
+\item Server yang digunakan adalah sebuah \emph{cloud server} dengan sistem operais Ubuntu Server 16.04.
+\item Pengenalan aktivitas dibatas menjadi tujuh aktivitas sederhana, yaitu duduk, berdiri, berjalan, berlari, menaiki tangga, menuruni tangga dan bersepeda.
+\end{enumerate}

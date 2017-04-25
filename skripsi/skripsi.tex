@@ -1,0 +1,89 @@
+\documentclass{ugmskripsi}
+
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage[justification=centering, font=bf]{caption}
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
+\renewcommand{\arraystretch}{1.2}
+
+\usepackage{courier}
+\usepackage{color}
+\usepackage{listings}
+\lstset{
+	basicstyle=\footnotesize\ttfamily,
+	numbers=left,
+ 	numberstyle=\scriptsize,
+	frame=tb,
+    aboveskip=10pt,
+	tabsize=4,
+	columns=fixed,
+	showstringspaces=false,
+	showtabs=false,
+	keepspaces,
+	commentstyle=\color{red},
+	keywordstyle=\color{blue}
+}
+
+%------------------------------------------------------------------------------
+% Title
+%------------------------------------------------------------------------------
+\titleind{PENGENALAN AKTIVITAS MANUSIA MENGGUNAKAN SENSOR PADA SMARTPHONE DENGAN CONVOLUTIONAL NEURAL NETWORK DAN LONG SHORT-TERM MEMORY}
+
+\titleeng{HUMAN ACTIVITY RECOGNITION USING SMARTPHONE SENSORS WITH CONVOLUTIONAL NEURAL NETWORK AND LONG SHORT-TERM MEMORY}
+
+%------------------------------------------------------------------------------
+% Author Details
+%
+% FIXME:
+% - Exam date
+% - Supervisor
+% - Examiner
+%------------------------------------------------------------------------------
+\fullname{ILHAM IMADUDDIN}
+\idnum{13/352625/PA/15682}
+\examdate{... 2017}
+\degree{Sarjana Sains}
+\yearsubmit{2017}
+\program{Elektronika dan Instrumentasi}
+\headprogram{Drs. Agus Harjoko M.Sc., Ph.D}
+\dept{Ilmu Komputer dan Elektronika}
+\firstsupervisor{Raden Sumiharto S.Si., M.Kom}
+
+%------------------------------------------------------------------------------
+% Content
+% TODO:
+% - Acknowledment
+% - Prakata
+%
+%------------------------------------------------------------------------------
+\begin{document}
+
+\cover{}
+\titlepageind{}
+% \approvalpage{}
+\declarepage{}
+
+% \acknowledment{}
+% \begin{flushright}
+%     Untuk Ibu dan Apa.
+% \end{flushright}
+
+\input{bab/0.1-prakata.tex}
+
+\tableofcontents
+\listoftables
+\listoffigures
+
+\input{bab/0.2-intisari.tex}
+\input{bab/1-pendahuluan.tex}
+\input{bab/2-tinjauan-pustaka.tex}
+\input{bab/3-landasan-teori.tex}
+\input{bab/4-metode-penelitian.tex}
+\input{bab/5-hasil-penelitian.tex}
+\input{bab/6-kesimpulan.tex}
+
+
+\bibliography{pustaka}
+
+\end{document}

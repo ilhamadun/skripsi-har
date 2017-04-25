@@ -1,0 +1,51 @@
+\chapter{TINJAUAN PUSTAKA}
+
+Dalam pengenalan aktivitas, berbagai jenis teknologi pengindraan telah dieksplorasi untuk meningkatkan pengenalan dan adaptasi ke berbagai skenario aplikasi. Pada umumnya, pengenalan aktivitas dapat dikelompokkan menjadi tiga kategori: pendekatan berbasis \textit{vision}, pendekatan berbasis sensor interaksi lingkungan, dan pendekatan berbasis \textit{wearable sensor} \citep{wang-2016}. Beberapa penelitian terkahir mengenai pengenalan aktivitas dengan \textit{wearable sensor} dirangkum dalam Tabel~\ref{table:perbandingan-pustaka}.
+
+\citet{tapia-2007} melakukan penelitian untuk mengenali 30 aktivitas fisik dengan menggunakan lima akselerometer tiga sumbu yang ditempatkan pada pergelangan tangan, pergelangan kaki, lengan atas, paha atas dan pinggul. Data dari sensor-sensor tersebut diklasifikasikan dengan \textit{Decision Tree} dan menghasilkan tingkat akurasi 94,6\% pada pelatihan yang bergantung subjek, namun menurun drastis menjadi 56,3\% pada pelatihan yang independen terhadap subjek.
+
+Penelitian yang dilakukan oleh \citet{khan-2010} menggunakan satu akselerometer tiga sumbu yang ditempatkan di dada. Data dari akselerometer tersebut diklasifikasikan dengan jaringan saraf tiruan berbasis algoritma \textit{feed-forward backpropagation} dan berhasil mengenali 15 aktivitas dengan tingkat akurasi rata-rata 97,9\%.
+
+Implementasi yang dilakukan pada kedua penelitian tersebut memiliki tantangan untuk diaplikasikan secara luas karena mengharuskan subjek untuk menggunakan perangkat eksternal. Oleh karena itu, beberapa penelitian memanfaatkan sensor pada ponsel cerdas untuk mengenali aktivitas. Ponsel cerdas telah dilengkapi dengan berbagai macam sensor, memiliki kemampuan komputasi yang tinggi, dan penggunaannya sangan umum di masyarakat. Selain itu, penelitian yang dilakukan oleh \citet{he-2008} menunjukkan bahwa menempatkan akselerometer di dalam saku celana menghasilkan klasifikasi yang cukup baik, meskipun arah dan posisi akselerometer tidak menentu.
+
+\citet{shoaib-2013} mencoba untuk menggabungkan akselerometer dengan giroskop dan magnetometer yang terintegrasi dengan ponsel cerdas. Ponsel cerdas tersebut ditempatkan pada saku kanan dan kiri celana, sabuk, lengan atas kanan, dan pergelangan tangan kanan. Akselerometer dan giroskop saling melengkapi satu sama lain dan menghasilkan pengenalan aktivitas yang lebih baik, sedangkan penggabungan dengan magnetometer menghasilkan klasifikasi yang buruk. Data mengetometer yang tergantung pada arah menyebabkan \textit{overfitting} pada proses pelatihan. Pada penelitian selanjutnya, ditemukan bahwa akselerometer dan giroskop dapat berperan sebagai sensor utama dalam proses pengenalan aktivitas, tergantung pada jenis aktivitas yang dilakukan, posisi tubuh, metode klasifikasi dan fitur yang digunakan \citep{shoaib-2014}.
+
+\citet{Chiang-201413} memanfaatkan GPS pada ponsel cerdas Android untuk mengetahui lokasi dilakukannya satu aktivitas. Klasifikasi aktivitas yang diekstrak dari akselerometer dapat diintegrasikan dengan lokasi dari GPS untuk menghasilkan pola aktivitas sehari-hari yang dilakukan seseorang. Dalam penelitian ini digunakan empat jenis \textit{classifier} untuk mengenali aktivitas, yaitu Decision Tree, Nearest Neighbor, Naive Bayes dan Support Vector Machine (SVM). Setelah diuji dan dibandingkan, SVM menunjukkan tingkat akurasi yang paling tinggi.
+
+Salah satu kelemahan dalam metode seperti SVM, KNN, Naive Bayes dan metode-metode \textit{supervised learning} tradisional lainnya adalah sulit mengetahui fitur yang paling baik digunakan dalam suatu kasus. Fitur dari suatu set data biasanya dipilih secara manual dengan mengandalkan pengalaman dari penelitian-penelitian yang telah dilakukan sebelumnya, sehingga bisa saja fitur tersebut tidak memiliki kemampuan yang baik untuk membedakan berbagai jenis aktivitas \citet{zhang-2015}. Dalam penelitiannya \citeauthor{zhang-2015} menggunakan Deep Neural Network (DNN) untuk mengklasifikasikan aktivitas berdasarkan akselerometer pada ponsel cerdas. DNN mempelajari fitur yang sesuai secara otomatis dalam proses \textit{pre-training}. Proses tersebut menghasilkan model yang belum menggunakan informasi label. Setelah fitur-fitur diperolah dari proses \textit{pre-training}, model tersebut disesuaikan lebih lanjut dengan menambahkan informasi label dengan lapisan \textit{softmax}. Model dari proses pelatihan tersebut diimplementasikan secara online dalam ponsel cerdas.
+
+\begin{table}[p!]
+    \centering
+    \caption{Perbandingan sensor, lokasi penggunaannya dan metode klasifikasi yang digunakan untuk mengenali aktivitas}
+    \begin{tabular}{ |L{2cm}|L{3cm}|L{4.2cm}|L{3cm}| }
+        \hline
+        \textbf{Peneliti} & \textbf{Sensor} & \textbf{Lokasi Sensor} & \textbf{Metode} \\
+
+        \hline
+        \citet{tapia-2007} & Akselerometer & Pergelangan tangan, pergelangan kaki, lengan atas, paha atas, pinggul & Decision Tree \\
+
+        \hline
+        \citet{khan-2010} & Akselerometer & Dada & JST \\
+
+        \hline
+        \citet{he-2008} & Akselerometer & Saku celana & SVM \\
+
+        \hline
+        \citet{shoaib-2013} & Akselerometer, giroskop, magnetometer (pada ponsel cerdas) & Saku celana, sabuk, lengan atas, pergelangan tangan & Naive Bayes, SVM, JST, Logistic Regression, KNN, Rule Based Classifier, Decision Tree \\
+
+        \hline
+        \citet{shoaib-2014} & Akselerometer, giroskop, magnetometer (pada ponsel cerdas) & Saku celana, sabuk, lengan atas, pergelangan tangan & Bayesian Networks, SVM, JST, Logistic Regression, KNN, Rule Based Classifier, Decision Tree \\
+
+        \hline
+        \citet{Chiang-201413} & Akselerometer, GPS (pada ponsel cerdas) & Saku celana, lengan atas, dasbor mobil & Decision Tree, Nearest Neighbor, Naive Bayes, SVM \\
+
+        \hline
+        \citet{zhang-2015} & Akselerometer (pada ponsel cerdas) & Saku celana & Deep Neural Network \\
+
+        \hline
+        Imaduddin (2017) & Akselerometer, giroskop (pada ponsel cerdas) & Saku celana & Convolutional Neural Network dan LSTM \\
+
+        \hline
+    \end{tabular}
+    \label{table:perbandingan-pustaka}
+\end{table}
