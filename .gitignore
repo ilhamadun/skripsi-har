@@ -321,5 +321,5 @@ TSWLatexianTemp*
 *.pdf
 
 .vscode
-/sample
+sample
 /logs
