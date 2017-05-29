@@ -1,0 +1,70 @@
+<resources>
+    <string name="app_name">Aktvtas</string>
+    <string name="home">Home</string>
+    <string name="prediction">Prediction</string>
+    <string name="train">Train</string>
+    <string name="settings">Settings</string>
+    <string name="help">Help</string>
+    <string name="about">About</string>
+
+    <string name="choose_activity">Choose Activity</string>
+    <string name="training_options">Training Options</string>
+    <string name="set_training_time">Set training time in minutes:</string>
+
+    <string name="stand">Stand</string>
+    <string name="sit">Sit</string>
+    <string name="walk">Walk</string>
+    <string name="run">Run</string>
+    <string name="walking_upstairs">Walk Upstairs</string>
+    <string name="walking_downstairs">Walk Downstairs</string>
+    <string name="lie">Lie Down</string>
+    <string name="biking">Bike</string>
+    <string name="drive">Drive</string>
+    <string name="ride">Ride</string>
+
+    <string name="start">Start</string>
+    <string name="cancel">Cancel</string>
+    <string name="training_activity">Training Activity</string>
+    <string name="time_left">Time Left</string>
+    <string name="stop">Stop</string>
+    <string name="starts_in">Starts in</string>
+
+    <string name="accelerometer">Accelerometer</string>
+    <string name="gyroscope">Gyroscope</string>
+    <string name="x" translatable="false">x</string>
+    <string name="y" translatable="false">y</string>
+    <string name="z" translatable="false">z</string>
+    <string name="sensor">Sensor</string>
+
+    <string name="training_in_progress">Training in progress</string>
+    <string name="minutes">Minutes</string>
+    <string name="seconds">Seconds</string>
+    <string name="press_back_again_to_stop_training">Press back again to stop training.</string>
+    <string name="activity_history">Activity History</string>
+    <string name="not_recognized">Not Recognized</string>
+    <string name="training_data_saved">Training data saved.</string>
+    <string name="training_data_deleted">Training data deleted.</string>
+    <string name="delete">Delete</string>
+    <string name="training_time_in_minutes">Training Time in Minutes</string>
+    <string name="device_placement">Device Placement</string>
+    <string name="age">Age</string>
+    <string name="continue_text">Continue</string>
+    <string name="you_need_to_fill_your_age">You need to fill your age.</string>
+    <string name="network_error">Network Error.</string>
+    <string name="failed_to_register_device">Failed to register device.</string>
+
+    <string-array name="training_position_array">
+        <item>Right Pants Pocket</item>
+        <item>Left Pants Pocket</item>
+        <item>Right Jacket Pocket</item>
+        <item>Left Jacket Pocket</item>
+        <item>Handheld</item>
+        <item>Backpack</item>
+        <item>Sling Bag</item>
+    </string-array>
+    
+    <string-array name="gender_array">
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+</resources>
