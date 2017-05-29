@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Aktvtas</string>
+    <string name="about">Tentang</string>
+    <string name="accelerometer">Akselerometer</string>
+    <string name="activity_history">Riwayat Aktivitas</string>
+    <string name="biking">Bersepeda</string>
+    <string name="cancel">Batalkan</string>
+    <string name="choose_activity">Pilih Aktivitas</string>
+    <string name="drive">Mengemudi</string>
+    <string name="gyroscope">Giroskop</string>
+    <string name="help">Bantuan</string>
+    <string name="home">Beranda</string>
+    <string name="lie">Berbaring</string>
+    <string name="minutes">Menit</string>
+    <string name="not_recognized">Tidak Dikenali</string>
+    <string name="prediction">Prediksi</string>
+    <string name="press_back_again_to_stop_training">Tekan kembali lagi untuk berhenti latihan.</string>
+    <string name="ride">Mengendarai Motor</string>
+    <string name="run">Berlari</string>
+    <string name="seconds">Detik</string>
+    <string name="sensor">Sensor</string>
+    <string name="settings">Pengaturan</string>
+    <string name="sit">Duduk</string>
+    <string name="stand">Berdiri</string>
+    <string name="start">Mulai</string>
+    <string name="starts_in">Dimulai dalam</string>
+    <string name="stop">Berhenti</string>
+    <string name="time_left">Sisa Waktu</string>
+    <string name="train">Berlatih</string>
+    <string name="training_activity">Melatih Aktivitas</string>
+    <string name="training_in_progress">Dalam proses latihan</string>
+    <string name="walk">Berjalan</string>
+    <string name="walking_downstairs">Menuruni Tangga</string>
+    <string name="walking_upstairs">Menaiki Tangga</string>
+    <string name="set_training_time">Atur lama latihan dalam menit:</string>
+    <string name="training_data_deleted">Data latihan dihapus</string>
+    <string name="training_data_saved">Data latihan disimpan.</string>
+    <string name="delete">Hapus</string>
+    <string name="training_options">Pengaturan Latihan</string>
+    <string name="training_time_in_minutes">Durasi Latihan dalam Menit</string>
+    <string name="device_placement">Penempatan Perangkat</string>
+    <string name="age">Usia</string>
+    <string name="continue_text">Lanjutkan</string>
+    <string name="you_need_to_fill_your_age">Usia Anda harus diisi.</string>
+    <string name="network_error">Kesalahan dalam jaringan.</string>
+    <string name="failed_to_register_device">Gagal mendaftarkan perangkat.</string>
+
+    <string-array name="training_position_array">
+        <item>Saku Kanan Celana</item>
+        <item>Saku Kiri Celana</item>
+        <item>Saku Kanan Jaket</item>
+        <item>Saku Kiri Jaket</item>
+        <item>Digenggam</item>
+        <item>Ransel</item>
+        <item>Tas Selempang</item>
+    </string-array>
+
+    <string-array name="gender_array">
+        <item>Pria</item>
+        <item>Wanita</item>
+    </string-array>
+</resources>
