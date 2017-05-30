@@ -37,6 +37,7 @@
     <string name="training_data_deleted">Data latihan dihapus</string>
     <string name="training_data_saved">Data latihan disimpan.</string>
     <string name="delete">Hapus</string>
+    <string name="prediction_options">Pengaturan Prediksi</string>
     <string name="training_options">Pengaturan Latihan</string>
     <string name="training_time_in_minutes">Durasi Latihan dalam Menit</string>
     <string name="device_placement">Penempatan Perangkat</string>
@@ -47,13 +48,9 @@
     <string name="failed_to_register_device">Gagal mendaftarkan perangkat.</string>
 
     <string-array name="training_position_array">
-        <item>Saku Kanan Celana</item>
-        <item>Saku Kiri Celana</item>
-        <item>Saku Kanan Jaket</item>
-        <item>Saku Kiri Jaket</item>
-        <item>Digenggam</item>
-        <item>Ransel</item>
-        <item>Tas Selempang</item>
+        <item>Saku Kanan</item>
+        <item>Saku Kiri</item>
+        <item>Pinggang</item>
     </string-array>
 
     <string-array name="gender_array">
