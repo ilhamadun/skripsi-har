@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.elins.aktvtas.human.HumanActivityHistory;
 import org.elins.aktvtas.human.HumanActivityHistoryAdapter;
@@ -28,11 +29,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class PredictionActivity extends AppCompatActivity {
+public class PredictionActivity extends AppCompatActivity
+        implements CountDownFragment.OnCountDownListener {
     private static final int WINDOW_SIZE = 100;
     private static final float OVERLAP = 0.5f;
     private static final int[] SENSOR_TO_READ = {Sensor.TYPE_ACCELEROMETER, Sensor.TYPE_GYROSCOPE,
                                                  Sensor.TYPE_LINEAR_ACCELERATION};
+    private static final long PREPARATION_TIME = 10000;
+
+    private CountDownFragment countDownFragment;
 
     private ImageView predictionIcon;
     private TextView predictionName;
@@ -74,14 +79,14 @@ public class PredictionActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        countDownFragment = CountDownFragment.newInstance(PREPARATION_TIME);
+        transaction.replace(R.id.prediction_countdown, countDownFragment).commit();
+
         predictionIcon = (ImageView) findViewById(R.id.prediction_icon);
         predictionName = (TextView) findViewById(R.id.prediction_name);
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        Fragment activityHistoryFragment = ActivityHistoryFragment.newInstance(10);
-        transaction.add(R.id.activity_prediction_history, activityHistoryFragment).commit();
-
-        startPredictionService();
+//        startPredictionService();
     }
 
     private final ServiceConnection connection = new ServiceConnection() {
@@ -136,6 +141,11 @@ public class PredictionActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         stopPredictionService();
+    }
+
+    @Override
+    public void onPreparationFinish() {
+        Toast.makeText(this, "Start prediction", Toast.LENGTH_SHORT).show();
     }
 
 }

@@ -24,11 +24,12 @@
     <string name="sit">Duduk</string>
     <string name="stand">Berdiri</string>
     <string name="start">Mulai</string>
-    <string name="starts_in">Dimulai dalam</string>
+    <string name="starts_in">Dimulai dalam:</string>
     <string name="stop">Berhenti</string>
-    <string name="time_left">Sisa Waktu</string>
+    <string name="time_left">Sisa Waktu:</string>
     <string name="train">Berlatih</string>
     <string name="training_activity">Melatih Aktivitas</string>
+    <string name="predicting_activity">Memprediksi Aktivitas</string>
     <string name="training_in_progress">Dalam proses latihan</string>
     <string name="walk">Berjalan</string>
     <string name="walking_downstairs">Menuruni Tangga</string>
@@ -37,7 +38,7 @@
     <string name="training_data_deleted">Data latihan dihapus</string>
     <string name="training_data_saved">Data latihan disimpan.</string>
     <string name="delete">Hapus</string>
-    <string name="prediction_options">Pengaturan Prediksi</string>
+    <string name="predicting_options">Pengaturan Prediksi</string>
     <string name="training_options">Pengaturan Latihan</string>
     <string name="training_time_in_minutes">Durasi Latihan dalam Menit</string>
     <string name="device_placement">Penempatan Perangkat</string>
@@ -46,6 +47,8 @@
     <string name="you_need_to_fill_your_age">Usia Anda harus diisi.</string>
     <string name="network_error">Kesalahan dalam jaringan.</string>
     <string name="failed_to_register_device">Gagal mendaftarkan perangkat.</string>
+    <string name="accuracy">Akurasi</string>
+    <string name="predicted_activity">Prediksi Aktivitas</string>
 
     <string-array name="training_position_array">
         <item>Saku Kanan</item>

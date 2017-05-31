@@ -26,9 +26,10 @@
     <string name="start">Start</string>
     <string name="cancel">Cancel</string>
     <string name="training_activity">Training Activity</string>
-    <string name="time_left">Time Left</string>
+    <string name="predicting_activity">Predicting Activity</string>
+    <string name="time_left">Time Left:</string>
     <string name="stop">Stop</string>
-    <string name="starts_in">Starts in</string>
+    <string name="starts_in">Starts in:</string>
 
     <string name="accelerometer">Accelerometer</string>
     <string name="gyroscope">Gyroscope</string>
@@ -59,9 +60,14 @@
         <item>Left Pocket</item>
         <item>Waist</item>
     </string-array>
-    
+
     <string-array name="gender_array">
         <item>Male</item>
         <item>Female</item>
     </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="accuracy">Accuracy</string>
+    <string name="predicted_activity">Predicted Activity</string>
 </resources>
