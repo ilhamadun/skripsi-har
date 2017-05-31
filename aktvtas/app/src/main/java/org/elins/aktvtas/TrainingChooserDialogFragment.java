@@ -90,7 +90,12 @@ public class TrainingChooserDialogFragment extends DialogFragment implements
     }
 
     public void startPredictionActivity() {
-        throw new NotImplementedException("Not implemented.");
+        int activityId = getArguments().getInt("id");
+        int trainingDuration = Integer.parseInt(
+                timeArray[timePicker.getValue()]) * 60;
+
+        PredictionActivity.startActivity(getActivity(), activityId, sensorPlacement,
+                trainingDuration);
     }
 
     public void startTrainingActivity() {

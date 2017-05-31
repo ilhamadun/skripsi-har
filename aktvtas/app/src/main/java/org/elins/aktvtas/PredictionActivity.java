@@ -7,26 +7,25 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.hardware.Sensor;
+import android.os.CountDownTimer;
 import android.os.IBinder;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.elins.aktvtas.human.HumanActivityHistory;
-import org.elins.aktvtas.human.HumanActivityHistoryAdapter;
+import org.elins.aktvtas.sensor.DataAcquisition;
 import org.elins.aktvtas.human.Recognition;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 public class PredictionActivity extends AppCompatActivity
@@ -38,6 +37,9 @@ public class PredictionActivity extends AppCompatActivity
     private static final long PREPARATION_TIME = 10000;
 
     private CountDownFragment countDownFragment;
+    private CountDownTimer predictionCountDown;
+
+    private DataAcquisition acquisition;
 
     private ImageView predictionIcon;
     private TextView predictionName;
@@ -65,15 +67,21 @@ public class PredictionActivity extends AppCompatActivity
 
     private LocalBroadcastManager broadcastManager;
 
-    public static void startActivity(Context context) {
+    public static void startActivity(Context context, int activityId, int sensorPlacement,
+                                     int duration) {
         Intent intent = new Intent(context, PredictionActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(DataAcquisition.ACTIVITY_ID, activityId);
+        intent.putExtra(DataAcquisition.SENSOR_PLACEMENT, sensorPlacement);
+        intent.putExtra(DataAcquisition.ACQUISITION_DURATION, duration);
         context.startActivity(intent);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        acquisition = new DataAcquisition(getIntent());
 
         setContentView(R.layout.activity_prediction);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -85,8 +93,6 @@ public class PredictionActivity extends AppCompatActivity
 
         predictionIcon = (ImageView) findViewById(R.id.prediction_icon);
         predictionName = (TextView) findViewById(R.id.prediction_name);
-
-//        startPredictionService();
     }
 
     private final ServiceConnection connection = new ServiceConnection() {
@@ -103,7 +109,7 @@ public class PredictionActivity extends AppCompatActivity
         }
     };
 
-    public void startPredictionService() {
+    public void startPrediction() {
         Intent intent = new Intent(this, PredictionService.class);
         intent.putExtra(PredictionService.WINDOW_SIZE, WINDOW_SIZE);
         intent.putExtra(PredictionService.OVERLAP, OVERLAP);
@@ -114,6 +120,24 @@ public class PredictionActivity extends AppCompatActivity
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(PredictionService.BROADCAST_ACTION);
         broadcastManager.registerReceiver(predictionReceiver, intentFilter);
+
+        startPredictionCountdown();
+    }
+
+    private void startPredictionCountdown() {
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("mm:ss", Locale.getDefault());
+        predictionCountDown = new CountDownTimer((acquisition.getDuration() * 1000) + 1000, 200) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                Date date = new Date(millisUntilFinished - 1000);
+                countDownFragment.updateTimeLeft(dateFormat.format(date));
+            }
+
+            @Override
+            public void onFinish() {
+                stopPredictionService();
+            }
+        }.start();
     }
 
     public void stopPredictionService() {
@@ -145,7 +169,7 @@ public class PredictionActivity extends AppCompatActivity
 
     @Override
     public void onPreparationFinish() {
-        Toast.makeText(this, "Start prediction", Toast.LENGTH_SHORT).show();
+        startPrediction();
     }
 
 }

@@ -57,7 +57,7 @@ public class PredictionService extends SensorService {
         createSensorDataWriter(generateFilename(new Date()));
         createSensorDataReader(sensorToRead);
 
-        classifier = new HumanActivityClassifier(getAssets());
+//        classifier = new HumanActivityClassifier(getAssets());
         
         return binder;
     }
@@ -72,14 +72,14 @@ public class PredictionService extends SensorService {
         super.onSensorDataReady();
 
         if (sensorDataSequence.size() == windowSize) {
-            List<Recognition> recognitions = classifier.classify(sensorDataSequence);
-
-            if (! recognitions.equals(lastRecognitions)) {
-                reportPredictions(recognitions);
-                lastRecognitions = recognitions;
-            }
-
-            writeBuffer();
+//            List<Recognition> recognitions = classifier.classify(sensorDataSequence);
+//
+//            if (! recognitions.equals(lastRecognitions)) {
+//                reportPredictions(recognitions);
+//                lastRecognitions = recognitions;
+//            }
+//
+//            writeBuffer();
         }
     }
 
