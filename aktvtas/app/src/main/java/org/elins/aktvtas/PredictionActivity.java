@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.hardware.Sensor;
 import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.support.v4.app.FragmentTransaction;
@@ -18,6 +17,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.elins.aktvtas.human.HumanActivity;
 import org.elins.aktvtas.sensor.DataAcquisition;
 import org.elins.aktvtas.human.Recognition;
 
@@ -30,19 +30,21 @@ import java.util.Locale;
 
 public class PredictionActivity extends AppCompatActivity
         implements CountDownFragment.OnCountDownListener {
-    private static final int WINDOW_SIZE = 100;
-    private static final float OVERLAP = 0.5f;
-    private static final int[] SENSOR_TO_READ = {Sensor.TYPE_ACCELEROMETER, Sensor.TYPE_GYROSCOPE,
-                                                 Sensor.TYPE_LINEAR_ACCELERATION};
-    private static final long PREPARATION_TIME = 10000;
+    private static final String TAG = "PredictionActivity";
+
+    private static final long PREPARATION_TIME = 1000;
 
     private CountDownFragment countDownFragment;
     private CountDownTimer predictionCountDown;
 
     private DataAcquisition acquisition;
 
+    private TextView activityName;
     private ImageView predictionIcon;
     private TextView predictionName;
+    private TextView accuracyText;
+    private TextView totalPrediction;
+    private TextView correctPrediction;
 
     private PredictionService predictionService;
     private boolean predictionServiceBound = false;
@@ -55,12 +57,17 @@ public class PredictionActivity extends AppCompatActivity
                 float confidences[] = intent.getFloatArrayExtra(
                         PredictionService.PREDICTION_RESULT_CONFIDENCE);
 
+                float accuracy = intent.getFloatExtra(PredictionService.PREDICTION_ACCURACY, 0f);
+                int totalPrediction = intent.getIntExtra(PredictionService.TOTAL_PREDICTION, 0);
+                int correctPrediction = intent.getIntExtra(PredictionService.CORRECT_PREDICTION, 0);
+
                 List<Recognition> recognitions = new ArrayList<>();
                 for (int i = 0; i < ids.length; i++) {
                     recognitions.add(new Recognition(ids[i], confidences[i]));
                 }
 
                 updatePrediction(recognitions);
+                updateAccuracy(accuracy, totalPrediction, correctPrediction);
             }
         }
     };
@@ -71,9 +78,9 @@ public class PredictionActivity extends AppCompatActivity
                                      int duration) {
         Intent intent = new Intent(context, PredictionActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(DataAcquisition.ACTIVITY_ID, activityId);
-        intent.putExtra(DataAcquisition.SENSOR_PLACEMENT, sensorPlacement);
-        intent.putExtra(DataAcquisition.ACQUISITION_DURATION, duration);
+        intent.putExtra(DataAcquisition.EXTRA_ACTIVITY_ID, activityId);
+        intent.putExtra(DataAcquisition.EXTRA_SENSOR_PLACEMENT, sensorPlacement);
+        intent.putExtra(DataAcquisition.EXTRA_ACQUISITION_DURATION, duration);
         context.startActivity(intent);
     }
 
@@ -91,8 +98,15 @@ public class PredictionActivity extends AppCompatActivity
         countDownFragment = CountDownFragment.newInstance(PREPARATION_TIME);
         transaction.replace(R.id.prediction_countdown, countDownFragment).commit();
 
+        activityName = (TextView) findViewById(R.id.prediction_activity_name);
         predictionIcon = (ImageView) findViewById(R.id.prediction_icon);
         predictionName = (TextView) findViewById(R.id.prediction_name);
+        accuracyText = (TextView) findViewById(R.id.prediction_accuracy);
+        totalPrediction = (TextView) findViewById(R.id.total_prediction);
+        correctPrediction = (TextView) findViewById(R.id.correct_prediction);
+
+        HumanActivity humanActivity = new HumanActivity(acquisition.getActivityId());
+        activityName.setText(humanActivity.name());
     }
 
     private final ServiceConnection connection = new ServiceConnection() {
@@ -111,9 +125,12 @@ public class PredictionActivity extends AppCompatActivity
 
     public void startPrediction() {
         Intent intent = new Intent(this, PredictionService.class);
-        intent.putExtra(PredictionService.WINDOW_SIZE, WINDOW_SIZE);
-        intent.putExtra(PredictionService.OVERLAP, OVERLAP);
-        intent.putExtra(PredictionService.SENSOR_TO_READ, SENSOR_TO_READ);
+        intent.putExtra(PredictionService.EXTRA_WINDOW_SIZE, PredictionService.DEFAULT_WINDOW_SIZE);
+        intent.putExtra(PredictionService.EXTRA_OVERLAP, PredictionService.DEFAULT_OVERLAP);
+        intent.putExtra(PredictionService.EXTRA_SENSOR_TO_READ, DataAcquisition.SENSOR_TO_READ);
+        intent.putExtra(PredictionService.EXTRA_ACTIVITY_ID, acquisition.getActivityId().ordinal());
+        intent.putExtra(PredictionService.EXTRA_SENSOR_PLACEMENT, acquisition.getSensorPlacement());
+        intent.putExtra(PredictionService.EXTRA_DURATION_SECOND, acquisition.getDuration());
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
         broadcastManager = LocalBroadcastManager.getInstance(this);
@@ -159,6 +176,12 @@ public class PredictionActivity extends AppCompatActivity
             predictionName.setText(best.getName());
             Log.i("PredictionService", String.format("Activity: %s\tConfidence: %f", getString(best.getName()), best.getConfidence()));
         }
+    }
+
+    public void updateAccuracy(float accuracy, int totalPrediction, int correctPrediction) {
+        accuracyText.setText(String.format(Locale.getDefault(), "%.2f%%", accuracy));
+        this.totalPrediction.setText(String.format(Locale.getDefault(), "%d", totalPrediction));
+        this.correctPrediction.setText(String.format(Locale.getDefault(), "%d", correctPrediction));
     }
 
     @Override

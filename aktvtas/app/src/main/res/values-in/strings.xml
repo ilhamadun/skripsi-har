@@ -49,6 +49,8 @@
     <string name="failed_to_register_device">Gagal mendaftarkan perangkat.</string>
     <string name="accuracy">Akurasi</string>
     <string name="predicted_activity">Prediksi Aktivitas</string>
+    <string name="total_prediction">Seluruh Prediksi:</string>
+    <string name="correct_prediction">Prediksi Benar:</string>
 
     <string-array name="training_position_array">
         <item>Saku Kanan</item>

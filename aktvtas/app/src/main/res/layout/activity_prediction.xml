@@ -22,7 +22,7 @@
             android:padding="@dimen/activity_horizontal_margin">
 
             <TextView
-                android:id="@+id/trainer_title"
+                android:id="@+id/prediction_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/predicting_activity"
@@ -34,7 +34,7 @@
                 android:id="@+id/prediction_activity_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/trainer_title"
+                android:layout_below="@id/prediction_title"
                 android:layout_marginBottom="20dp"
                 android:text="@string/stand"
                 android:textAlignment="center"
@@ -107,12 +107,55 @@
                         android:id="@+id/prediction_accuracy"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="98%"
+                        android:text="100%"
                         android:textAlignment="center"
                         android:textAllCaps="true"
                         android:textColor="@color/accent"
                         android:textSize="24sp"
                         android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="40dp"
+                        android:layout_marginRight="40dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/total_prediction"
+                            android:layout_weight="1"/>
+                        <TextView
+                            android:id="@+id/total_prediction"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="textEnd"
+                            android:layout_gravity="end"
+                            android:layout_weight="1"
+                            android:text="0"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="40dp"
+                        android:layout_marginRight="40dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/correct_prediction"
+                            android:layout_weight="1"/>
+                        <TextView
+                            android:id="@+id/correct_prediction"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="textEnd"
+                            android:layout_gravity="end"
+                            android:layout_weight="1"
+                            android:text="0"/>
+
+                    </LinearLayout>
 
                 </LinearLayout>
 

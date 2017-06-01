@@ -14,7 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SensorService extends Service implements SensorReader.SensorReaderEvent {
-    public static final String SENSOR_TO_READ = "org.elins.aktvtas.extra.SENSOR_TO_READ";
+    public static final String EXTRA_SENSOR_TO_READ = "org.elins.aktvtas.extra.EXTRA_SENSOR_TO_READ";
+    public static final String EXTRA_ACTIVITY_ID = "org.elins.aktvtas.extra.EXTRA_ACTIVITY_ID";
+    public static final String EXTRA_SENSOR_PLACEMENT = "org.elins.aktvtas.extra.EXTRA_SENSOR_PLACEMENT";
+    public static final String EXTRA_DURATION_SECOND = "org.elins.aktvtas.extra.EXTRA_DURATION_SECOND";
 
     protected List<Integer> sensorToRead = new ArrayList<>();
     protected List<Integer> numberOfAxis = new ArrayList<>();

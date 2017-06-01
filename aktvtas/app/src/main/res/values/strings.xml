@@ -70,4 +70,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="accuracy">Accuracy</string>
     <string name="predicted_activity">Predicted Activity</string>
+    <string name="total_prediction">Total Prediction:</string>
+    <string name="correct_prediction">Correct Prediction:</string>
 </resources>
