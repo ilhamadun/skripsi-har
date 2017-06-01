@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.elins.aktvtas.human.HumanActivity;
+import org.elins.aktvtas.human.PredictionHistory;
 import org.elins.aktvtas.sensor.DataAcquisition;
 import org.elins.aktvtas.human.Recognition;
 
@@ -45,8 +46,11 @@ public class PredictionActivity extends AppCompatActivity
     private ImageView predictionIcon;
     private TextView predictionName;
     private TextView accuracyText;
-    private TextView totalPrediction;
-    private TextView correctPrediction;
+    private TextView totalPredictionText;
+    private TextView correctPredictionText;
+
+    float accuracy;
+    int totalPrediction, correctPrediction;
 
     private PredictionService predictionService;
     private boolean predictionServiceBound = false;
@@ -60,9 +64,9 @@ public class PredictionActivity extends AppCompatActivity
                 float confidences[] = intent.getFloatArrayExtra(
                         PredictionService.PREDICTION_RESULT_CONFIDENCE);
 
-                float accuracy = intent.getFloatExtra(PredictionService.PREDICTION_ACCURACY, 0f);
-                int totalPrediction = intent.getIntExtra(PredictionService.TOTAL_PREDICTION, 0);
-                int correctPrediction = intent.getIntExtra(PredictionService.CORRECT_PREDICTION, 0);
+                accuracy = intent.getFloatExtra(PredictionService.PREDICTION_ACCURACY, 0f);
+                totalPrediction = intent.getIntExtra(PredictionService.TOTAL_PREDICTION, 0);
+                correctPrediction = intent.getIntExtra(PredictionService.CORRECT_PREDICTION, 0);
 
                 List<Recognition> recognitions = new ArrayList<>();
                 for (int i = 0; i < ids.length; i++) {
@@ -70,7 +74,7 @@ public class PredictionActivity extends AppCompatActivity
                 }
 
                 updatePrediction(recognitions);
-                updateAccuracy(accuracy, totalPrediction, correctPrediction);
+                updateAccuracy();
             }
         }
     };
@@ -105,8 +109,8 @@ public class PredictionActivity extends AppCompatActivity
         predictionIcon = (ImageView) findViewById(R.id.prediction_icon);
         predictionName = (TextView) findViewById(R.id.prediction_name);
         accuracyText = (TextView) findViewById(R.id.prediction_accuracy);
-        totalPrediction = (TextView) findViewById(R.id.total_prediction);
-        correctPrediction = (TextView) findViewById(R.id.correct_prediction);
+        totalPredictionText = (TextView) findViewById(R.id.total_prediction);
+        correctPredictionText = (TextView) findViewById(R.id.correct_prediction);
 
         HumanActivity humanActivity = new HumanActivity(acquisition.getActivityId());
         activityName.setText(humanActivity.name());
@@ -156,6 +160,8 @@ public class PredictionActivity extends AppCompatActivity
             @Override
             public void onFinish() {
                 stopPredictionService();
+                savePredictionHistory();
+                finish();
             }
         }.start();
     }
@@ -169,11 +175,21 @@ public class PredictionActivity extends AppCompatActivity
         }
     }
 
+    private void savePredictionHistory() {
+        PredictionHistory predictionHistory = new PredictionHistory(acquisition.getActivityId().ordinal(),
+                totalPrediction, correctPrediction, accuracy);
+        Log.i(TAG, "Saving prediction history..");
+        predictionHistory.save();
+        PredictionHistory history = PredictionHistory.last();
+        Log.i(TAG, String.format("Prediction history saved. %s: %.2f%% accuracy.",
+                history.activityName(this), history.getAccuracy()));
+    }
+
     public void updatePrediction(List<Recognition> recognitions) {
         if (recognitions == null || recognitions.size() == 0) {
             predictionIcon.setImageResource(R.drawable.ic_not_recognized);
             predictionName.setText(R.string.not_recognized);
-        } else  {
+        } else {
             Recognition best = recognitions.get(0);
             predictionIcon.setImageResource(best.getIcon());
             predictionName.setText(best.getName());
@@ -181,10 +197,10 @@ public class PredictionActivity extends AppCompatActivity
         }
     }
 
-    public void updateAccuracy(float accuracy, int totalPrediction, int correctPrediction) {
+    public void updateAccuracy() {
         accuracyText.setText(String.format(Locale.getDefault(), "%.2f%%", accuracy));
-        this.totalPrediction.setText(String.format(Locale.getDefault(), "%d", totalPrediction));
-        this.correctPrediction.setText(String.format(Locale.getDefault(), "%d", correctPrediction));
+        this.totalPredictionText.setText(String.format(Locale.getDefault(), "%d", totalPrediction));
+        this.correctPredictionText.setText(String.format(Locale.getDefault(), "%d", correctPrediction));
     }
 
     @Override
