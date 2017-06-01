@@ -1,5 +1,7 @@
 package org.elins.aktvtas.sensor;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -118,6 +120,10 @@ public class SensorDataSequence {
     }
 
     public void slice(int fromIndex, int toIndex) {
-        sequence = sequence.subList(fromIndex, toIndex);
+        try {
+            sequence = sequence.subList(fromIndex, toIndex);
+        } catch (IndexOutOfBoundsException e) {
+            throw new IndexOutOfBoundsException();
+        }
     }
 }

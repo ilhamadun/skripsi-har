@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 
@@ -22,6 +23,9 @@ public class CountDownFragment extends Fragment {
     private static final String PREPARATION_TIME = "org.elins.aktvtas.extra.PREPARATION_TIME";
 
     private OnCountDownListener mListener;
+
+    CountDownTimer preparationCountDown;
+    private boolean preparation = true;
 
     TextView countDownTitle;
     TextView countDownTimeLeft;
@@ -60,6 +64,16 @@ public class CountDownFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         countDownTitle = (TextView) getActivity().findViewById(R.id.countdown_title);
         countDownTimeLeft = (TextView) getActivity().findViewById(R.id.countdown_time_left);
+        Button stopButton = (Button) getActivity().findViewById(R.id.countdown_stop_button);
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (preparation) {
+                    preparationCountDown.cancel();
+                }
+                mListener.onCountDownStopped();
+            }
+        });
 
         long preparationTime = getArguments().getLong(PREPARATION_TIME);
         startPreparationCountdown(preparationTime);
@@ -103,10 +117,11 @@ public class CountDownFragment extends Fragment {
     public interface OnCountDownListener {
         // TODO: Update argument type and name
         void onPreparationFinish();
+        void onCountDownStopped();
     }
 
     private void startPreparationCountdown(long preparationTimeInMilliseconds) {
-        CountDownTimer countDownTimer = new CountDownTimer(preparationTimeInMilliseconds + 1000, 1000) {
+        preparationCountDown = new CountDownTimer(preparationTimeInMilliseconds + 1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 countDownTimeLeft.setText(String.valueOf((millisUntilFinished - 1000) / 1000));
@@ -114,6 +129,7 @@ public class CountDownFragment extends Fragment {
 
             @Override
             public void onFinish() {
+                preparation = false;
                 countDownTitle.setText(R.string.time_left);
                 mListener.onPreparationFinish();
             }

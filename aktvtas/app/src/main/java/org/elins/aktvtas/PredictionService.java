@@ -121,7 +121,11 @@ public class PredictionService extends SensorService {
 
     private void rearrangeSequence() {
         int fromIndex = Math.round(windowSize * (1 - overlap));
-        sensorDataSequence.slice(fromIndex, windowSize);
+        try {
+            sensorDataSequence.slice(fromIndex, windowSize);
+        } catch (IndexOutOfBoundsException e) {
+            Log.e(TAG, "Failed to rearrange SensorDataSequence.");
+        }
     }
 
     private void reportPredictions(List<Recognition> recognitions) {
@@ -140,5 +144,13 @@ public class PredictionService extends SensorService {
                 .putExtra(TOTAL_PREDICTION, totalPrediction)
                 .putExtra(CORRECT_PREDICTION, correctPrediction);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    @Override
+    public void onDestroy() {
+        if (sensorDataWriter != null) {
+            sensorDataWriter.close();
+        }
+        sensorReader.close();
     }
 }

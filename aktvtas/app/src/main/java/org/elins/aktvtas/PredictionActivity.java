@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
@@ -16,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.elins.aktvtas.human.HumanActivity;
 import org.elins.aktvtas.sensor.DataAcquisition;
@@ -48,6 +50,7 @@ public class PredictionActivity extends AppCompatActivity
 
     private PredictionService predictionService;
     private boolean predictionServiceBound = false;
+    private boolean doubleBackToExitPressedOnce;
 
     private BroadcastReceiver predictionReceiver = new BroadcastReceiver() {
         @Override
@@ -191,8 +194,34 @@ public class PredictionActivity extends AppCompatActivity
     }
 
     @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            stopPredictionService();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, R.string.press_back_again_to_stop_prediction, Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce = false;
+            }
+        }, 2000);
+    }
+
+    @Override
     public void onPreparationFinish() {
         startPrediction();
+    }
+
+    @Override
+    public void onCountDownStopped() {
+        predictionCountDown.cancel();
+        stopPredictionService();
+        finish();
     }
 
 }

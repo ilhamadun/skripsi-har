@@ -16,6 +16,7 @@
     <string name="not_recognized">Tidak Dikenali</string>
     <string name="prediction">Prediksi</string>
     <string name="press_back_again_to_stop_training">Tekan kembali lagi untuk berhenti latihan.</string>
+    <string name="press_back_again_to_stop_prediction">Tekan kembali lagi untuk menghentikan prediksi.</string>
     <string name="ride">Mengendarai Motor</string>
     <string name="run">Berlari</string>
     <string name="seconds">Detik</string>
