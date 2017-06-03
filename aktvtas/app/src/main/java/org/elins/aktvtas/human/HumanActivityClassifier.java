@@ -25,13 +25,10 @@ public class HumanActivityClassifier {
     private static final int MAX_RESULT = 3;
 
     private float[] outputs = new float[HumanActivity.Id.values().length];
-    private TensorFlowInferenceInterface inferenceInterface = new TensorFlowInferenceInterface();
+    private TensorFlowInferenceInterface inferenceInterface;
 
     public HumanActivityClassifier(AssetManager assetManager) {
-        final int status = inferenceInterface.initializeTensorFlow(assetManager, MODEL_FILE);
-        if (status != 0) {
-            throw new RuntimeException("TF init status (" + status + ") != 0");
-        }
+        inferenceInterface = new TensorFlowInferenceInterface(assetManager, MODEL_FILE);
     }
 
     public List<Recognition> classify(SensorDataSequence sequence) {
@@ -44,9 +41,9 @@ public class HumanActivityClassifier {
         Log.i(TAG, String.valueOf(inputNode.length));
         Log.i(TAG, sensorString);
 
-        inferenceInterface.fillNodeFloat(INPUT_NAME, new int[] {900}, inputNode);
-        inferenceInterface.runInference(new String[] {OUTPUT_NAME});
-        inferenceInterface.readNodeFloat(OUTPUT_NAME, outputs);
+        inferenceInterface.feed(INPUT_NAME, inputNode, 900);
+        inferenceInterface.run(new String[] {OUTPUT_NAME});
+        inferenceInterface.fetch(OUTPUT_NAME, outputs);
 
         String outputString = "";
         for (int i = 0; i < outputs.length; i++) {

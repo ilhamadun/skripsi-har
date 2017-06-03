@@ -20,6 +20,7 @@ import org.elins.aktvtas.sensor.SensorReader;
 
 import java.util.HashMap;
 
+@Deprecated
 public class RegisterActivity extends AppCompatActivity implements
         AdapterView.OnItemSelectedListener {
 
