@@ -3,7 +3,7 @@
     <string name="app_name">Aktvtas</string>
     <string name="about">Tentang</string>
     <string name="accelerometer">Akselerometer</string>
-    <string name="activity_history">Riwayat Aktivitas</string>
+    <string name="prediction_history">Riwayat Prediksi</string>
     <string name="biking">Bersepeda</string>
     <string name="cancel">Batalkan</string>
     <string name="choose_activity">Pilih Aktivitas</string>
@@ -52,6 +52,9 @@
     <string name="predicted_activity">Prediksi Aktivitas</string>
     <string name="total_prediction">Seluruh Prediksi:</string>
     <string name="correct_prediction">Prediksi Benar:</string>
+    <string name="total_naccuracy">Total\nAccuracy</string>
+    <string name="total_nprediction">Total\nPrediction</string>
+    <string name="correct_nprediction">Correct\nPrediction</string>
 
     <string-array name="training_position_array">
         <item>Saku Kanan</item>

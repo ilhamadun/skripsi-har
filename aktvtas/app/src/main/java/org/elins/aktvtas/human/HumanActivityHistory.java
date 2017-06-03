@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+@Deprecated
 public class HumanActivityHistory extends SugarRecord {
 
     SensorLog sensorLog;

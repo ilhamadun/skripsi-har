@@ -43,7 +43,7 @@
     <string name="seconds">Seconds</string>
     <string name="press_back_again_to_stop_training">Press back again to stop training.</string>
     <string name="press_back_again_to_stop_prediction">Press back again to stop prediction.</string>
-    <string name="activity_history">Activity History</string>
+    <string name="prediction_history">Prediction History</string>
     <string name="not_recognized">Not Recognized</string>
     <string name="training_data_saved">Training data saved.</string>
     <string name="training_data_deleted">Training data deleted.</string>
@@ -73,4 +73,7 @@
     <string name="predicted_activity">Predicted Activity</string>
     <string name="total_prediction">Total Prediction:</string>
     <string name="correct_prediction">Correct Prediction:</string>
+    <string name="total_naccuracy">Total\nAccuracy</string>
+    <string name="total_nprediction">Total\nPrediction</string>
+    <string name="correct_nprediction">Correct\nPrediction</string>
 </resources>

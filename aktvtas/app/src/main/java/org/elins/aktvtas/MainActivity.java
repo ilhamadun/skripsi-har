@@ -21,9 +21,11 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
-    private static final int DRAWER_ID_PREDICTION = 1;
-    private static final int DRAWER_ID_TRAIN = 2;
+    private static final int DRAWER_ID_HOME = 1;
+    private static final int DRAWER_ID_PREDICTION = 2;
+    private static final int DRAWER_ID_TRAIN = 3;
 
+    private PredictionHistoryFragment predictionHistoryFragment;
     private ActivityChooserFragment activityChooserFragment;
 
     public static void startActivity(Context context) {
@@ -40,17 +42,20 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(R.string.prediction);
 
         Drawer drawer = setupNavigationDrawer(toolbar);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        predictionHistoryFragment = PredictionHistoryFragment.newInstance();
         activityChooserFragment = ActivityChooserFragment.newInstance();
-        transaction.replace(R.id.content, activityChooserFragment).commit();
+
+        transaction.add(R.id.content, predictionHistoryFragment).commit();
     }
 
     private Drawer setupNavigationDrawer(Toolbar toolbar) {
         AccountHeader accountHeader = new AccountHeaderBuilder().withActivity(this).build();
+        PrimaryDrawerItem home = new PrimaryDrawerItem().withIdentifier(DRAWER_ID_HOME)
+                .withName(R.string.home);
         PrimaryDrawerItem prediction = new PrimaryDrawerItem().withIdentifier(DRAWER_ID_PREDICTION)
                 .withName(R.string.prediction);
         PrimaryDrawerItem train = new PrimaryDrawerItem().withIdentifier(DRAWER_ID_TRAIN)
@@ -61,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 .withToolbar(toolbar)
                 .withAccountHeader(accountHeader)
                 .addDrawerItems(
-                        prediction, train
+                        home, prediction, train
                 )
                 .withOnDrawerItemClickListener(drawerItemClickListener())
                 .build();
@@ -74,12 +79,18 @@ public class MainActivity extends AppCompatActivity {
             public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-                if (drawerItem.equals(DRAWER_ID_PREDICTION)) {
-                    getSupportActionBar().setTitle(R.string.prediction);
+                if (drawerItem.equals(DRAWER_ID_HOME)) {
+                    predictionHistoryFragment = PredictionHistoryFragment.newInstance();
+                    transaction.replace(R.id.content, predictionHistoryFragment).commit();
+                    getSupportActionBar().setTitle(R.string.app_name);
+                } else if (drawerItem.equals(DRAWER_ID_PREDICTION)) {
+                    transaction.replace(R.id.content, activityChooserFragment).commit();
                     activityChooserFragment.setMode(ActivityChooserFragment.MODE_PREDICTION);
+                    getSupportActionBar().setTitle(R.string.prediction);
                 } else if (drawerItem.equals(DRAWER_ID_TRAIN)) {
-                    getSupportActionBar().setTitle(R.string.train);
+                    transaction.replace(R.id.content, activityChooserFragment).commit();
                     activityChooserFragment.setMode(ActivityChooserFragment.MODE_TRAINING);
+                    getSupportActionBar().setTitle(R.string.train);
                 }
 
                 return false;
