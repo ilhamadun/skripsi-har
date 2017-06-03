@@ -12,6 +12,7 @@ import org.elins.aktvtas.human.HumanActivityHistory;
 import org.elins.aktvtas.human.HumanActivityHistoryAdapter;
 
 
+@Deprecated
 public class ActivityHistoryFragment extends Fragment {
     private static final String ACTIVITY_HISTORY_LIMIT = "limit";
 

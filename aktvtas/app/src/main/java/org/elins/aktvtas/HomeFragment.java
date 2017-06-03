@@ -13,6 +13,7 @@ import android.view.ViewGroup;
  * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
+@Deprecated
 public class HomeFragment extends Fragment {
 
     public HomeFragment() {

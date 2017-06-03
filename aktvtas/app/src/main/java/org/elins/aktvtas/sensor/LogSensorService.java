@@ -14,10 +14,6 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 public class LogSensorService extends SensorService {
-    public static final String ACTIVITY_ID = "org.elins.aktvtas.extra.ACTIVITY_ID";
-    public static final String SENSOR_PLACEMENT = "org.elins.aktvtas.extra.SENSOR_PLACEMENT";
-    public static final String LOG_DURATION_SECOND = "org.elins.aktvtas.extra.LOG_DURATION_SECOND";
-
     private static final int DEFAULT_LOG_DURATION = 600;
     private  static final int NOTIFICATION_ID = 1;
 
@@ -39,17 +35,17 @@ public class LogSensorService extends SensorService {
 
     @Override
     public IBinder onBind(Intent intent) {
-        HumanActivity.Id activityId = HumanActivity.Id.valueOf(intent.getIntExtra(ACTIVITY_ID, 0));
+        HumanActivity.Id activityId = HumanActivity.Id.valueOf(intent.getIntExtra(EXTRA_ACTIVITY_ID, 0));
         HumanActivity humanActivity = new HumanActivity(activityId);
-        sensorPlacement = intent.getIntExtra(SENSOR_PLACEMENT, 0);
+        sensorPlacement = intent.getIntExtra(EXTRA_SENSOR_PLACEMENT, 0);
 
         logType = "TRAINING#" + String.valueOf(activityId) +
                 "#" + SensorPlacement.toString(sensorPlacement);
 
         activityName = humanActivity.nameString(this);
         activityIcon = humanActivity.icon();
-        logDurationInSecond = intent.getIntExtra(LOG_DURATION_SECOND, DEFAULT_LOG_DURATION);
-        int[] sensors = intent.getIntArrayExtra(SENSOR_TO_READ);
+        logDurationInSecond = intent.getIntExtra(EXTRA_DURATION_SECOND, DEFAULT_LOG_DURATION);
+        int[] sensors = intent.getIntArrayExtra(EXTRA_SENSOR_TO_READ);
 
         extractSensorToRead(sensors);
         createSensorDataSequence(sensorToRead, numberOfAxis);

@@ -35,8 +35,8 @@ import org.elins.aktvtas.sensor.SensorLog;
 
 
 public class TrainingActivity extends AppCompatActivity {
-    public static final String ACTIVITY_ID = "org.elins.aktvtas.extra.ACTIVITY_ID";
-    public static final String SENSOR_PLACEMENT = "org.elins.aktvtas.extra.SENSOR_PLACEMENT";
+    public static final String ACTIVITY_ID = "org.elins.aktvtas.extra.EXTRA_ACTIVITY_ID";
+    public static final String SENSOR_PLACEMENT = "org.elins.aktvtas.extra.EXTRA_SENSOR_PLACEMENT";
     public static final String TRAINING_DURATION = "org.elins.aktvtas.extra.TRAINING_DURATION";
     public static final String RESULT = "org.elins.aktvtas.extra.TRAINING_RESULT";
 
@@ -171,10 +171,10 @@ public class TrainingActivity extends AppCompatActivity {
 
     private void startTraining() {
         Intent intent = new Intent(this, LogSensorService.class);
-        intent.putExtra(LogSensorService.ACTIVITY_ID, activityId.ordinal());
-        intent.putExtra(LogSensorService.SENSOR_PLACEMENT, sensorPlacement);
-        intent.putExtra(LogSensorService.LOG_DURATION_SECOND, trainingDurationSecond);
-        intent.putExtra(LogSensorService.SENSOR_TO_READ, sensorToRead);
+        intent.putExtra(LogSensorService.EXTRA_ACTIVITY_ID, activityId.ordinal());
+        intent.putExtra(LogSensorService.EXTRA_SENSOR_PLACEMENT, sensorPlacement);
+        intent.putExtra(LogSensorService.EXTRA_DURATION_SECOND, trainingDurationSecond);
+        intent.putExtra(LogSensorService.EXTRA_SENSOR_TO_READ, sensorToRead);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
         startTrainingCountdown();

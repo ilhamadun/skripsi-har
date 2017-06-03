@@ -8,6 +8,7 @@
     <string name="about">About</string>
 
     <string name="choose_activity">Choose Activity</string>
+    <string name="prediction_options">Prediction Options</string>
     <string name="training_options">Training Options</string>
     <string name="set_training_time">Set training time in minutes:</string>
 
@@ -25,9 +26,10 @@
     <string name="start">Start</string>
     <string name="cancel">Cancel</string>
     <string name="training_activity">Training Activity</string>
-    <string name="time_left">Time Left</string>
+    <string name="predicting_activity">Predicting Activity</string>
+    <string name="time_left">Time Left:</string>
     <string name="stop">Stop</string>
-    <string name="starts_in">Starts in</string>
+    <string name="starts_in">Starts in:</string>
 
     <string name="accelerometer">Accelerometer</string>
     <string name="gyroscope">Gyroscope</string>
@@ -40,7 +42,8 @@
     <string name="minutes">Minutes</string>
     <string name="seconds">Seconds</string>
     <string name="press_back_again_to_stop_training">Press back again to stop training.</string>
-    <string name="activity_history">Activity History</string>
+    <string name="press_back_again_to_stop_prediction">Press back again to stop prediction.</string>
+    <string name="prediction_history">Prediction History</string>
     <string name="not_recognized">Not Recognized</string>
     <string name="training_data_saved">Training data saved.</string>
     <string name="training_data_deleted">Training data deleted.</string>
@@ -54,17 +57,23 @@
     <string name="failed_to_register_device">Failed to register device.</string>
 
     <string-array name="training_position_array">
-        <item>Right Pants Pocket</item>
-        <item>Left Pants Pocket</item>
-        <item>Right Jacket Pocket</item>
-        <item>Left Jacket Pocket</item>
-        <item>Handheld</item>
-        <item>Backpack</item>
-        <item>Sling Bag</item>
+        <item>Right Pocket</item>
+        <item>Left Pocket</item>
+        <item>Waist</item>
     </string-array>
-    
+
     <string-array name="gender_array">
         <item>Male</item>
         <item>Female</item>
     </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="accuracy">Accuracy</string>
+    <string name="predicted_activity">Predicted Activity</string>
+    <string name="total_prediction">Total Prediction:</string>
+    <string name="correct_prediction">Correct Prediction:</string>
+    <string name="total_naccuracy">Total\nAccuracy</string>
+    <string name="total_nprediction">Total\nPrediction</string>
+    <string name="correct_nprediction">Correct\nPrediction</string>
 </resources>

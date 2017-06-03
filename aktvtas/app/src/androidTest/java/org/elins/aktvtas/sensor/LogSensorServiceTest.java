@@ -54,11 +54,11 @@ public class LogSensorServiceTest {
         Intent serviceIntent = new Intent(InstrumentationRegistry.getTargetContext(),
                 LogSensorService.class);
 
-        serviceIntent.putExtra(LogSensorService.ACTIVITY_ID, HumanActivity.Id.STAND);
-        serviceIntent.putExtra(LogSensorService.SENSOR_PLACEMENT,
+        serviceIntent.putExtra(LogSensorService.EXTRA_ACTIVITY_ID, HumanActivity.Id.STAND);
+        serviceIntent.putExtra(LogSensorService.EXTRA_SENSOR_PLACEMENT,
                 SensorPlacement.HANDHELD.ordinal());
-        serviceIntent.putExtra(LogSensorService.LOG_DURATION_SECOND, logDuration);
-        serviceIntent.putExtra(LogSensorService.SENSOR_TO_READ, sensorToRead);
+        serviceIntent.putExtra(LogSensorService.EXTRA_DURATION_SECOND, logDuration);
+        serviceIntent.putExtra(LogSensorService.EXTRA_SENSOR_TO_READ, sensorToRead);
 
         IBinder binder = serviceRule.bindService(serviceIntent);
         service = ((LogSensorService.LogSensorBinder) binder).getService();

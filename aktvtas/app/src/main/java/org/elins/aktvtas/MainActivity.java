@@ -15,22 +15,18 @@ import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
-import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-
-import org.elins.aktvtas.preferences.Preferences;
 
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
-    private static final int DRAWER_ID_HOME = 0;
-    private static final int DRAWER_ID_PREDICTION = 1;
-    private static final int DRAWER_ID_TRAIN = 2;
-    private static final int DRAWER_ID_SETTINGS = 3;
-    private static final int DRAWER_ID_HELP = 4;
-    private static final int DRAWER_ID_ABOUT = 5;
+    private static final int DRAWER_ID_HOME = 1;
+    private static final int DRAWER_ID_PREDICTION = 2;
+    private static final int DRAWER_ID_TRAIN = 3;
+
+    private PredictionHistoryFragment predictionHistoryFragment;
+    private ActivityChooserFragment activityChooserFragment;
 
     public static void startActivity(Context context) {
         Intent intent = new Intent(context, MainActivity.class);
@@ -42,10 +38,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (! Preferences.deviceIsRegistered(this)) {
-            RegisterActivity.startActivity(this);
-        }
-
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -54,8 +46,10 @@ public class MainActivity extends AppCompatActivity {
         Drawer drawer = setupNavigationDrawer(toolbar);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        Fragment homeFragment = HomeFragment.newInstance();
-        transaction.add(R.id.content, homeFragment).commit();
+        predictionHistoryFragment = PredictionHistoryFragment.newInstance();
+        activityChooserFragment = ActivityChooserFragment.newInstance();
+
+        transaction.add(R.id.content, predictionHistoryFragment).commit();
     }
 
     private Drawer setupNavigationDrawer(Toolbar toolbar) {
@@ -66,21 +60,13 @@ public class MainActivity extends AppCompatActivity {
                 .withName(R.string.prediction);
         PrimaryDrawerItem train = new PrimaryDrawerItem().withIdentifier(DRAWER_ID_TRAIN)
                 .withName(R.string.train);
-        SecondaryDrawerItem settings = new SecondaryDrawerItem().withIdentifier(DRAWER_ID_SETTINGS)
-                .withName(R.string.settings);
-        SecondaryDrawerItem help = new SecondaryDrawerItem().withIdentifier(DRAWER_ID_HELP)
-                .withName(R.string.help);
-        SecondaryDrawerItem about = new SecondaryDrawerItem().withIdentifier(DRAWER_ID_ABOUT)
-                .withName(R.string.about);
 
         return new DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(toolbar)
                 .withAccountHeader(accountHeader)
                 .addDrawerItems(
-                        home, prediction, train,
-                        new DividerDrawerItem(),
-                        settings, help, about
+                        home, prediction, train
                 )
                 .withOnDrawerItemClickListener(drawerItemClickListener())
                 .build();
@@ -94,19 +80,17 @@ public class MainActivity extends AppCompatActivity {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
                 if (drawerItem.equals(DRAWER_ID_HOME)) {
-                    Fragment predictionFragment = HomeFragment.newInstance();
-                    transaction.replace(R.id.content, predictionFragment).commit();
+                    predictionHistoryFragment = PredictionHistoryFragment.newInstance();
+                    transaction.replace(R.id.content, predictionHistoryFragment).commit();
+                    getSupportActionBar().setTitle(R.string.app_name);
                 } else if (drawerItem.equals(DRAWER_ID_PREDICTION)) {
-                    PredictionActivity.startActivity(getApplicationContext());
+                    transaction.replace(R.id.content, activityChooserFragment).commit();
+                    activityChooserFragment.setMode(ActivityChooserFragment.MODE_PREDICTION);
+                    getSupportActionBar().setTitle(R.string.prediction);
                 } else if (drawerItem.equals(DRAWER_ID_TRAIN)) {
-                    Fragment trainingChooserFragment = TrainingChooserFragment.newInstance();
-                    transaction.replace(R.id.content, trainingChooserFragment).commit();
-                } else if (drawerItem.equals(DRAWER_ID_SETTINGS)) {
-                    Snackbar.make(view, R.string.settings, Snackbar.LENGTH_SHORT).show();
-                } else if (drawerItem.equals(DRAWER_ID_HELP)) {
-                    Snackbar.make(view, R.string.help, Snackbar.LENGTH_SHORT).show();
-                } else if (drawerItem.equals(DRAWER_ID_ABOUT)) {
-                    Snackbar.make(view, R.string.about, Snackbar.LENGTH_SHORT).show();
+                    transaction.replace(R.id.content, activityChooserFragment).commit();
+                    activityChooserFragment.setMode(ActivityChooserFragment.MODE_TRAINING);
+                    getSupportActionBar().setTitle(R.string.train);
                 }
 
                 return false;

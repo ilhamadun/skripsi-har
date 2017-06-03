@@ -12,6 +12,7 @@ import org.elins.aktvtas.R;
 
 import java.util.List;
 
+@Deprecated
 public class HumanActivityHistoryAdapter
         extends RecyclerView.Adapter<HumanActivityHistoryAdapter.ActivityViewHolder> {
 

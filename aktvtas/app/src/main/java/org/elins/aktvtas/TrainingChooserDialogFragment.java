@@ -14,22 +14,25 @@ import android.widget.ArrayAdapter;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
 
+import org.apache.commons.lang3.NotImplementedException;
 
 public class TrainingChooserDialogFragment extends DialogFragment implements
         AdapterView.OnItemSelectedListener {
 
-    NumberPicker trainingTimePicker;
-    String[] trainingTimeArray = new String[]{
-            "5", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55", "60"};
+    NumberPicker timePicker;
+    String[] timeArray = new String[]{
+            "1", "5", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55", "60"};
 
-    Spinner trainingPositionSpinner;
+    Spinner positionSpinner;
     int sensorPlacement;
+    int mode;
 
-    public static TrainingChooserDialogFragment newInstance(int id) {
+    public static TrainingChooserDialogFragment newInstance(int mode, int id) {
         TrainingChooserDialogFragment fragment = new TrainingChooserDialogFragment();
         Bundle args = new Bundle();
         args.putInt("id", id);
         fragment.setArguments(args);
+        fragment.mode = mode;
         return fragment;
     }
 
@@ -40,26 +43,30 @@ public class TrainingChooserDialogFragment extends DialogFragment implements
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_training_time, null);
 
-        trainingTimePicker = (NumberPicker) view.findViewById(R.id.training_time);
-        trainingTimePicker.setMinValue(0);
-        trainingTimePicker.setMaxValue(trainingTimeArray.length - 1);
-        trainingTimePicker.setDisplayedValues(trainingTimeArray);
+        timePicker = (NumberPicker) view.findViewById(R.id.training_time);
+        timePicker.setMinValue(0);
+        timePicker.setMaxValue(timeArray.length - 1);
+        timePicker.setDisplayedValues(timeArray);
 
-        trainingPositionSpinner = (Spinner) view.findViewById(R.id.training_position);
+        positionSpinner = (Spinner) view.findViewById(R.id.training_position);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.training_position_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        trainingPositionSpinner.setAdapter(adapter);
-        trainingPositionSpinner.setOnItemSelectedListener(this);
+        positionSpinner.setAdapter(adapter);
+        positionSpinner.setOnItemSelectedListener(this);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.training_options)
+        builder.setTitle(dialogTitle(mode))
                 .setView(view)
                 .setPositiveButton(R.string.start, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-                        startTrainingActivity();
+                        if (mode == ActivityChooserFragment.MODE_PREDICTION) {
+                            startPredictionActivity();
+                        } else {
+                            startTrainingActivity();
+                        }
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -71,10 +78,30 @@ public class TrainingChooserDialogFragment extends DialogFragment implements
         return builder.show();
     }
 
+    private int dialogTitle(int mode) {
+        int title;
+        if (mode == ActivityChooserFragment.MODE_PREDICTION) {
+            title = R.string.prediction_options;
+        } else {
+            title = R.string.training_options;
+        }
+
+        return title;
+    }
+
+    public void startPredictionActivity() {
+        int activityId = getArguments().getInt("id");
+        int trainingDuration = Integer.parseInt(
+                timeArray[timePicker.getValue()]) * 60;
+
+        PredictionActivity.startActivity(getActivity(), activityId, sensorPlacement,
+                trainingDuration);
+    }
+
     public void startTrainingActivity() {
         int activityId = getArguments().getInt("id");
         int trainingDuration = Integer.parseInt(
-                trainingTimeArray[trainingTimePicker.getValue()]) * 60;
+                timeArray[timePicker.getValue()]) * 60;
 
         Intent intent = new Intent(getActivity(), TrainingActivity.class);
         intent.putExtra(TrainingActivity.ACTIVITY_ID, activityId);

@@ -1,24 +1,23 @@
 package org.elins.aktvtas;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import org.elins.aktvtas.human.HumanActivity;
 
-import java.io.File;
+public class ActivityChooserFragment extends Fragment {
+    public static final int MODE_PREDICTION = 0;
+    public static final int MODE_TRAINING = 1;
 
-import static android.app.Activity.RESULT_OK;
+    private int mode = MODE_PREDICTION;
 
-public class TrainingChooserFragment extends Fragment {
-
-    public TrainingChooserFragment() {
+    public ActivityChooserFragment() {
         // Required empty public constructor
     }
 
@@ -26,10 +25,10 @@ public class TrainingChooserFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment TrainingChooserFragment.
+     * @return A new instance of fragment ActivityChooserFragment.
      */
-    public static TrainingChooserFragment newInstance() {
-        TrainingChooserFragment fragment = new TrainingChooserFragment();
+    public static ActivityChooserFragment newInstance() {
+        ActivityChooserFragment fragment = new ActivityChooserFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -77,9 +76,13 @@ public class TrainingChooserFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 DialogFragment dialog = TrainingChooserDialogFragment
-                        .newInstance(id);
+                        .newInstance(mode, id);
                 dialog.show(getFragmentManager(), "TrainingChooserDialogFragment");
             }
         });
+    }
+
+    public void setMode(int mode) {
+        this.mode = mode;
     }
 }
