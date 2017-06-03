@@ -41,6 +41,8 @@ class Normalize:
         - All features are filtered with median filter
 
     """
+    COLUMN_FORMAT = ['%.10f']  * 6 + ['%d']
+
     def __init__(self):
         os.makedirs('sample', exist_ok=True)
 
@@ -73,7 +75,7 @@ class Normalize:
             filtered_features = median_filter(dataset[:, :6])
             dataset = np.concatenate([filtered_features, dataset[:, 6:7]], axis=1)
             header = str(dataset.shape[0]) + ',6'
-            np.savetxt(output_path, dataset, delimiter=',', header=header, comments='')
+            np.savetxt(output_path, dataset, self.COLUMN_FORMAT, delimiter=',', header=header, comments='')
             print('Output:', output_path)
 
         def _class_id(activity_class):
@@ -127,7 +129,7 @@ class Normalize:
             filtered_features = median_filter(dataset[:, :6])
             dataset = np.concatenate([filtered_features, dataset[:, 6:7]], axis=1)
             header = str(dataset.shape[0]) + ',6'
-            np.savetxt(output_path, dataset, delimiter=',', header=header, comments='')
+            np.savetxt(output_path, dataset, self.COLUMN_FORMAT, delimiter=',', header=header, comments='')
             print('Output:', output_path)
 
         def _class_id(activity_class):
@@ -181,7 +183,7 @@ class Normalize:
             dataset = np.concatenate([filtered_acc, filtered_gyro, activity_id], 1)
 
             header = str(num_sample) + ',6'
-            np.savetxt(output_path, dataset, delimiter=',', header=header, comments='')
+            np.savetxt(output_path, dataset, self.COLUMN_FORMAT, delimiter=',', header=header, comments='')
             print('Saved to:', output_path)
 
         def _class_id(activity_class):
@@ -301,8 +303,8 @@ class Normalize:
             output_path = os.path.join(output_path, 'uci_har')
 
             header = str(dataset.shape[0]) + ',6'
-            np.savetxt(os.path.join(output_path, data_type + '.csv'), dataset, delimiter=',',
-                       header=header, comments='')
+            np.savetxt(os.path.join(output_path, data_type + '.csv'), dataset, self.COLUMN_FORMAT,
+                       delimiter=',', header=header, comments='')
 
         os.makedirs(output_path, exist_ok=True)
         _filter('train', input_path, output_path)
