@@ -9,6 +9,7 @@ import android.content.ServiceConnection;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Vibrator;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -150,6 +151,7 @@ public class PredictionActivity extends AppCompatActivity
 
     private void startPredictionCountdown() {
         final SimpleDateFormat dateFormat = new SimpleDateFormat("mm:ss", Locale.getDefault());
+        final Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         predictionCountDown = new CountDownTimer((acquisition.getDuration() * 1000) + 1000, 200) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -161,6 +163,7 @@ public class PredictionActivity extends AppCompatActivity
             public void onFinish() {
                 stopPredictionService();
                 savePredictionHistory();
+                vibrator.vibrate(500);
                 finish();
             }
         }.start();
