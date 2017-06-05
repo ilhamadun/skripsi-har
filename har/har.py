@@ -1,5 +1,6 @@
 import io
 import itertools
+import glob
 import math
 import os
 import fire
@@ -15,31 +16,30 @@ class HARConvLSTM:
         self.session = tf.Session()
         self.log_train, self.log_test = None, None
         self.best_directory, self.last_directory = None, None
-        self.features = tf.placeholder(tf.float32, [None, 900], name='input')
+        self.checkpoint_path = None
+        self.features = tf.placeholder(tf.float32, [None, 600], name='input')
         self.target = tf.placeholder(tf.float32, [None, 10], name='target')
         self.keep_prob = tf.placeholder(tf.float32, name='keep_prob')
 
         features = self.__preprocessing()
-        conv1_input = tf.reshape(features, [-1, 100, 1, 12])
-        conv1 = self.__conv_layer(conv1_input, [1, 5, 12, 32], 'conv1')
-        conv2 = self.__conv_layer(conv1, [1, 5, 32, 32], 'conv2')
+        conv1_input = tf.reshape(features, [-1, 100, 1, 8])
+        conv1 = self.__conv_layer(conv1_input, [1, 3, 8, 32], 'conv1')
+        conv2 = self.__conv_layer(conv1, [1, 3, 32, 32], 'conv2')
         lstm_input = tf.reshape(conv2, [-1, 100, 32])
         lstm = self.__lstm_layers(lstm_input, 128, 2)
-
         self.output = slim.fully_connected(lstm, 10, activation_fn=tf.nn.softmax, scope='output')
         self.train_op, self.accuracy = self.__train_layers(self.output, self.target)
 
     def __preprocessing(self):
         with tf.name_scope('preprocessing'):
-            reshaped_input = tf.reshape(self.features, [-1, 100, 9])
+            reshaped_input = tf.reshape(self.features, [-1, 100, 6])
 
             with tf.name_scope('magnitude'):
-                acc, gyr, lin_acc = tf.split(reshaped_input, 3, 2)
+                acc, gyr = tf.split(reshaped_input, 2, 2)
                 acc = self.__magnitude(acc, 'accelerometer')
                 gyr = self.__magnitude(gyr, 'gyroscope')
-                lin_acc = self.__magnitude(lin_acc, 'linear_accelerometer')
 
-            return tf.concat([acc, gyr, lin_acc], 2)
+            return tf.concat([acc, gyr], 2)
 
     def __magnitude(self, raw_input, name_scope):
         with tf.name_scope(name_scope):
@@ -63,9 +63,7 @@ class HARConvLSTM:
 
             lstm = [tf.contrib.rnn.BasicLSTMCell(num_units) for _ in range(num_layers)]
             lstm_cells = tf.contrib.rnn.MultiRNNCell(lstm)
-            lstm_dropout = tf.contrib.rnn.DropoutWrapper(lstm_cells,
-                                                         output_keep_prob=self.keep_prob)
-            lstm_outputs, _ = tf.nn.dynamic_rnn(lstm_dropout, lstm_input, dtype=tf.float32,
+            lstm_outputs, _ = tf.nn.dynamic_rnn(lstm_cells, lstm_input, dtype=tf.float32,
                                                 time_major=True)
 
             return lstm_outputs[-1]
@@ -143,14 +141,23 @@ class HARConvLSTM:
             tf.summary.scalar('min', tf.reduce_min(var))
             tf.summary.histogram('histogram', var)
 
-    def save_checkpoint(self, saver):
+    def write_graph(self, output):
+        with self.session.as_default():
+            tf.train.write_graph(self.session.graph.as_graph_def(), self.best_directory, output)
+
+            print('Graph definitions created on', os.path.join(self.best_directory, output))
+
+    def save_checkpoint(self, saver, step):
         checkpoint_prefix = os.path.join(self.last_directory, 'saved_checkpoint')
-        saver.save(self.session, checkpoint_prefix, global_step=0)
+        self.checkpoint_path = saver.save(self.session, checkpoint_prefix, global_step=step)
+
 
     def train(self, features, target, batch_size, number_of_steps):
         merged_summary = tf.summary.merge_all()
-        saver = tf.train.Saver()
+        saver = tf.train.Saver(max_to_keep=10)
         train_iterator = data.iterator(features, target, features.shape[0], batch_size)
+
+        self.write_graph('graph.pbtxt')
 
         print('Training %d data in %d steps...' % (features.shape[0], number_of_steps))
 
@@ -165,6 +172,7 @@ class HARConvLSTM:
                         self.keep_prob: 1.0
                     })
                     self.log_test.add_summary(summary, step)
+                    self.save_checkpoint(saver, step)
 
                     print("step %5d\taccuracy: %5g" % (step, accuracy))
 
@@ -174,8 +182,6 @@ class HARConvLSTM:
                     self.keep_prob: 0.2
                 })
                 self.log_train.add_summary(summary, step)
-                self.save_checkpoint(saver)
-
 
     def test(self, features, target):
         print('Testing %d sample...' % (features.shape[0]))
@@ -208,7 +214,7 @@ class HARConvLSTM:
             'WALKING_UPSTAIRS',
             'WALKING_DOWNSTAIRS',
             'BIKING',
-            'NONE',
+            'LAYING',
             'NONE',
             'NONE'
         ]
@@ -245,14 +251,15 @@ def epoch_to_steps(epoch, data_length, batch_size):
 
     return number_of_steps
 
-def main(train=True, test=True, epoch=5, batch_size=100, logdir=None):
+def main(datadir, train=True, test=True, epoch=5, batch_size=100, logdir=None):
     model = HARConvLSTM()
 
     if logdir:
         model.initialize_logs(os.path.join(logdir, 'summary'))
         model.initialize_checkpoint(os.path.join(logdir, 'checkpoint'))
 
-    filenames = ['sample/activity_{0}.csv'.format(i) for i in range(1, 11)]
+    filepath = os.path.join(datadir, '**', '*.csv')
+    filenames = glob.glob(filepath, recursive=True)
     target_num = 10
     window_size = 100
     train_data, test_data, train_target, test_target = data.get(filenames, target_num,
