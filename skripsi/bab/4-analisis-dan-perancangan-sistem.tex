@@ -1,0 +1,185 @@
+\chapter{ANALISIS DAN PERANCANGAN SISTEM}
+
+
+%------------------------------------------------------------------------------
+% Analisis Sistem
+%------------------------------------------------------------------------------
+\section{Analisis Sistem}
+Pada penelitian ini dibuat sistem untuk mengenali aktivitas manusia secara \textit{realtime} dengan sensor akselerometer dan giroskop yang tertanam pada ponsel cerdas. Sistem dirancang menjadi dua bagian, . Rancangan sistem ini dapat dilihat pada Gambar~\ref{gambar:diagram-blok-sistem}.
+
+
+%------------------------------------------------------------------------------
+% Peralatan
+%------------------------------------------------------------------------------
+\section{Peralatan}
+Peralatan yang digunakan untuk mendukung penelitian ini terdiri dari perangkat keras dan perangkat lunak berikut:
+
+\subsection{Perangkat Keras}
+Perangkat keras yang digunakan adalah laptop HP 14-am015tx dengan CPU Intel Core i5--6200U 2.3 GHz dan RAM 12GB\@.
+
+\subsection{Sistem Perangkat Lunak}
+\begin{enumerate}
+    \item Ubuntu 16.04 64 bit sebagai sistem operasi laptop
+    \item TensorFlow sebagai pustaka komputasi numerik
+    \item Visual Studio Code sebagai \textit{text editor} untuk menulis program sistem klasifikasi
+    \item Android Studio sebagai \textit{Integrated Development Environment} (IDE) untuk mengembangkan aplikasi Android
+    \item Git sebagai aplikasi pengontrol versi terdistribusi
+\end{enumerate}
+
+
+%------------------------------------------------------------------------------
+% Rancangan Perangkat Lunak
+%
+% TODO:
+% - Offline:
+%   - Model klasifikasi
+%   - Pelatihan
+%   - Test
+% - Online:
+%   - Klasifikasi
+%
+%------------------------------------------------------------------------------
+\section{Rancangan Perangkat Lunak}
+Sistem dirancang untuk mengklasifikasikan aktivitas manusia berdasarkan data dari sensor akselerometer dan giroskop pada ponsel cerdas. Aliran data sensor pada proses klasifikasi ditunjukkan pada Gambar~\ref{gambar:state-diagram-sistem}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=12cm]{gambar/analisis-perancangan-sistem/state-diagram.png}
+    \caption{State diagram model klasifikasi aktivitas manusia}
+    \label{gambar:state-diagram-sistem}
+\end{figure}
+
+\section{Model Klasifikasi}
+
+\subsection{Data Masukan}
+Sensor akselerometer dan giroskop menghasilkan nilai bacaan dengan tiga sumbu, yaitu sumbu $x$, $y$ dan $z$. Nilai sensor akselerometer $\pmb{a}$ dan giroskop $\pmb{g}$ dinotasikan sebagai vektor~\ref{eq:vektor-akselerometer} dan~\ref{eq:vektor-giroskop}.
+
+\begin{equation}
+    \label{eq:vektor-akselerometer}
+    \pmb{a} = 
+    \begin{bmatrix}
+        a_x \\
+        a_y \\
+        a_z
+    \end{bmatrix}
+\end{equation}
+
+\begin{equation}
+    \label{eq:vektor-giroskop}
+    \pmb{g} = 
+    \begin{bmatrix}
+        g_x \\
+        g_y \\
+        g_z
+    \end{bmatrix}
+\end{equation}
+
+Nilai sensor pada sumbu $x$, $y$ dan $z$ dipengaruhi oleh posisi dan arah gerak sensor. Mengingat posisi ponsel cerdas saat digunakan tidak menentu, maka perlu dicari nilai yang tidak dipengaruhi oleh arah gerak sensor, yaitu besar dari masing-masing vektor $\pmb{a}$ dan $\pmb{g}$. Besar vektor akseleromter dan giroskop dapat dicari dengan Persamaan~\ref{eq:norm-akselerometer} dan~\ref{eq:norm-giroskop}.
+
+\begin{equation}
+    \label{eq:norm-akselerometer}
+    |\pmb{a}| = \sqrt{a_x^2 + a_y^2 + a_z^2}
+\end{equation}
+
+\begin{equation}
+    \label{eq:norm-giroskop}
+    |\pmb{g}| = \sqrt{g_x^2 + g_y^2 + g_z^2}
+\end{equation}
+
+Nilai vektor sensor dan besarnya disusun menjadi matriks akselerometer $\pmb{A}$ dan matriks giroskop $\pmb{G}$ seperti pada Persamaan~\ref{eq:matriks-akselerometer} dan~\ref{eq:matriks-giroskop}.
+
+\begin{equation}
+    \label{eq:matriks-akselerometer}
+    \pmb{A} = 
+    \begin{bmatrix}
+        a_x & a_y & a_z & |\pmb{a}|
+    \end{bmatrix}
+\end{equation}
+
+\begin{equation}
+    \label{eq:matriks-giroskop}
+    \pmb{G} = 
+    \begin{bmatrix}
+        g_x & g_y & g_z & |\pmb{g}|
+    \end{bmatrix}
+\end{equation}
+
+Model klasifikasi menerima masukan tensor $\tensorsym{X}$. Jika $m_X$ jumlah baris $\tensorsym{X}$, $n_X$ jumlah kolom $\tensorsym{X}$ dan $c_X$ jumlah anggota masing-masing matriks anggota $\tensorsym{X}$, ukuran tensor $\tensorsym{X}$ adalah $m_X \times n_X \times c_X = 100 \times 2 \times 4$. Setiap baris pada tensor tersebut merupakan \textit{sample} dari matriks akselerometer $\pmb{A}$ dan giroskop $\pmb{G}$ yang diurutkan dari waktu $t_{0}$ sampai $t_{99}$.
+
+\begin{equation}
+    \tensorsym{X}_{m_X \times n_X \times c_X} =
+    \begin{bmatrix}
+        \pmb{A}_{t_0} & \pmb{G}_{t_0} \\
+        \pmb{A}_{t_1} & \pmb{G}_{t_1} \\
+        \cdots & \cdots \\
+        \pmb{A}_{t_{99}} & \pmb{G}_{t_{99}} \\
+    \end{bmatrix}
+\end{equation}
+
+\subsection{Lapisan Konvolusi}
+Tensor $\tensorsym{X}$ dilewatkan melalui dua lapisan kovolusi untuk mencari fitur-fitur abstrak dari data sensor. Lapisan konvolusi menggunakan kernel $\tensorsym{K}$ yang merupakan tensor dengan ukuran $m_K \times n_K \times c_X \times c_K$. Nilai masing-masing anggota $\tensorsym{K}$ adalah bobot yang digunakan bersama oleh setiap jendela komputasi. Karena digunakan bersama, jumlah bobot dapat diminalisir menjadi $m_K \times n_K \times c_X$.
+
+Setiap lapisan konvolusi juga dilengkapi oleh bias $\pmb{b}$ dan fungsi aktivasi. Fungsi aktivasi yang digunakan adalah ReLU \textit{(Rectified Linear Unit)}, didefinisikan dalam Persamaan~\ref{eq:relu}.
+
+\begin{equation}
+    g(z) = \max(0,z)
+    \label{eq:relu}
+\end{equation}
+
+Nilai keluaran lapisan konvolusi dapat dihitung dengan melakukan konvolusi antara $\tensorsym{I}$ dengan bobot $\tensorsym{W}$. Hasil konvolusi ditambahkan dengan bias dan dimasukkan ke dalam fungsi ReLU, seperti pada Persamaan~\ref{eq:konvolusi-kernel}. Nilai optimal bobot dan bias dicari melalui tahap pelatihan.
+
+\begin{equation}
+    H(i,j,k) = g((\tensorsym{I} * \tensorsym{W})(i,j,k) + \pmb{b})
+    \label{eq:konvolusi-kernel}
+\end{equation}
+
+dengan
+
+\begin{equation}
+    (\tensorsym{I} * \tensorsym{W})(i,j,k) = \sum_{m}\sum_{n}\sum_{c}I(m,n,c)W(i-m, j-n, k-c)
+\end{equation}
+
+Perhitungan tersebut dilakukan untuk setiap jendela komputasi. Berikut ini tahapan perhitungan dalam lapisan konvolusi:
+
+\begin{enumerate}
+\item Jendela komputasi $\tensorsym{I}$ dibuat dari $\tensorsym{X}$ dengan ukuran $m_K \times n_K \times c_X$
+\item Untuk setiap jendela, lakukan perhitungan konvolusi dengan Persamaan~\ref{eq:konvolusi-kernel}.
+\item Lakukan tahap 1 dan 2 dengan langkah antar jendela sebesar $\pmb{S}$
+\item Susun hasil perhitungan setiap jendela menjadi tensor $\tensorsym{H}$
+\end{enumerate}
+
+Pada lapisan konvolusi pertama, ukuran kernel yang digunakan adalah $5 \times 2 \times 4 \times 32$ dan langkah antar jendela $\pmb{S} = [\begin{matrix}2 & 2\end{matrix}]$ sehingga menghasilkan keluaran $\tensorsym{H}^1$ dengan ukuran $50 \times 2 \times 32$. Pada lapisan konvolusi ke dua, ukuran kernel yang digunakan adalah $5 \times 2 \times 32 \times 32$ dan langkah antar jendela $\pmb{S} = [\begin{matrix}2 & 2\end{matrix}]$ sehingga menghasilkan keluaran $\tensorsym{H}^2$ dengan ukuran $25 \times 2 \times 32$.
+
+\subsection{Lapisan LSTM}
+\subsection{Lapisan Dense}
+
+\section{Pelatihan}
+\section{Klasifikasi Pada Ponsel Cerdas}
+
+
+%------------------------------------------------------------------------------
+% Pengumpulan Data -> Masukkan saja ke rancangan perngkat lunak
+%
+% TODO:
+% - Sumber Data
+%   - Dataset publik
+%   - Pengambilan data pada ponsel cerdas
+% - Preprocessing
+% - Sliding window
+% - Pembagian data latih, validasi dan tes
+%
+%------------------------------------------------------------------------------
+\section{Pengambilan dan Pengolahan Data}
+\subsection{Pengambilan Data}
+\subsection{\textit{Preprocessing}}
+\subsection{\textit{Sliding Window}}
+\subsection{Pembagian Data Latih, Validasi dan Uji}
+
+
+%------------------------------------------------------------------------------
+% Pengujian
+%
+% Tabel: indikator keberhasilan
+% Menjawab judul rumusan masalah
+%------------------------------------------------------------------------------
+\section{Rencana Pengujian}
