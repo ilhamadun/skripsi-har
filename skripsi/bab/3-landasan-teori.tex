@@ -213,6 +213,7 @@ dengan $\pmb{b}, \pmb{U}$ dan $\pmb{W}$ sebagai bias, bobot input dan bobot peng
 Output LSTM $h_{i}^{(t)}$ dapat dimatikan melalui gerbang output $q_{i}^{(t)}$, yang juga menggunakan unit sigmoid:
 
 \begin{align}
+    \label{eq:output-lstm}
     h_{i}^{(t)} &= \tanh\left(s_{i}^{(t)}\right) q_{i}{(t)} \\
     q_{i}^{(t)} &= \sigma\left(b_{i}^{o} + \sum_{j} U_{i,j}^{o} x_{j}^{(t)} + \sum_{j} W_{i,j}^{o} h_{j}^{(t-1)} \right)
 \end{align}

@@ -26,7 +26,6 @@ Perangkat keras yang digunakan adalah laptop HP 14-am015tx dengan CPU Intel Core
     \item Git sebagai aplikasi pengontrol versi terdistribusi
 \end{enumerate}
 
-
 %------------------------------------------------------------------------------
 % Rancangan Perangkat Lunak
 %
@@ -52,6 +51,8 @@ Sistem dirancang untuk mengklasifikasikan aktivitas manusia berdasarkan data dar
 \section{Model Klasifikasi}
 
 \subsection{Data Masukan}
+Data masukan adalah rangkaian data \textit{time series} dari sensor akselerometer dan giroskop. Rangkaian data tersebut diambil dari ponsel cerdas dan dikelompokkan dengan \textit{sliding window}.
+
 Sensor akselerometer dan giroskop menghasilkan nilai bacaan dengan tiga sumbu, yaitu sumbu $x$, $y$ dan $z$. Nilai sensor akselerometer $\pmb{a}$ dan giroskop $\pmb{g}$ dinotasikan sebagai vektor~\ref{eq:vektor-akselerometer} dan~\ref{eq:vektor-giroskop}.
 
 \begin{equation}
@@ -126,18 +127,22 @@ Setiap lapisan konvolusi juga dilengkapi oleh bias $\pmb{b}$ dan fungsi aktivasi
     \label{eq:relu}
 \end{equation}
 
-Nilai keluaran lapisan konvolusi dapat dihitung dengan melakukan konvolusi antara $\tensorsym{I}$ dengan bobot $\tensorsym{W}$. Hasil konvolusi ditambahkan dengan bias dan dimasukkan ke dalam fungsi ReLU, seperti pada Persamaan~\ref{eq:konvolusi-kernel}. Nilai optimal bobot dan bias dicari melalui tahap pelatihan.
+Nilai keluaran lapisan konvolusi dapat dihitung dengan melakukan konvolusi antara jendela komputasi $\tensorsym{I}$ dengan bobot $\tensorsym{W}$. Hasil konvolusi ditambahkan dengan bias dan dimasukkan ke dalam fungsi ReLU\@. Operasi tersebut didefinisikan sebagai
 
 \begin{equation}
     H(i,j,k) = g((\tensorsym{I} * \tensorsym{W})(i,j,k) + \pmb{b})
     \label{eq:konvolusi-kernel}
 \end{equation}
 
+\noindent
 dengan
 
 \begin{equation}
     (\tensorsym{I} * \tensorsym{W})(i,j,k) = \sum_{m}\sum_{n}\sum_{c}I(m,n,c)W(i-m, j-n, k-c)
 \end{equation}
+
+\noindent
+Nilai optimal bobot dan bias dicari melalui tahap pelatihan.
 
 Perhitungan tersebut dilakukan untuk setiap jendela komputasi. Berikut ini tahapan perhitungan dalam lapisan konvolusi:
 
@@ -148,14 +153,75 @@ Perhitungan tersebut dilakukan untuk setiap jendela komputasi. Berikut ini tahap
 \item Susun hasil perhitungan setiap jendela menjadi tensor $\tensorsym{H}$
 \end{enumerate}
 
-Pada lapisan konvolusi pertama, ukuran kernel yang digunakan adalah $5 \times 2 \times 4 \times 32$ dan langkah antar jendela $\pmb{S} = [\begin{matrix}2 & 2\end{matrix}]$ sehingga menghasilkan keluaran $\tensorsym{H}^1$ dengan ukuran $50 \times 2 \times 32$. Pada lapisan konvolusi ke dua, ukuran kernel yang digunakan adalah $5 \times 2 \times 32 \times 32$ dan langkah antar jendela $\pmb{S} = [\begin{matrix}2 & 2\end{matrix}]$ sehingga menghasilkan keluaran $\tensorsym{H}^2$ dengan ukuran $25 \times 2 \times 32$.
+Pada lapisan konvolusi pertama, ukuran kernel yang digunakan adalah $5 \times 2 \times 4 \times 32$ dan langkah antar jendela $\pmb{S} = [\begin{matrix}2 & 2\end{matrix}]$ sehingga menghasilkan keluaran $\tensorsym{H}^1$ dengan ukuran $50 \times 2 \times 32$.
+
+Pada lapisan konvolusi ke dua, ukuran kernel yang digunakan adalah $5 \times 2 \times 32 \times 32$ dan langkah antar jendela $\pmb{S} = [\begin{matrix}2 & 2\end{matrix}]$ sehingga menghasilkan keluaran $\tensorsym{H}^2$ dengan ukuran $25 \times 2 \times 32$.
+
+Perbandingan \textit{hyperparameter} lapisan konvolusi pertama dan kedua dapat dilihat pada Tabel~\ref{table:hyperparameter-lapisan-konvolusi}.
+
+\begin{table}[h!]
+    \centering
+    \caption{\textit{Hyperparameter} lapisan konvolusi}
+    \begin{tabular}{ |p{1.5cm}|p{3cm}|p{2cm}|p{1.5cm}|p{1.7cm}|p{2cm}| }
+        \hline
+        \textbf{Lapisan} & \textbf{Ukuran Kernel} & \textbf{Langkah} & \textbf{Ukuran Bias} & \textbf{Jumlah Bobot} & \textbf{Ukuran Keluaran} \\
+
+        \hline
+        1 & $5 \times 2 \times 4 \times 32$ & $[\begin{matrix}2 & 2\end{matrix}]$ & $32$ & 1280 & $50 \times 2 \times 32$ \\
+
+        \hline
+        2 & $5 \times 2 \times 32 \times 32$ & $[\begin{matrix}2 & 2\end{matrix}]$ & $32$ & 10240 & $25 \times 2 \times 32$ \\
+
+        \hline
+    \end{tabular}
+    \label{table:hyperparameter-lapisan-konvolusi}
+\end{table}
 
 \subsection{Lapisan LSTM}
+Setelah melalui lapisan konvolusi, hasil keluarannya dilewatkan melalui dua lapisan LSTM\@. Kedua lapisan LSTM dibuat dengan 128 \textit{hidden unit}. Masing-masing lapisan memiliki bobot antar input ke hidden $\pmb{U}$, bobot antar hidden ke output $\pmb{V}$, bobot antar hidden ke hidden $\pmb{W}$, serta bias $\pmb{b}$ dan $\pmb{c}$. Jika diberikan masukan matriks $\pmb{X}_{m \times n}$, $\pmb{x}^{(t)}$ merupakan subset dari $\pmb{X}$ pada langkah waktu $t$ dari $t = 1$ sampai $t = m$. Keluaran LSTM $\pmb{h}^{(t)}$ dapat dicari dengan Persamaan~\ref{eq:output-lstm}.
+
+Sel-sel LSTM pada lapisan pertama disusun dengan arsitektur \textit{many-to-many} seperti pada Gambar~\ref{gambar:many-to-one}. Masukan lapisan LSTM pertama diambil dari keluaran lapisan konvolusi $\tensorsym{H}^2$ yang bentuknya diubah dari $25 \times 2 \times 32$ menjadi $25 \times 64$ dengan meratakan anggota-anggota pada dimensi ke dua dan ke tiga. Dengan begitu, lapisan LSTM pertama dapat dibentangkan menjadi $25$ langkah waktu. Masing-masing langkah waktu menerima masukan vektor yang terdiri dari $64$ fitur. Karena lapisan LSTM menggunakan arsitektur \textit{many-to-many}, memiliki $25$ langkah waktu dan disusun dari $128$ \textit{hidden unit}, maka keluaran dari lapisan ini adalah matriks fitur dengan ukuran $25 \times 128$.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=5cm]{gambar/analisis-perancangan-sistem/many-to-many.png}
+    \caption{Arsitektur lapisan LSTM \textit{many-to-many}}
+    \label{gambar:many-to-many}
+\end{figure}
+
+Sel-sel LSTM pada lapisan kedua disusun dengan arsitektur \textit{many-to-one} seperti pada Gambar~\ref{gambar:many-to-one}. Masukan lapisan LSTM kedua diambil dari keluaran lapisan LSTM pertama. Lapisan ini dapat dibentangkan menjadi $25$ langkah waktu dan masing-masing langkah waktu menerima masukan vektor yang terdiri dari $128$ fitur. Karena arsitektur yang digunakan merupakan arsitektur \textit{many-to-one} dan disusun dari $128$ \textit{hidden unit}, maka keluaran dari lapisan LSTM kedua hanya diambil dari keluaran pada langkah waktu terakhir, yaitu $\pmb{h}^{(t)}$ pada saat $t = m$. Dengan begitu, keluaran lapisan LSTM kedua merupakan vektor yang terdiri dari $128$ fitur.
+
+Perbandingan \textit{hyperparameter} lapisan LSTM pertama dan kedua dapat dilihat pada Tabel~\ref{table:hyperparameter-lapisan-lstm}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=5cm]{gambar/analisis-perancangan-sistem/many-to-one.png}
+    \caption{Arsitektur lapisan LSTM \textit{many-to-one}}
+    \label{gambar:many-to-one}
+\end{figure}
+
+\begin{table}[h!]
+    \centering
+    \caption{\textit{Hyperparameter} lapisan LSTM}
+    \begin{tabular}{ |p{1.5cm}|p{1.5cm}|p{2cm}|p{1.7cm}|p{2.5cm}|p{2cm}| }
+        \hline
+        \textbf{Lapisan} & \textbf{\textit{Hidden Unit}} & \textbf{Ukuran Masukan} & \textbf{Langkah Waktu} & \textbf{Arsitektur} & \textbf{Ukuran Keluaran} \\
+
+        \hline
+        1 & $128$ & $25 \times 64$ & $25$ & \textit{many-to-many} & $25 \times 128$ \\
+
+        \hline
+        2 & $128$ & $25 \times 128$ & $25$ & \textit{many-to-one} & $128$ \\
+
+        \hline
+    \end{tabular}
+    \label{table:hyperparameter-lapisan-lstm}
+\end{table}
+
 \subsection{Lapisan Dense}
 
 \section{Pelatihan}
 \section{Klasifikasi Pada Ponsel Cerdas}
-
 
 %------------------------------------------------------------------------------
 % Pengumpulan Data -> Masukkan saja ke rancangan perngkat lunak
@@ -169,12 +235,10 @@ Pada lapisan konvolusi pertama, ukuran kernel yang digunakan adalah $5 \times 2 
 % - Pembagian data latih, validasi dan tes
 %
 %------------------------------------------------------------------------------
-\section{Pengambilan dan Pengolahan Data}
+\section{Pengambilan dan Pengondisian Data}
 \subsection{Pengambilan Data}
-\subsection{\textit{Preprocessing}}
 \subsection{\textit{Sliding Window}}
 \subsection{Pembagian Data Latih, Validasi dan Uji}
-
 
 %------------------------------------------------------------------------------
 % Pengujian
