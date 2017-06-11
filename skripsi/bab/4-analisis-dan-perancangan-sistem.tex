@@ -345,6 +345,28 @@ Data tersebut dibagi untuk pelatihan dan pengujian. Seluruh data terlebih dulu d
 
 
 \section{Klasifikasi Pada Ponsel Cerdas}
+Proses klasifikasi pada ponsel cerdas ditunjukkan pada Gambar~\ref{gambar:diagram-alir-klasifikasi-ponsel-cerdas}. Sensor akselerometer dan giroskop dibaca dengan \textit{sampling rate} 50 Hz. Masing-masing sensor menghasilkan data dengan tiga sumbu, sehingga satu kali pembacaan menghasilkan enam data. Hasil bacaannya dikumpulkan menjadi jendela berisi 100 sample dengan tumpang tindih 50\%. Dengan begitu, satu jendela data terdiri dari pembacaan sensor selama dua detik dan jendela baru dibuat setiap satu detik. Setelah jendela terpenuhi, jendela tersebut dijadikan sebagai masukan model klasifikasi yang telah dibuat. Proses ini menghasilkan kelas aktivitas manusia yang sesuai dengan bacaan sensor.
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[node distance=2cm]
+        \node (mulai) [startstop] {Mulai};
+        \node (baca-sensor) [io, below of=mulai] {Baca sensor};
+        \node (susun-jendela) [process, below of=baca-sensor] {Susun jendela};
+        \node (jendela-siap) [decision, below of=susun-jendela, yshift=-1cm] {Jendela siap?};
+        \node (klasifikasi) [process, below of=jendela-siap, yshift=-1cm] {Klasifikasi};
+        \node (selesai) [startstop, below of=klasifikasi] {Selesai};
+
+        \draw [arrow] (mulai) -- (baca-sensor);
+        \draw [arrow] (baca-sensor) -- (susun-jendela);
+        \draw [arrow] (susun-jendela) -- (jendela-siap);
+        \draw [arrow] (jendela-siap) -- node[anchor=south] {tidak} (4,-7) -- (4,-2) -- (baca-sensor);
+        \draw [arrow] (jendela-siap) -- node[anchor=west] {ya} (klasifikasi);
+        \draw [arrow] (klasifikasi) -- (selesai);
+    \end{tikzpicture}
+    \caption{Diagram alir klasifikasi pada ponsel cerdas}
+    \label{gambar:diagram-alir-klasifikasi-ponsel-cerdas}
+\end{figure}
 
 %------------------------------------------------------------------------------
 % Pengujian
