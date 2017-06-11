@@ -22,10 +22,10 @@ class HARConvLSTM:
         self.keep_prob = tf.placeholder(tf.float32, name='keep_prob')
 
         features = self.__preprocessing()
-        conv1_input = tf.reshape(features, [-1, 100, 1, 8])
-        conv1 = self.__conv_layer(conv1_input, [1, 3, 8, 32], 'conv1')
-        conv2 = self.__conv_layer(conv1, [1, 3, 32, 32], 'conv2')
-        lstm_input = tf.reshape(conv2, [-1, 100, 32])
+        conv1_input = tf.reshape(features, [-1, 100, 2, 4])
+        conv1 = self.__conv_layer(conv1_input, [5, 2, 4, 32], 'conv1')
+        conv2 = self.__conv_layer(conv1, [5, 2, 32, 32], 'conv2')
+        lstm_input = tf.reshape(conv2, [-1, 25, 64])
         lstm = self.__lstm_layers(lstm_input, 128, 2)
         self.output = slim.fully_connected(lstm, 10, activation_fn=tf.nn.softmax, scope='output')
         self.train_op, self.accuracy = self.__train_layers(self.output, self.target)
@@ -53,9 +53,25 @@ class HARConvLSTM:
             weight = self.__weight_variable(filters)
             bias = self.__bias_variable([filters[3]])
 
-            conv = tf.nn.conv2d(tensor_in, weight, [1, 1, 1, 1], 'SAME')
+            conv = tf.nn.conv2d(tensor_in, weight, [1, 2, 1, 1], 'SAME')
             conv = tf.nn.bias_add(conv, bias)
             return tf.nn.relu(conv)
+
+    def __weight_variable(self, shape):
+        with tf.name_scope('weights'):
+            initial = tf.random_normal(shape)
+            weights = tf.Variable(initial)
+            self.__variable_summaries(weights)
+
+        return weights
+
+    def __bias_variable(self, shape):
+        with tf.name_scope('biases'):
+            initial = tf.random_normal(shape)
+            biases = tf.Variable(initial)
+            self.__variable_summaries(biases)
+
+        return biases
 
     def __lstm_layers(self, tensor_in, num_units, num_layers):
         with tf.name_scope('LSTM'):
@@ -63,7 +79,9 @@ class HARConvLSTM:
 
             lstm = [tf.contrib.rnn.BasicLSTMCell(num_units) for _ in range(num_layers)]
             lstm_cells = tf.contrib.rnn.MultiRNNCell(lstm)
-            lstm_outputs, _ = tf.nn.dynamic_rnn(lstm_cells, lstm_input, dtype=tf.float32,
+            lstm_outputs, _ = tf.nn.dynamic_rnn(lstm_cells,
+                                                lstm_input,
+                                                dtype=tf.float32,
                                                 time_major=True)
 
             return lstm_outputs[-1]
@@ -84,32 +102,6 @@ class HARConvLSTM:
                 tf.summary.scalar('accuracy', accuracy)
 
         return train_op, accuracy
-
-    def __weight_variable(self, shape):
-        """ Create initial weight variable
-
-        Keyword arguments:
-        shape -- weight Tensor shape
-        """
-        with tf.name_scope('weights'):
-            initial = tf.random_normal(shape)
-            weights = tf.Variable(initial)
-            self.__variable_summaries(weights)
-
-        return weights
-
-    def __bias_variable(self, shape):
-        """ Create initial bias variable
-
-        Keyword argumetns:
-        shape -- bias Tensor shape
-        """
-        with tf.name_scope('biases'):
-            initial = tf.random_normal(shape)
-            biases = tf.Variable(initial)
-            self.__variable_summaries(biases)
-
-        return biases
 
     def initialize_logs(self, logdir):
         train_path = os.path.join(logdir, 'train')

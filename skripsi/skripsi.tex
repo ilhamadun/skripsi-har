@@ -16,15 +16,36 @@
 	numbers=left,
  	numberstyle=\scriptsize,
 	frame=tb,
+	xleftmargin=2em,
+	framexleftmargin=1.5em,
     aboveskip=10pt,
-	tabsize=4,
+	tabsize=2,
 	columns=fixed,
 	showstringspaces=false,
 	showtabs=false,
 	keepspaces,
 	commentstyle=\color{red},
-	keywordstyle=\color{blue}
+	keywordstyle=\color{blue},
 }
+
+\usepackage[section]{minted}
+\setminted{
+	linenos,
+	autogobble,
+	fontsize=\scriptsize,
+	frame=lines,
+	style=colorful,
+	breaklines,
+	breakautoindent=true
+}
+\setminted[python]{
+	python3=true
+}
+\setmintedinline{
+	fontsize=\small
+}
+
+\usepackage[labelsep=period]{caption}
 
 %------------------------------------------------------------------------------
 % Title

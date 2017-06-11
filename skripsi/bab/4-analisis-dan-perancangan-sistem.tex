@@ -108,6 +108,7 @@ Nilai vektor sensor dan besarnya disusun menjadi matriks akselerometer $\pmb{A}$
 Model klasifikasi menerima masukan tensor $\tensorsym{X}$. Jika $m_X$ jumlah baris $\tensorsym{X}$, $n_X$ jumlah kolom $\tensorsym{X}$ dan $c_X$ jumlah anggota masing-masing matriks anggota $\tensorsym{X}$, ukuran tensor $\tensorsym{X}$ adalah $m_X \times n_X \times c_X = 100 \times 2 \times 4$. Setiap baris pada tensor tersebut merupakan \textit{sample} dari matriks akselerometer $\pmb{A}$ dan giroskop $\pmb{G}$ yang diurutkan dari waktu $t_{0}$ sampai $t_{99}$.
 
 \begin{equation}
+    \label{eq:tensor-masukan}
     \tensorsym{X}_{m_X \times n_X \times c_X} =
     \begin{bmatrix}
         \pmb{A}_{t_0} & \pmb{G}_{t_0} \\
@@ -139,6 +140,7 @@ dengan
 
 \begin{equation}
     (\tensorsym{I} * \tensorsym{W})(i,j,k) = \sum_{m}\sum_{n}\sum_{c}I(m,n,c)W(i-m, j-n, k-c)
+    \label{eq:konvolusi-3d}
 \end{equation}
 
 \noindent
@@ -240,7 +242,12 @@ Persamaan di atas menghasilkan vektor distribusi probabilitas dari 10 kelas akti
 
 
 \section{Pelatihan}
-\section{Klasifikasi Pada Ponsel Cerdas}
+Proses pelatihan jaringan dilakukan untuk mencari bobot dan bias yang optimal pada seluruh neuron dalam setiap lapisan. Optimasi bobot dan bias tersebut dilakukan dengan meminimal \textit{cost function} menggunakan algoritma optimasi berbasis \textit{gradient descent}. \textit{Cost function} yang digunakan adalah \textit{cross entropy} dan algoritma \textit{gradient descent} yang digunakan adalah RMSProp \citep{Dauphin-2015}.
+
+\subsection{Perhitungan \textit{loss} dengan Cross Entropy}
+
+
+\subsection{Optimasi dengan RMSProp}
 
 %------------------------------------------------------------------------------
 % Pengumpulan Data -> Masukkan saja ke rancangan perngkat lunak
@@ -258,6 +265,8 @@ Persamaan di atas menghasilkan vektor distribusi probabilitas dari 10 kelas akti
 \subsection{Pengambilan Data}
 \subsection{\textit{Sliding Window}}
 \subsection{Pembagian Data Latih, Validasi dan Uji}
+
+\section{Klasifikasi Pada Ponsel Cerdas}
 
 %------------------------------------------------------------------------------
 % Pengujian
