@@ -261,10 +261,88 @@ Proses pelatihan jaringan dilakukan untuk mencari bobot dan bias yang optimal pa
 % - Pembagian data latih, validasi dan tes
 %
 %------------------------------------------------------------------------------
-\section{Pengambilan dan Pengondisian Data}
-\subsection{Pengambilan Data}
-\subsection{\textit{Sliding Window}}
-\subsection{Pembagian Data Latih, Validasi dan Uji}
+\section{Data Pelatihan}
+Model klasifikasi dilatih dengan menggunakan dataset terbuka dari beberapa sumber, yaitu \textit{Activity Recognition Dataset} \citep{shoaib-2013}, \textit{Sensor Activity Dataset} \citep{shoaib-2014}, \textit{MobiAct Dataset} \citep{vavoulas-2016} dan \textit{Human Activity Recognition Using Smartphones Data Set} \citep{anguita-2013}. Partisipan pada keempat dataset tersebut dapat dilihat pada Tabel~\ref{table:partisipan-dataset}.
+
+\begin{table}[h!]
+    \centering
+    \caption{Partisipan pengambilan data}
+    \begin{tabular}{ |l|l|l|l|l|l| }
+        \hline
+        \textbf{Dataset} & \textbf{Partisipan} & \textbf{Laki-laki} & \textbf{Perempuan} & \textbf{Rentang Usia} \\
+
+        \hline
+        \citet{shoaib-2013} & 4 & 4 & 0 & 25 --- 30 \\
+
+        \hline
+        \citet{shoaib-2014} & 10 & 10 & 0 & 25 --- 30 \\
+
+        \hline
+        \citet{vavoulas-2016} & 57 & 39 & 15 & 20 --- 47 \\
+
+        \hline
+        \citet{anguita-2013} & 30 & --- & --- & 19 --- 48 \\
+
+        \hline
+    \end{tabular}
+    \label{table:partisipan-dataset}
+\end{table}
+
+Data sensor akselerometer dan giroskop dari keempat dataset tersebut diambil dengan \textit{sampling rate} 50 Hz. \textit{Sliding window} dibuat dari setiap 100 langkah waktu dengan tumpang tindih 50\%. Dengan aturan tersebut, diperoleh data pelatihan seperti pada Tabel~\ref{table:jumlah-dataset}.
+
+\begin{table}[h!]
+    \centering
+    \caption{Jumlah dataset}
+    \begin{tabular}{ |l|c| }
+        \hline
+        \textbf{Aktivitas} & \textbf{Jumlah Sample} \\
+
+        \hline
+        Berdiri & 1000 \\
+
+        \hline
+        Duduk & 1000 \\
+
+        \hline
+        Berjalan & 1000 \\
+
+        \hline
+        Berlari & 1000 \\
+
+        \hline
+        Bersepeda & 1000 \\
+
+        \hline
+        Menaiki Tangga & 1000 \\
+
+        \hline
+        Menuruni Tangga & 1000 \\
+
+        \hline
+    \end{tabular}
+    \label{table:jumlah-dataset}
+\end{table}
+
+Data tersebut dibagi untuk pelatihan dan pengujian. Seluruh data terlebih dulu diacak, lalu 70\% data diambil untuk data latih dan 30\% untuk data uji. Hasil pembagian data dapat dilihat pada Tabel~\ref{table:pembagian-data-latih-uji}.
+
+\begin{table}[h!]
+    \centering
+    \caption{Pembagian data latih dan data uji}
+    \begin{tabular}{ |l|c| }
+        \hline
+        \textbf{Data} & \textbf{Jumlah Sample} \\
+
+        \hline
+        Data Latih & 1000 \\
+
+        \hline
+        Data Uji & 1000 \\
+
+        \hline
+    \end{tabular}
+    \label{table:pembagian-data-latih-uji}
+\end{table}
+
 
 \section{Klasifikasi Pada Ponsel Cerdas}
 
