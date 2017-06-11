@@ -5,7 +5,27 @@
 % Analisis Sistem
 %------------------------------------------------------------------------------
 \section{Analisis Sistem}
-Pada penelitian ini dibuat sistem untuk mengenali aktivitas manusia secara \textit{realtime} dengan sensor akselerometer dan giroskop yang tertanam pada ponsel cerdas. Sistem dirancang menjadi dua bagian, . Rancangan sistem ini dapat dilihat pada Gambar~\ref{gambar:diagram-blok-sistem}.
+Pada penelitian ini dibuat sistem untuk mengenali aktivitas manusia secara \textit{real time} dengan sensor akselerometer dan giroskop yang tertanam pada ponsel cerdas. Rancangan sistem ini dapat dilihat pada Gambar~\ref{gambar:diagram-blok-sistem}.
+
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}[node distance=1.5cm]
+        \node (dataset) [process] {Dataset};
+        \node (pelatihan) [process, right of=dataset, xshift=2cm] {Pelatihan};
+        \node (model-klasifikasi) [process, right of=pelatihan, xshift=4cm, minimum width=7cm] {Model Klasifikasi};
+        \node (akselerometer) [process, above of=model-klasifikasi, xshift=-1.75cm, yshift=0.5cm] {Akselerometer};
+        \node (giroskop) [process, right of=akselerometer, xshift=2cm] {Giroskop};
+        \draw (5.5,1) -- (12.5,1) -- (12.5,3.5) -- node[anchor=north] {Ponsel Cerdas} (5.5,3.5) -- (5.5,1);
+        \node (aktivitas) [process, below of=model-klasifikasi, yshift=-0.5cm] {Aktivitas};
+
+        \draw [arrow] (dataset) -- (pelatihan);
+        \draw [arrow] (pelatihan) -- (model-klasifikasi);
+        \draw [arrow] (9,1) -- (9,0.5);
+        \draw [arrow] (model-klasifikasi) -- (aktivitas);
+    \end{tikzpicture}
+    \caption{Diagram blok sistem}
+    \label{gambar:diagram-blok-sistem}
+\end{figure}
 
 
 %------------------------------------------------------------------------------
@@ -39,13 +59,42 @@ Perangkat keras yang digunakan adalah laptop HP 14-am015tx dengan CPU Intel Core
 %
 %------------------------------------------------------------------------------
 \section{Rancangan Perangkat Lunak}
-Sistem dirancang untuk mengklasifikasikan aktivitas manusia berdasarkan data dari sensor akselerometer dan giroskop pada ponsel cerdas. Aliran data sensor pada proses klasifikasi ditunjukkan pada Gambar~\ref{gambar:state-diagram-sistem}.
+Sistem dirancang untuk mengklasifikasikan aktivitas manusia berdasarkan data dari sensor akselerometer dan giroskop pada ponsel cerdas. Aliran data sensor pada proses klasifikasi ditunjukkan pada Gambar~\ref{gambar:aliran-data-klasifikasi}.
 
-\begin{figure}
+\begin{figure}[h!]
     \centering
-    \includegraphics[width=12cm]{gambar/analisis-perancangan-sistem/state-diagram.png}
-    \caption{State diagram model klasifikasi aktivitas manusia}
-    \label{gambar:state-diagram-sistem}
+    \begin{tikzpicture}[node distance=1.9cm]
+        \node (masukan) [state] {Masukan};
+        \node (cnn1) [state, above of=masukan, yshift=0.2cm] {Konvolusi};
+        \node (cnn2) [state, above of=cnn1, yshift=0.2cm] {Konvolusi};
+        \node (lstm1) [state, above of=cnn2, yshift=0.1cm] {LSTM};
+        \node (lstm2) [state, above of=lstm1] {LSTM};
+        \node (softmax) [state, above of=lstm2] {Softmax};
+        \node (keluaran) [state, above of=softmax] {Keluaran};
+        \node (loss) [state, right of=softmax, xshift=3cm] {Loss};
+        \node (akurasi) [state, above of=loss] {Akurasi};
+        \node (target) [state, right of=loss, yshift=1cm] {Target};
+        \node (optimizer) [state, right of=lstm1, xshift=3cm] {Optimizer};
+
+        \draw [arrow] (masukan) -- (cnn1);
+        \draw [arrow] (cnn1) -- (cnn2);
+        \draw [arrow] (cnn2) -- (lstm1);
+        \draw [arrow] (lstm1) -- (lstm2);
+        \draw [arrow] (lstm2) -- (softmax);
+        \draw [arrow] (softmax) -- (keluaran);
+        \draw [arrow] (keluaran) -- (loss);
+        \draw [arrow] (keluaran) -- (akurasi);
+        \draw [arrow] (target) -- (loss);
+        \draw [arrow] (target) -- (akurasi);
+        \draw [arrow] (loss) -- (optimizer);
+        \draw [arrow] (optimizer) -- (cnn1);
+        \draw [arrow] (optimizer) -- (cnn2);
+        \draw [arrow] (optimizer) -- (lstm1);
+        \draw [arrow] (optimizer) -- (lstm2);
+        \draw [arrow] (optimizer) -- (softmax);
+    \end{tikzpicture}
+    \caption{Aliran data pada proses klasifikasi}
+    \label{gambar:aliran-data-klasifikasi}
 \end{figure}
 
 \section{Model Klasifikasi}
@@ -184,9 +233,28 @@ Setelah melalui lapisan konvolusi, hasil keluarannya dilewatkan melalui dua lapi
 
 Sel-sel LSTM pada lapisan pertama disusun dengan arsitektur \textit{many-to-many} seperti pada Gambar~\ref{gambar:many-to-one}. Masukan lapisan LSTM pertama diambil dari keluaran lapisan konvolusi $\tensorsym{H}^2$ yang bentuknya diubah dari $25 \times 2 \times 32$ menjadi $25 \times 64$ dengan meratakan anggota-anggota pada dimensi ke dua dan ke tiga. Dengan begitu, lapisan LSTM pertama dapat dibentangkan menjadi $25$ langkah waktu. Masing-masing langkah waktu menerima masukan vektor yang terdiri dari $64$ fitur. Karena lapisan LSTM menggunakan arsitektur \textit{many-to-many}, memiliki $25$ langkah waktu dan disusun dari $128$ \textit{hidden unit}, maka keluaran dari lapisan ini adalah matriks fitur dengan ukuran $25 \times 128$.
 
-\begin{figure}
+\begin{figure}[h!]
     \centering
-    \includegraphics[width=5cm]{gambar/analisis-perancangan-sistem/many-to-many.png}
+    \begin{tikzpicture}[node distance=2cm]
+        \node (x1) [cell] {$x^{(1)}$};
+        \node (x2) [cell, right of=x1] {$x^{(2)}$};
+        \node (x25) [cell, right of=x2, xshift=1cm] {$x^{(25)}$};
+        \node (h1) [cell, above of=x1] {$h^{(1)}$};
+        \node (h2) [cell, above of=x2] {$h^{(2)}$};
+        \node (h25) [cell, above of=x25] {$h^{(25)}$};
+        \node (y1) [cell, above of=h1] {$y^{(1)}$};
+        \node (y2) [cell, above of=h2] {$y^{(2)}$};
+        \node (y25) [cell, above of=h25] {$y^{(25)}$};
+
+        \draw [arrow] (x1) -- (h1);
+        \draw [arrow] (x2) -- (h2);
+        \draw [arrow] (x25) -- (h25);
+        \draw [arrow] (h1) -- (y1);
+        \draw [arrow] (h2) -- (y2);
+        \draw [arrow] (h25) -- (y25);
+        \draw [arrow] (h1) -- (h2);
+        \draw [dashed, very thick,->] (h2) -- (h25);
+    \end{tikzpicture}
     \caption{Arsitektur lapisan LSTM \textit{many-to-many}}
     \label{gambar:many-to-many}
 \end{figure}
@@ -195,9 +263,24 @@ Sel-sel LSTM pada lapisan kedua disusun dengan arsitektur \textit{many-to-one} s
 
 Perbandingan \textit{hyperparameter} lapisan LSTM pertama dan kedua dapat dilihat pada Tabel~\ref{table:hyperparameter-lapisan-lstm}.
 
-\begin{figure}
+\begin{figure}[h!]
     \centering
-    \includegraphics[width=5cm]{gambar/analisis-perancangan-sistem/many-to-one.png}
+    \begin{tikzpicture}[node distance=2cm]
+        \node (x1) [cell] {$x^{(1)}$};
+        \node (x2) [cell, right of=x1] {$x^{(2)}$};
+        \node (x25) [cell, right of=x2, xshift=1cm] {$x^{(25)}$};
+        \node (h1) [cell, above of=x1] {$h^{(1)}$};
+        \node (h2) [cell, above of=x2] {$h^{(2)}$};
+        \node (h25) [cell, above of=x25] {$h^{(25)}$};
+        \node (y) [cell, above of=h25] {$y$};
+
+        \draw [arrow] (x1) -- (h1);
+        \draw [arrow] (x2) -- (h2);
+        \draw [arrow] (x25) -- (h25);
+        \draw [arrow] (h25) -- (y);
+        \draw [arrow] (h1) -- (h2);
+        \draw [dashed, very thick,->] (h2) -- (h25);
+    \end{tikzpicture}
     \caption{Arsitektur lapisan LSTM \textit{many-to-one}}
     \label{gambar:many-to-one}
 \end{figure}
