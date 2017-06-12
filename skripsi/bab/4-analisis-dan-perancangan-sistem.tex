@@ -12,24 +12,25 @@ Pada penelitian ini dibuat sistem untuk mengenali aktivitas manusia secara \text
     \begin{tikzpicture}[node distance=1.5cm]
         \node (dataset) [process] {Dataset};
         \node (pelatihan) [process, right of=dataset, xshift=2cm] {Pelatihan};
-        \node (model-klasifikasi) [process, right of=pelatihan, xshift=4cm, minimum width=6.5cm] {Model Klasifikasi};
+        \node (model-klasifikasi) [process, right of=pelatihan, xshift=4cm, minimum width=7cm] {Model Klasifikasi};  
         \node (akselerometer) [process, above of=model-klasifikasi, xshift=-1.75cm, yshift=0.5cm] {Akselerometer};
         \node (giroskop) [process, right of=akselerometer, xshift=2cm] {Giroskop};
-        % \draw (5.5,1) -- (12.5,1) -- (12.5,3.5) -- node[anchor=north] {Ponsel Cerdas} (5.5,3.5) -- (5.5,1);
+        \draw (5.5,1) -- (12.5,1) -- (12.5,3.5) -- node[anchor=north] {Sensor} (5.5,3.5) -- (5.5,1); 
         \node (aktivitas) [process, below of=model-klasifikasi, yshift=-0.5cm] {Aktivitas};
 
         \draw [arrow] (dataset) -- (pelatihan);
         \draw [arrow] (pelatihan) -- (model-klasifikasi);
-        \draw [arrow] (akselerometer) -- (7.25,0.5);
-        \draw [arrow] (giroskop) -- (10.75,0.5);
-        \draw [arrow] (model-klasifikasi) -- (aktivitas);
+        \draw [arrow] (9,1) -- (9,0.5);
+        \draw [arrow] (5.5,2) -- (0,2) -- (dataset);
+        \draw [arrow] (model-klasifikasi) -- node[anchor=west, font=\footnotesize] {Pengenalan} (aktivitas);
     \end{tikzpicture}
     \caption{Diagram blok sistem}
     \label{gambar:diagram-blok-sistem}
 \end{figure}
 
-\textbf{Penjelasan diagram blok \dots}
+Sistem ini memanfaatkan model klasifikasi yang disusun dari lapisan-lapisan \textit{Convolutional Neural Network} (CNN) dan \textit{Long Short-Term Memory} (LSTM) untuk mengklasifikasikan bacaan sensor akselerometer dan giroskop menjadi tujuh aktivitas sederhana, yaitu duduk, berdiri, berjalan, berlari, bersepeda, menaiki tangga dan menuruni tangga.
 
+Sebelum dapat melakukan klasifikasi, model dilatih dengan dataset aktivitas manusia. Dalam proses pelatihan tersebut, model klasifikasi menerima masukan dari data latih lalu mengoptimasi parameter-parameternya untuk menghasilkan klasifikasi yang lebih baik. Setelah dilatih, model diimplementasikan pada ponsel cerdas Android untuk melakukan pengenalan aktivitas manusia secara \textit{real time} dari data sensor akselerometer dan giroskop yang tertanam.
 
 %------------------------------------------------------------------------------
 % Peralatan
@@ -387,25 +388,25 @@ Data sensor akselerometer dan giroskop dari keempat dataset tersebut diambil den
         \textbf{Aktivitas} & \textbf{Jumlah Sample} \\
 
         \hline
-        Berdiri & 1000 \\
+        Berdiri & ? \\
 
         \hline
-        Duduk & 1000 \\
+        Duduk & ? \\
 
         \hline
-        Berjalan & 1000 \\
+        Berjalan & ? \\
 
         \hline
-        Berlari & 1000 \\
+        Berlari & ? \\
 
         \hline
-        Bersepeda & 1000 \\
+        Bersepeda & ? \\
 
         \hline
-        Menaiki Tangga & 1000 \\
+        Menaiki Tangga & ? \\
 
         \hline
-        Menuruni Tangga & 1000 \\
+        Menuruni Tangga & ? \\
 
         \hline
     \end{tabular}
@@ -422,10 +423,10 @@ Data tersebut dibagi untuk pelatihan dan pengujian. Seluruh data terlebih dulu d
         \textbf{Data} & \textbf{Jumlah Sample} \\
 
         \hline
-        Data Latih & 1000 \\
+        Data Latih & ? \\
 
         \hline
-        Data Uji & 1000 \\
+        Data Uji & ? \\
 
         \hline
     \end{tabular}
