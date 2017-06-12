@@ -122,7 +122,7 @@ Pembagian data latih dan data uji dilakukan dengan fungsi \mintinline{python}{di
 \end{listing}
 
 \section{Implementasi Klasifikasi Pada Ponsel Cerdas}
-Klasifikasi pada ponsel cerdas dimulai dengan pengambilan dan pengondisian data sensor akselerometer dan giroskop. Kedua sensor tersebut diinisialisasi oleh kelas \mintinline{java}{SensorReader} pada Listing~\ref{listing:inisialisasi-sensor}. \textit{Constructor} \mintinline{java}{SensorReader()} menerima \mintinline{java}{List} berisi jenis sensor yang akan dibaca, lalu pada baris $28-30$ seluruhnya didaftarkan untuk pembacaan dengan fungsi \mintinline{java}{registerSensorIfAvailable()}.
+Sistem diimplemantasikan pada ponsel cerdas dengan sistem operasi Android. Proses klasifikasi dimulai dengan pengambilan dan pengondisian data sensor akselerometer dan giroskop. Kedua sensor tersebut diinisialisasi oleh kelas \mintinline{java}{SensorReader} pada Listing~\ref{listing:inisialisasi-sensor}. \textit{Constructor} \mintinline{java}{SensorReader()} menerima \mintinline{java}{List} berisi jenis sensor yang akan dibaca, lalu pada baris $28-30$ seluruhnya didaftarkan untuk pembacaan dengan fungsi \mintinline{java}{registerSensorIfAvailable()}.
 
 \begin{listing}[h]
     \inputminted[firstline=14,firstnumber=14,lastline=32]{java}{../aktvtas/app/src/main/java/org/elins/aktvtas/sensor/SensorReader.java}

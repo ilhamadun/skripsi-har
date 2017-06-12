@@ -12,20 +12,23 @@ Pada penelitian ini dibuat sistem untuk mengenali aktivitas manusia secara \text
     \begin{tikzpicture}[node distance=1.5cm]
         \node (dataset) [process] {Dataset};
         \node (pelatihan) [process, right of=dataset, xshift=2cm] {Pelatihan};
-        \node (model-klasifikasi) [process, right of=pelatihan, xshift=4cm, minimum width=7cm] {Model Klasifikasi};
+        \node (model-klasifikasi) [process, right of=pelatihan, xshift=4cm, minimum width=6.5cm] {Model Klasifikasi};
         \node (akselerometer) [process, above of=model-klasifikasi, xshift=-1.75cm, yshift=0.5cm] {Akselerometer};
         \node (giroskop) [process, right of=akselerometer, xshift=2cm] {Giroskop};
-        \draw (5.5,1) -- (12.5,1) -- (12.5,3.5) -- node[anchor=north] {Ponsel Cerdas} (5.5,3.5) -- (5.5,1);
+        % \draw (5.5,1) -- (12.5,1) -- (12.5,3.5) -- node[anchor=north] {Ponsel Cerdas} (5.5,3.5) -- (5.5,1);
         \node (aktivitas) [process, below of=model-klasifikasi, yshift=-0.5cm] {Aktivitas};
 
         \draw [arrow] (dataset) -- (pelatihan);
         \draw [arrow] (pelatihan) -- (model-klasifikasi);
-        \draw [arrow] (9,1) -- (9,0.5);
+        \draw [arrow] (akselerometer) -- (7.25,0.5);
+        \draw [arrow] (giroskop) -- (10.75,0.5);
         \draw [arrow] (model-klasifikasi) -- (aktivitas);
     \end{tikzpicture}
     \caption{Diagram blok sistem}
     \label{gambar:diagram-blok-sistem}
 \end{figure}
+
+\textbf{Penjelasan diagram blok \dots}
 
 
 %------------------------------------------------------------------------------
@@ -35,7 +38,10 @@ Pada penelitian ini dibuat sistem untuk mengenali aktivitas manusia secara \text
 Peralatan yang digunakan untuk mendukung penelitian ini terdiri dari perangkat keras dan perangkat lunak berikut:
 
 \subsection{Perangkat Keras}
-Perangkat keras yang digunakan adalah laptop HP 14-am015tx dengan CPU Intel Core i5--6200U 2.3 GHz dan RAM 12GB\@.
+\begin{enumerate}
+    \item Laptop HP 14--015tx dengan CPU Intel Core i5--6200U 2.3 GHz dan RAM 12GB
+    \item Ponsel cerdas Android dengan sensor akselerometer dan giroskop tertanam
+\end{enumerate}
 
 \subsection{Sistem Perangkat Lunak}
 \begin{enumerate}
