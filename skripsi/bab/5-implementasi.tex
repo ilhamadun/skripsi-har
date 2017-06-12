@@ -122,7 +122,23 @@ Pembagian data latih dan data uji dilakukan dengan fungsi \mintinline{python}{di
 \end{listing}
 
 \section{Implementasi Klasifikasi Pada Ponsel Cerdas}
-\subsection{Struktur Data}
+Klasifikasi pada ponsel cerdas dimulai dengan pengambilan dan pengondisian data sensor akselerometer dan giroskop. Kedua sensor tersebut diinisialisasi oleh kelas \mintinline{java}{SensorReader} pada Listing~\ref{listing:inisialisasi-sensor}. \textit{Constructor} \mintinline{java}{SensorReader()} menerima \mintinline{java}{List} berisi jenis sensor yang akan dibaca, lalu pada baris $28-30$ seluruhnya didaftarkan untuk pembacaan dengan fungsi \mintinline{java}{registerSensorIfAvailable()}.
+
+\begin{listing}[h]
+    \inputminted[firstline=14,firstnumber=14,lastline=32]{java}{../aktvtas/app/src/main/java/org/elins/aktvtas/sensor/SensorReader.java}
+    \caption{Inisialisasi sensor}
+    \label{listing:inisialisasi-sensor}
+\end{listing}
+
+Fungsi \mintinline{java}{registerSensorIfAvailable()} pada Listing~\ref{listing:mendaftarkan-sensor} digunakan untuk mendaftarkan \textit{listener} pada masing-masing sensor dan mengatur \textit{sampling rate} menjadi 50 Hz. Sehingga setiap 20 milisekon, ketika bacaan baru dari sensor telah siap, fungsi \textit{callback} \mintinline{java}{onSensorDataReady()} akan dipanggil.
+
+\begin{listing}[h]
+    \inputminted[firstline=38,firstnumber=38,lastline=44,gobble=4]{java}{../aktvtas/app/src/main/java/org/elins/aktvtas/sensor/SensorReader.java}
+    \caption{Mendaftarkan sensor}
+    \label{listing:mendaftarkan-sensor}
+\end{listing}
+
+Data sensor disimpan dan dikelola dalam dua struktur data, yaitu \mintinline{java}{SensorData} dan \mintinline{java}{SensorDataSequence}. Struktur \mintinline{java}{SensorData} (Listing~\ref{listing:sensor-data}) digunakan untuk menyimpan dan mengelola data satu sensor dalam satu waktu, sedangkan struktur \mintinline{java}{SensorDataSequence} (Listing~\ref{listing:sensor-data-sequence}) digunakan untuk menyimpan dan mengelola jendela data dari seluruh sensor.
 
 \begin{listing}[h]
     \inputminted[firstline=6,firstnumber=6,lastline=16]{java}{../aktvtas/app/src/main/java/org/elins/aktvtas/sensor/SensorData.java}
@@ -136,20 +152,31 @@ Pembagian data latih dan data uji dilakukan dengan fungsi \mintinline{python}{di
     \label{listing:sensor-data-sequence}
 \end{listing}
 
-\subsection{Pengambilan Data}
-\begin{listing}[h]
-    \inputminted[firstline=47,firstnumber=47,lastline=56,gobble=4]{java}{../aktvtas/app/src/main/java/org/elins/aktvtas/sensor/SensorService.java}
-    \caption{Struktur SensorDataSequence}
-    \label{listing:sensor-data-sequence}
-\end{listing}
+Pengambilan data sensor dilakukan dalam kelas \mintinline{java}{SensorService}. Kelas \mintinline{java}{SensorService} mengimplementasikan \textit{interface} \mintinline{java}{SensorReaderEvent} dari kelas \mintinline{java}{SensorReader}, sehingga setiap kali bacaan sensor baru tersedia, implementasi metode \mintinline{java}{onSensorDataReady()} pada kelas \mintinline{java}{SensorService} akan dipanggil (Listing~\ref{listing:callback-sensor-ready}). Pada baris $48$, data sensor dibaca dan menghasilkan \mintinline{java}{List} berisi \mintinline{java}{SensorData} terbaru dari seluruh sensor. Kemudian data tersebut disusun menjadi \mintinline{java}{SensorDataSequence} pada baris $50-53$.
 
 \begin{listing}[h]
-    \inputminted[firstline=83,firstnumber=83,lastline=114,gobble=4]{java}{../aktvtas/app/src/main/java/org/elins/aktvtas/PredictionService.java}
+    \inputminted[firstline=46,firstnumber=46,lastline=56,gobble=4]{java}{../aktvtas/app/src/main/java/org/elins/aktvtas/sensor/SensorService.java}
     \caption{Struktur SensorDataSequence}
-    \label{listing:sensor-data-sequence}
+    \label{listing:callback-sensor-ready}
 \end{listing}
 
-\subsection{Klasifikasi}
+Pengenalan aktivitas manusia dilakukan secara \textit{real time} pada ponsel cerdas dengan kelas \mintinline{java}{PredictionService} yang memperluas kelas \mintinline{java}{SensorService}. Kelas \mintinline{java}{PredictionService} mengimplementasikan metode \mintinline{java}{onSensorDataReady()} seperti pada Listing~\ref{listing:callback-sensor-ready-prediction}.
+
+\begin{listing}[h]
+    \inputminted[firstline=82,firstnumber=82,lastline=103,gobble=4]{java}{../aktvtas/app/src/main/java/org/elins/aktvtas/PredictionService.java}
+    \caption{Struktur SensorDataSequence}
+    \label{listing:callback-sensor-ready-prediction}
+\end{listing}
+
+Pada baris $84$, metode \mintinline{java}{super.onSensorDataReady()} dipanggil untuk menjalankan implementasi \mintinline{java}{onSensorDataReady()} pada kelas \mintinline{java}{SensorService}. Pemanggilan metode tersebut dilakukan untuk menyusun bacaan sensor menjadi struktur \mintinline{java}{SensorDataSequence}. Saat ukuran \mintinline{java}{SensorDataSequence} telah sesuai dengan ukuran jendela yang diinginkan, aktivitas diklasifikasikan memanggil metode \mintinline{java}{classifier.classify(SensorDataSequence)} pada baris $87$.
+
+Akurasi pengenalan dihitung pada baris $94-103$. Pengenalan yang tepat diketahui dengan membandingkan hasil klasifikasi dengan referensi. Pada baris 102, tingkat akurasi pengenalan dihitung dengan persamaan
+
+\begin{equation}
+    accuracy = \frac{correctPrediction}{totalPrediction} \times 100
+\end{equation}
+
+Klasifikasi dengan metode \mintinline{java}{classify()} diimplementasikan pada Listing~\ref{listing:klasifikasi-aktivitas}. Metode tersebut menerima parameter \mintinline{java}{SensorDataSequence} sebagai masukan dari model klasifikasi. Pada baris $35$, \mintinline{java}{SensorDataSequence} diratakan menjadi matriks satu dimensi dengan memanggil metode \mintinline{java}{sequence.flatten()}. Pada baris $44-46$, data dimasukkan ke model klasifikasi dengan \mintinline{java}{inferenceInterface.feed()}, klasifikasi dijalankan dengan \mintinline{java}{inferenceInterface.run()} dan keluaran diambil dengan \mintinline{java}{inferenceInterface.fetch()}. Objek \mintinline{java}{inferenceInterface} sendiri merupakan \textit{instance} dari kelas \mintinline{java}{TensorFlowInferenceInterface}. Hasil klasifikasi terbaik dicari dengan metode \mintinline{java}{findBestClassification()}.
 
 \begin{listing}[h]
     \inputminted[firstline=34,firstnumber=34,lastline=56,gobble=4]{java}{../aktvtas/app/src/main/java/org/elins/aktvtas/human/HumanActivityClassifier.java}
