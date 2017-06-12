@@ -430,7 +430,7 @@ Data tersebut dibagi untuk pelatihan dan pengujian. Seluruh data terlebih dulu d
 \section{Klasifikasi Pada Ponsel Cerdas}
 Proses klasifikasi pada ponsel cerdas ditunjukkan pada Gambar~\ref{gambar:diagram-alir-klasifikasi-ponsel-cerdas}. Sensor akselerometer dan giroskop dibaca dengan \textit{sampling rate} 50 Hz. Masing-masing sensor menghasilkan data dengan tiga sumbu, sehingga satu kali pembacaan menghasilkan enam data. Hasil bacaannya dikumpulkan menjadi jendela berisi 100 sample dengan tumpang tindih 50\%. Dengan begitu, satu jendela data terdiri dari pembacaan sensor selama dua detik dan jendela baru dibuat setiap satu detik. Setelah jendela terpenuhi, jendela tersebut dijadikan sebagai masukan model klasifikasi yang telah dibuat. Proses ini menghasilkan kelas aktivitas manusia yang sesuai dengan bacaan sensor.
 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \begin{tikzpicture}[node distance=2cm]
         \node (mulai) [startstop] {Mulai};
@@ -458,3 +458,33 @@ Proses klasifikasi pada ponsel cerdas ditunjukkan pada Gambar~\ref{gambar:diagra
 % Menjawab judul rumusan masalah
 %------------------------------------------------------------------------------
 \section{Rencana Pengujian}
+Pengujian dilakukan untuk mengetahui kemampuan klasifikasi dari model yang telah dibuat. Terdapat tiga parameter yang diuji, yaitu akurasi klasifikasi \textit{offline}, akurasi klasifikasi \textit{online} dan kecepatan klasifikasi pada ponsel cerdas.
+
+Pada pengujian klasifikasi \textit{offline}, kemampuan model klasifikasi diukur berdasarkan akurasi klasifikasi pada data uji. Model klasifikasi menerima data uji yang diambil secara acak dari dataset dan terpisah dari data latih. Keluaran dari proses klasifikasi dibandingkan dengan label data tersebut.
+
+Pada pengujian klasifikasi \textit{online}, kemampuan model klasifikasi diukur berdasarkan akurasi klasifikasi pada data sensor ponsel cerdas yang diambil dan diolah secara \textit{real time}. Pengujian dilakukan oleh ? partisipan yang terdiri dari ? laki-laki dan ? perempuan. Partisipan memilih aktivitas yang akan diuji, lalu aktivitas tersebut dibandingkan dengan hasil klasifikasi dari data sensor. Ponsel cerdas ditempatkan di saku celana dengan posisi acak. Setiap partisipan melakukan pengujian selama ? menit untuk masing-masing aktivitas.
+
+Pengujian kecepatan klasifikasi dilakukan bersamaan dengan pengujian klasifikasi \textit{online}. Pengujian dilakukan dengan mengukur waktu yang dibutuhkan oleh setiap siklus klasifikasi, dimulai dari pengambilan data sensor sampai diperoleh kelas aktivitas dari data tersebut. Pengukuran ini dilakukan dengan beberapa model ponsel cerdas dengan kemampuan pemrosesan yang berbeda.
+
+Ketiga pengujian ini dilakukan dengan indikator pencapaian yang ditunjukkan pada Tabel~\ref{table:rencana-pengujian}.
+
+\begin{table}[h!]
+    \centering
+    \caption{Rencana Pengujian}
+    \begin{tabular}{ |p{0.5cm}|p{5cm}|p{7.5cm}| }
+        \hline
+        \textbf{No} & \textbf{Parameter} & \textbf{Pencapaian} \\
+
+        \hline
+        1 & Pengujian akurasi klasifikasi \textit{offline} & Didapatkan tingkat akurasi \dots pada data uji  \\
+
+        \hline
+        2 & Pengujian akurasi klasifikasi \textit{online} & Didapatkan tingkat akurasi \dots pada klasifikasi secara \textit{online}\\
+        
+        \hline
+        3 & Pengujian kecepatan klasifikasi pada ponsel cerdas & Klasifikasi dapat dilakukan secara \textit{real time} pada ponsel cerdas \\
+
+        \hline
+    \end{tabular}
+    \label{table:rencana-pengujian}
+\end{table}
