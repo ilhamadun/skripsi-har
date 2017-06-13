@@ -19,7 +19,7 @@ public class HumanActivityClassifier {
             "file:///android_asset/human_activity_recognition_graph.pb";
 
     private static final String INPUT_NAME = "input:0";
-    private static final String OUTPUT_NAME = "output/add:0";
+    private static final String OUTPUT_NAME = "output/Softmax:0";
 
     private static final float THRESHOLD = 0.1f;
     private static final int MAX_RESULT = 3;
@@ -41,7 +41,7 @@ public class HumanActivityClassifier {
         Log.i(TAG, String.valueOf(inputNode.length));
         Log.i(TAG, sensorString);
 
-        inferenceInterface.feed(INPUT_NAME, inputNode, 900);
+        inferenceInterface.feed(INPUT_NAME, inputNode, 600);
         inferenceInterface.run(new String[] {OUTPUT_NAME});
         inferenceInterface.fetch(OUTPUT_NAME, outputs);
 

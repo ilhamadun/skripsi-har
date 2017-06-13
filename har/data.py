@@ -2,26 +2,28 @@ import tensorflow as tf
 import numpy as np
 
 
-def sliding_window(data_in, window_size):
-    """ Apply sliding windows to data
+def get(filenames, num_target, window_size, overlap=0.5, divider=0.7):
+    """ Get data and prepares it for training and testing
 
-    data_in     -- data array
+    This method do all the preparation needed for training and testing process,
+    including loading, shuffling and dividing data to train and test group
+
+    filenames   -- list of filename to open
+    num_target  -- number of target class
     window_size -- size of window to group the data
+    overlap     -- overlap size of the sliding window
+    divider     -- ratio for dividing train and test data
     """
-    overlap = 0.5
-    step = int(window_size * (1 - overlap))
-    data = np.empty([int(data_in.data.shape[0] / (window_size * overlap)),
-                     data_in.data.shape[1] * window_size])
-    target = np.empty([int(data_in.target.shape[0] / (window_size * overlap))])
+    data, target = load(filenames, window_size, overlap)
+    data, target = shuffle(data, target)
 
-    for i in range(0, data_in.data.shape[0] - window_size, step):
-        if data_in.target[i] != data_in.target[i + window_size]:
-            continue
+    data_train, data_test = divide(data, divider)
+    target_train, target_test = divide(target, divider)
 
-        data[int(i / step)] = data_in.data[i:i + window_size].flatten()
-        target[int(i / step)] = data_in.target[i]
+    target_train = tf.one_hot(target_train, num_target)
+    target_test = tf.one_hot(target_test, num_target)
 
-    return data, target
+    return data_train, data_test, target_train, target_test
 
 
 def load(filenames, window_size, overlap, one_hot=False, target_num=10):
@@ -55,6 +57,28 @@ def load(filenames, window_size, overlap, one_hot=False, target_num=10):
     return data, target
 
 
+def sliding_window(data_in, window_size):
+    """ Apply sliding windows to data
+
+    data_in     -- data array
+    window_size -- size of window to group the data
+    """
+    overlap = 0.5
+    step = int(window_size * (1 - overlap))
+    data = np.empty([int(data_in.data.shape[0] / (window_size * overlap)),
+                     data_in.data.shape[1] * window_size])
+    target = np.empty([int(data_in.target.shape[0] / (window_size * overlap))])
+
+    for i in range(0, data_in.data.shape[0] - window_size, step):
+        if data_in.target[i] != data_in.target[i + window_size]:
+            continue
+
+        data[int(i / step)] = data_in.data[i:i + window_size].flatten()
+        target[int(i / step)] = data_in.target[i]
+
+    return data, target
+
+
 def shuffle(data, target):
     """ Shuffle the data
 
@@ -81,30 +105,6 @@ def divide(arr, divider):
     test = arr[int(arr.shape[0] * divider):]
 
     return train, test
-
-
-def get(filenames, num_target, window_size, overlap=0.5, divider=0.7):
-    """ Get data and prepares it for training and testing
-
-    This method do all the preparation needed for training and testing process,
-    including loading, shuffling and dividing data to train and test group
-
-    filenames   -- list of filename to open
-    num_target  -- number of target class
-    window_size -- size of window to group the data
-    overlap     -- overlap size of the sliding window
-    divider     -- ratio for dividing train and test data
-    """
-    data, target = load(filenames, window_size, overlap)
-    data, target = shuffle(data, target)
-
-    data_train, data_test = divide(data, divider)
-    target_train, target_test = divide(target, divider)
-
-    target_train = tf.one_hot(target_train, num_target)
-    target_test = tf.one_hot(target_test, num_target)
-
-    return data_train, data_test, target_train, target_test
 
 
 def iterator(data, target, length, batch_size):

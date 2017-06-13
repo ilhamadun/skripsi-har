@@ -41,6 +41,8 @@ class Normalize:
         - All features are filtered with median filter
 
     """
+    COLUMN_FORMAT = ['%.10f']  * 6 + ['%d']
+
     def __init__(self):
         os.makedirs('sample', exist_ok=True)
 
@@ -73,23 +75,23 @@ class Normalize:
             filtered_features = median_filter(dataset[:, :6])
             dataset = np.concatenate([filtered_features, dataset[:, 6:7]], axis=1)
             header = str(dataset.shape[0]) + ',6'
-            np.savetxt(output_path, dataset, delimiter=',', header=header, comments='')
+            np.savetxt(output_path, dataset, self.COLUMN_FORMAT, delimiter=',', header=header, comments='')
             print('Output:', output_path)
 
         def _class_id(activity_class):
             ret = -1
             if activity_class == 'Standing':
-                ret = 1
+                ret = 0
             elif activity_class == 'Sitting':
-                ret = 2
+                ret = 1
             elif activity_class == 'Walking':
-                ret = 3
+                ret = 2
             elif activity_class == 'Running':
-                ret = 4
+                ret = 3
             elif activity_class == 'Upstairs':
-                ret = 5
+                ret = 4
             elif activity_class == 'Downstairs':
-                ret = 6
+                ret = 5
 
             return ret
 
@@ -124,28 +126,28 @@ class Normalize:
                     read.append(row[57:60] + row[63:66] + [_class_id(row[69])])
 
             dataset = np.array(read, dtype=np.float64)
-            filtered_features = median_filter(dataset[:, :6])
-            dataset = np.concatenate([filtered_features, dataset[:, 6:7]], axis=1)
+            # filtered_features = median_filter(dataset[:, :6])
+            # dataset = np.concatenate([filtered_features, dataset[:, 6:7]], axis=1)
             header = str(dataset.shape[0]) + ',6'
-            np.savetxt(output_path, dataset, delimiter=',', header=header, comments='')
+            np.savetxt(output_path, dataset, self.COLUMN_FORMAT, delimiter=',', header=header, comments='')
             print('Output:', output_path)
 
         def _class_id(activity_class):
             ret = -1
             if activity_class == 'standing':
-                ret = 1
+                ret = 0
             elif activity_class == 'sitting':
-                ret = 2
+                ret = 1
             elif activity_class == 'walking':
-                ret = 3
+                ret = 2
             elif activity_class == 'jogging':
-                ret = 4
+                ret = 3
             elif activity_class == 'upstairs':
-                ret = 5
+                ret = 4
             elif activity_class == 'downstairs':
-                ret = 6
+                ret = 5
             elif activity_class == 'biking':
-                ret = 7
+                ret = 6
 
             return ret
 
@@ -181,23 +183,23 @@ class Normalize:
             dataset = np.concatenate([filtered_acc, filtered_gyro, activity_id], 1)
 
             header = str(num_sample) + ',6'
-            np.savetxt(output_path, dataset, delimiter=',', header=header, comments='')
+            np.savetxt(output_path, dataset, self.COLUMN_FORMAT, delimiter=',', header=header, comments='')
             print('Saved to:', output_path)
 
         def _class_id(activity_class):
             ret = -1
             if activity_class == 'STD':
-                ret = 1
+                ret = 0
             elif activity_class == 'SCH':
-                ret = 2
+                ret = 1
             elif activity_class == 'WAL':
-                ret = 3
+                ret = 2
             elif activity_class == 'JOG':
-                ret = 4
+                ret = 3
             elif activity_class == 'STU':
-                ret = 5
+                ret = 4
             elif activity_class == 'STN':
-                ret = 6
+                ret = 5
 
             return ret
 
@@ -261,17 +263,17 @@ class Normalize:
         def _class_id(activity_class):
             ret = -1
             if activity_class == 5:
-                ret = 1
+                ret = 0
             elif activity_class == 4:
-                ret = 2
+                ret = 1
             elif activity_class == 1:
-                ret = 3
+                ret = 2
             elif activity_class == 2:
-                ret = 4
+                ret = 3
             elif activity_class == 3:
-                ret = 5
+                ret = 4
             elif activity_class == 6:
-                ret = 8
+                ret = 5
 
             return ret
 
@@ -301,8 +303,8 @@ class Normalize:
             output_path = os.path.join(output_path, 'uci_har')
 
             header = str(dataset.shape[0]) + ',6'
-            np.savetxt(os.path.join(output_path, data_type + '.csv'), dataset, delimiter=',',
-                       header=header, comments='')
+            np.savetxt(os.path.join(output_path, data_type + '.csv'), dataset, self.COLUMN_FORMAT,
+                       delimiter=',', header=header, comments='')
 
         os.makedirs(output_path, exist_ok=True)
         _filter('train', input_path, output_path)

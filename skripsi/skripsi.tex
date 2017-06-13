@@ -1,34 +1,47 @@
 \documentclass{ugmskripsi}
 
 \usepackage{amsmath}
+\usepackage{isomath}
 \usepackage{booktabs}
 \usepackage[justification=centering, font=bf]{caption}
 \usepackage{array}
 \newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
 \renewcommand{\arraystretch}{1.2}
 
-\usepackage{courier}
-\usepackage{color}
-\usepackage{listings}
-\lstset{
-	basicstyle=\footnotesize\ttfamily,
-	numbers=left,
- 	numberstyle=\scriptsize,
-	frame=tb,
-    aboveskip=10pt,
-	tabsize=4,
-	columns=fixed,
-	showstringspaces=false,
-	showtabs=false,
-	keepspaces,
-	commentstyle=\color{red},
-	keywordstyle=\color{blue}
+\usepackage[section]{minted}
+\setminted{
+	linenos,
+	autogobble,
+	fontsize=\scriptsize,
+	frame=lines,
+	style=colorful,
+	breaklines,
+	breakautoindent=true
 }
+\setminted[python]{
+	python3=true
+}
+\setmintedinline{
+	fontsize=\small
+}
+\renewcommand{\listoflistingscaption}{Daftar Listing}
+
+\usepackage[labelsep=period]{caption}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows}
+\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black]
+\tikzstyle{io} = [trapezium, trapezium left angle=70, trapezium right angle=110, minimum width=3cm, minimum height=1cm, text centered, draw=black]
+\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black]
+\tikzstyle{decision} = [diamond, minimum width=3cm, minimum height=1cm, text centered, draw=black]
+\tikzstyle{state} = [circle, minimum width=1.5cm, minimum height=1.5cm, text centered, draw=black, font=\footnotesize]
+\tikzstyle{cell} = [circle, minimum width=1.2cm, minimum height=1.2cm, text centered, draw=black, font=\footnotesize]
+\tikzstyle{arrow} = [thick,->,>=stealth]
 
 %------------------------------------------------------------------------------
 % Title
 %------------------------------------------------------------------------------
-\titleind{PENGENALAN AKTIVITAS MANUSIA MENGGUNAKAN SENSOR PADA SMARTPHONE DENGAN CONVOLUTIONAL NEURAL NETWORK DAN LONG SHORT-TERM MEMORY}
+\titleind{PENGENALAN AKTIVITAS MANUSIA MENGGUNAKAN SENSOR PADA SMARTPHONE DENGAN \textit{CONVOLUTIONAL NEURAL NETWORK} DAN \textit{LONG SHORT-TERM MEMORY}}
 
 \titleeng{HUMAN ACTIVITY RECOGNITION USING SMARTPHONE SENSORS WITH CONVOLUTIONAL NEURAL NETWORK AND LONG SHORT-TERM MEMORY}
 
@@ -66,7 +79,6 @@
 
 % \acknowledment{}
 % \begin{flushright}
-%     Untuk Ibu dan Apa.
 % \end{flushright}
 
 \input{bab/0.1-prakata.tex}
@@ -74,14 +86,16 @@
 \tableofcontents
 \listoftables
 \listoffigures
+\listoflistings
 
 \input{bab/0.2-intisari.tex}
 \input{bab/1-pendahuluan.tex}
 \input{bab/2-tinjauan-pustaka.tex}
 \input{bab/3-landasan-teori.tex}
-\input{bab/4-metode-penelitian.tex}
-\input{bab/5-hasil-penelitian.tex}
-\input{bab/6-kesimpulan.tex}
+\input{bab/4-analisis-dan-perancangan-sistem.tex}
+\input{bab/5-implementasi.tex}
+\input{bab/6-hasil-penelitian.tex}
+\input{bab/7-kesimpulan.tex}
 
 
 \bibliography{pustaka}

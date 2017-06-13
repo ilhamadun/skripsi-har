@@ -10,7 +10,7 @@ public class DataAcquisition {
     public static final String EXTRA_ACTIVITY_ID = "org.elins.aktvtas.extra.EXTRA_ACTIVITY_ID";
     public static final String EXTRA_SENSOR_PLACEMENT = "org.elins.aktvtas.extra.EXTRA_SENSOR_PLACEMENT";
     public static final String EXTRA_ACQUISITION_DURATION = "org.elins.aktvtas.extra.TRAINING_ACQUISITION";
-    public static final int[] SENSOR_TO_READ = {Sensor.TYPE_ACCELEROMETER, Sensor.TYPE_GYROSCOPE, Sensor.TYPE_LINEAR_ACCELERATION};
+    public static final int[] SENSOR_TO_READ = {Sensor.TYPE_ACCELEROMETER, Sensor.TYPE_GYROSCOPE};
 
     private HumanActivity.Id activityId;
     private int sensorPlacement;

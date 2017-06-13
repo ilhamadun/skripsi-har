@@ -1,0 +1,497 @@
+\chapter{ANALISIS DAN PERANCANGAN SISTEM}
+
+
+%------------------------------------------------------------------------------
+% Analisis Sistem
+%------------------------------------------------------------------------------
+\section{Analisis Sistem}
+Pada penelitian ini dibuat sistem untuk mengenali aktivitas manusia secara \textit{real time} dengan sensor akselerometer dan giroskop yang tertanam pada ponsel cerdas. Rancangan sistem ini dapat dilihat pada Gambar~\ref{gambar:diagram-blok-sistem}.
+
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}[node distance=1.5cm]
+        \node (dataset) [process] {Dataset};
+        \node (pelatihan) [process, right of=dataset, xshift=2cm] {Pelatihan};
+        \node (model-klasifikasi) [process, right of=pelatihan, xshift=4cm, minimum width=7cm] {Model Klasifikasi};  
+        \node (akselerometer) [process, above of=model-klasifikasi, xshift=-1.75cm, yshift=0.5cm] {Akselerometer};
+        \node (giroskop) [process, right of=akselerometer, xshift=2cm] {Giroskop};
+        \draw (5.5,1) -- (12.5,1) -- (12.5,3.5) -- node[anchor=north] {Sensor} (5.5,3.5) -- (5.5,1); 
+        \node (aktivitas) [process, below of=model-klasifikasi, yshift=-0.5cm] {Aktivitas};
+
+        \draw [arrow] (dataset) -- (pelatihan);
+        \draw [arrow] (pelatihan) -- (model-klasifikasi);
+        \draw [arrow] (9,1) -- (9,0.5);
+        \draw [arrow] (5.5,2) -- (0,2) -- (dataset);
+        \draw [arrow] (model-klasifikasi) -- node[anchor=west, font=\footnotesize] {Pengenalan} (aktivitas);
+    \end{tikzpicture}
+    \caption{Diagram blok sistem}
+    \label{gambar:diagram-blok-sistem}
+\end{figure}
+
+Sistem ini memanfaatkan model klasifikasi yang disusun dari lapisan-lapisan \textit{Convolutional Neural Network} (CNN) dan \textit{Long Short-Term Memory} (LSTM) untuk mengklasifikasikan bacaan sensor akselerometer dan giroskop menjadi tujuh aktivitas sederhana, yaitu duduk, berdiri, berjalan, berlari, bersepeda, menaiki tangga dan menuruni tangga.
+
+Sebelum dapat melakukan klasifikasi, model dilatih dengan dataset aktivitas manusia. Dalam proses pelatihan tersebut, model klasifikasi menerima masukan dari data latih lalu mengoptimasi parameter-parameternya untuk menghasilkan klasifikasi yang lebih baik. Setelah dilatih, model diimplementasikan pada ponsel cerdas Android untuk melakukan pengenalan aktivitas manusia secara \textit{real time} dari data sensor akselerometer dan giroskop yang tertanam.
+
+%------------------------------------------------------------------------------
+% Peralatan
+%------------------------------------------------------------------------------
+\section{Peralatan}
+Peralatan yang digunakan untuk mendukung penelitian ini terdiri dari perangkat keras dan perangkat lunak berikut:
+
+\subsection{Perangkat Keras}
+\begin{enumerate}
+    \item Laptop HP 14--015tx dengan CPU Intel Core i5--6200U 2.3 GHz dan RAM 12GB
+    \item Ponsel cerdas Android dengan sensor akselerometer dan giroskop tertanam
+\end{enumerate}
+
+\subsection{Sistem Perangkat Lunak}
+\begin{enumerate}
+    \item Ubuntu 16.04 64 bit sebagai sistem operasi laptop
+    \item TensorFlow sebagai pustaka komputasi numerik
+    \item Visual Studio Code sebagai \textit{text editor} untuk menulis program sistem klasifikasi
+    \item Android Studio sebagai \textit{Integrated Development Environment} (IDE) untuk mengembangkan aplikasi Android
+    \item Git sebagai aplikasi pengontrol versi terdistribusi
+\end{enumerate}
+
+%------------------------------------------------------------------------------
+% Rancangan Perangkat Lunak
+%
+% TODO:
+% - Offline:
+%   - Model klasifikasi
+%   - Pelatihan
+%   - Test
+% - Online:
+%   - Klasifikasi
+%
+%------------------------------------------------------------------------------
+\section{Rancangan Perangkat Lunak}
+Sistem dirancang untuk mengklasifikasikan aktivitas manusia berdasarkan data dari sensor akselerometer dan giroskop pada ponsel cerdas. Aliran data sensor pada proses klasifikasi ditunjukkan pada Gambar~\ref{gambar:aliran-data-klasifikasi}.
+
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}[node distance=1.9cm]
+        \node (masukan) [state] {Masukan};
+        \node (cnn1) [state, above of=masukan, yshift=0.2cm] {Konvolusi};
+        \node (cnn2) [state, above of=cnn1, yshift=0.2cm] {Konvolusi};
+        \node (lstm1) [state, above of=cnn2, yshift=0.1cm] {LSTM};
+        \node (lstm2) [state, above of=lstm1] {LSTM};
+        \node (softmax) [state, above of=lstm2] {Softmax};
+        \node (keluaran) [state, above of=softmax] {Keluaran};
+        \node (loss) [state, right of=softmax, xshift=3cm] {Loss};
+        \node (akurasi) [state, above of=loss] {Akurasi};
+        \node (target) [state, right of=loss, yshift=1cm] {Target};
+        \node (optimizer) [state, right of=lstm1, xshift=3cm] {Optimizer};
+
+        \draw [arrow] (masukan) -- (cnn1);
+        \draw [arrow] (cnn1) -- (cnn2);
+        \draw [arrow] (cnn2) -- (lstm1);
+        \draw [arrow] (lstm1) -- (lstm2);
+        \draw [arrow] (lstm2) -- (softmax);
+        \draw [arrow] (softmax) -- (keluaran);
+        \draw [arrow] (keluaran) -- (loss);
+        \draw [arrow] (keluaran) -- (akurasi);
+        \draw [arrow] (target) -- (loss);
+        \draw [arrow] (target) -- (akurasi);
+        \draw [arrow] (loss) -- (optimizer);
+        \draw [arrow] (optimizer) -- (cnn1);
+        \draw [arrow] (optimizer) -- (cnn2);
+        \draw [arrow] (optimizer) -- (lstm1);
+        \draw [arrow] (optimizer) -- (lstm2);
+        \draw [arrow] (optimizer) -- (softmax);
+    \end{tikzpicture}
+    \caption{Aliran data pada proses klasifikasi}
+    \label{gambar:aliran-data-klasifikasi}
+\end{figure}
+
+\section{Model Klasifikasi}
+
+\subsection{Data Masukan}
+Data masukan adalah rangkaian data \textit{time series} dari sensor akselerometer dan giroskop. Rangkaian data tersebut diambil dari ponsel cerdas dan dikelompokkan dengan \textit{sliding window}.
+
+Sensor akselerometer dan giroskop menghasilkan nilai bacaan dengan tiga sumbu, yaitu sumbu $x$, $y$ dan $z$. Nilai sensor akselerometer $\pmb{a}$ dan giroskop $\pmb{g}$ dinotasikan sebagai vektor~\ref{eq:vektor-akselerometer} dan~\ref{eq:vektor-giroskop}.
+
+\begin{equation}
+    \label{eq:vektor-akselerometer}
+    \pmb{a} = 
+    \begin{bmatrix}
+        a_x \\
+        a_y \\
+        a_z
+    \end{bmatrix}
+\end{equation}
+
+\begin{equation}
+    \label{eq:vektor-giroskop}
+    \pmb{g} = 
+    \begin{bmatrix}
+        g_x \\
+        g_y \\
+        g_z
+    \end{bmatrix}
+\end{equation}
+
+Nilai sensor pada sumbu $x$, $y$ dan $z$ dipengaruhi oleh posisi dan arah gerak sensor. Mengingat posisi ponsel cerdas saat digunakan tidak menentu, maka perlu dicari nilai yang tidak dipengaruhi oleh arah gerak sensor, yaitu besar dari masing-masing vektor $\pmb{a}$ dan $\pmb{g}$. Besar vektor akseleromter dan giroskop dapat dicari dengan Persamaan~\ref{eq:norm-akselerometer} dan~\ref{eq:norm-giroskop}.
+
+\begin{equation}
+    \label{eq:norm-akselerometer}
+    |\pmb{a}| = \sqrt{a_x^2 + a_y^2 + a_z^2}
+\end{equation}
+
+\begin{equation}
+    \label{eq:norm-giroskop}
+    |\pmb{g}| = \sqrt{g_x^2 + g_y^2 + g_z^2}
+\end{equation}
+
+Nilai vektor sensor dan besarnya disusun menjadi matriks akselerometer $\pmb{A}$ dan matriks giroskop $\pmb{G}$ seperti pada Persamaan~\ref{eq:matriks-akselerometer} dan~\ref{eq:matriks-giroskop}.
+
+\begin{equation}
+    \label{eq:matriks-akselerometer}
+    \pmb{A} = 
+    \begin{bmatrix}
+        a_x & a_y & a_z & |\pmb{a}|
+    \end{bmatrix}
+\end{equation}
+
+\begin{equation}
+    \label{eq:matriks-giroskop}
+    \pmb{G} = 
+    \begin{bmatrix}
+        g_x & g_y & g_z & |\pmb{g}|
+    \end{bmatrix}
+\end{equation}
+
+Model klasifikasi menerima masukan tensor $\tensorsym{X}$. Jika $m_X$ jumlah baris $\tensorsym{X}$, $n_X$ jumlah kolom $\tensorsym{X}$ dan $c_X$ jumlah anggota masing-masing matriks anggota $\tensorsym{X}$, ukuran tensor $\tensorsym{X}$ adalah $m_X \times n_X \times c_X = 100 \times 2 \times 4$. Setiap baris pada tensor tersebut merupakan \textit{sample} dari matriks akselerometer $\pmb{A}$ dan giroskop $\pmb{G}$ yang diurutkan dari waktu $t_{1}$ sampai $t_{100}$.
+
+\begin{equation}
+    \label{eq:tensor-masukan}
+    \tensorsym{X}_{m_X \times n_X \times c_X} =
+    \begin{bmatrix}
+        \pmb{A}_{t_1} & \pmb{G}_{t_1} \\
+        \pmb{A}_{t_2} & \pmb{G}_{t_2} \\
+        \cdots & \cdots \\
+        \pmb{A}_{t_{100}} & \pmb{G}_{t_{100}} \\
+    \end{bmatrix}
+\end{equation}
+
+\subsection{Lapisan Konvolusi}
+Tensor $\tensorsym{X}$ dilewatkan melalui dua lapisan kovolusi untuk mencari fitur-fitur abstrak dari data sensor. Lapisan konvolusi menggunakan kernel $\tensorsym{K}$ yang merupakan tensor dengan ukuran $m_K \times n_K \times c_X \times c_K$. Nilai masing-masing anggota $\tensorsym{K}$ adalah bobot yang digunakan bersama oleh setiap jendela komputasi. Karena digunakan bersama, jumlah bobot dapat diminalisir menjadi $m_K \times n_K \times c_X$.
+
+Setiap lapisan konvolusi juga dilengkapi oleh bias $\pmb{b}$ dan fungsi aktivasi. Fungsi aktivasi yang digunakan adalah ReLU \textit{(Rectified Linear Unit)}, didefinisikan dalam Persamaan~\ref{eq:relu}.
+
+\begin{equation}
+    g(z) = \max(0,z)
+    \label{eq:relu}
+\end{equation}
+
+Nilai keluaran lapisan konvolusi dapat dihitung dengan melakukan konvolusi antara jendela komputasi $\tensorsym{I}$ dengan bobot $\tensorsym{W}$. Hasil konvolusi ditambahkan dengan bias dan dimasukkan ke dalam fungsi ReLU\@. Operasi tersebut didefinisikan sebagai
+
+\begin{equation}
+    H(i,j,k) = g((\tensorsym{I} * \tensorsym{W})(i,j,k) + \pmb{b})
+    \label{eq:konvolusi-kernel}
+\end{equation}
+
+\noindent
+dengan
+
+\begin{equation}
+    (\tensorsym{I} * \tensorsym{W})(i,j,k) = \sum_{m}\sum_{n}\sum_{c}I(m,n,c)W(i-m, j-n, k-c)
+    \label{eq:konvolusi-3d}
+\end{equation}
+
+\noindent
+Nilai optimal bobot dan bias dicari melalui tahap pelatihan.
+
+Perhitungan tersebut dilakukan untuk setiap jendela komputasi. Berikut ini tahapan perhitungan dalam lapisan konvolusi:
+
+\begin{enumerate}
+\item Jendela komputasi $\tensorsym{I}$ dibuat dari $\tensorsym{X}$ dengan ukuran $m_K \times n_K \times c_X$
+\item Untuk setiap jendela, lakukan perhitungan konvolusi dengan Persamaan~\ref{eq:konvolusi-kernel}.
+\item Lakukan tahap 1 dan 2 dengan langkah antar jendela sebesar $\pmb{S}$
+\item Susun hasil perhitungan setiap jendela menjadi tensor $\tensorsym{H}$
+\end{enumerate}
+
+Pada lapisan konvolusi pertama, ukuran kernel yang digunakan adalah $5 \times 2 \times 4 \times 32$ dan langkah antar jendela $\pmb{S} = [\begin{matrix}2 & 2\end{matrix}]$ sehingga menghasilkan keluaran $\tensorsym{H}^1$ dengan ukuran $50 \times 2 \times 32$.
+
+Pada lapisan konvolusi ke dua, ukuran kernel yang digunakan adalah $5 \times 2 \times 32 \times 32$ dan langkah antar jendela $\pmb{S} = [\begin{matrix}2 & 2\end{matrix}]$ sehingga menghasilkan keluaran $\tensorsym{H}^2$ dengan ukuran $25 \times 2 \times 32$.
+
+Perbandingan \textit{hyperparameter} lapisan konvolusi pertama dan kedua dapat dilihat pada Tabel~\ref{table:hyperparameter-lapisan-konvolusi}.
+
+\begin{table}[h!]
+    \centering
+    \caption{\textit{Hyperparameter} lapisan konvolusi}
+    \begin{tabular}{ |p{1.5cm}|p{3cm}|p{2cm}|p{1.5cm}|p{1.7cm}|p{2cm}| }
+        \hline
+        \textbf{Lapisan} & \textbf{Ukuran Kernel} & \textbf{Langkah} & \textbf{Ukuran Bias} & \textbf{Jumlah Bobot} & \textbf{Ukuran Keluaran} \\
+
+        \hline
+        1 & $5 \times 2 \times 4 \times 32$ & $[\begin{matrix}2 & 2\end{matrix}]$ & $32$ & 1280 & $50 \times 2 \times 32$ \\
+
+        \hline
+        2 & $5 \times 2 \times 32 \times 32$ & $[\begin{matrix}2 & 2\end{matrix}]$ & $32$ & 10240 & $25 \times 2 \times 32$ \\
+
+        \hline
+    \end{tabular}
+    \label{table:hyperparameter-lapisan-konvolusi}
+\end{table}
+
+\subsection{Lapisan LSTM}
+Setelah melalui lapisan konvolusi, hasil keluarannya dilewatkan melalui dua lapisan LSTM\@. Kedua lapisan LSTM dibuat dengan 128 \textit{hidden unit}. Masing-masing lapisan memiliki bobot antar input ke hidden $\pmb{U}$, bobot antar hidden ke output $\pmb{V}$, bobot antar hidden ke hidden $\pmb{W}$, serta bias $\pmb{b}$ dan $\pmb{c}$. Jika diberikan masukan matriks $\pmb{X}_{m \times n}$, $\pmb{x}^{(t)}$ merupakan subset dari $\pmb{X}$ pada langkah waktu $t$ dari $t = 1$ sampai $t = m$. Keluaran LSTM $\pmb{h}^{(t)}$ dapat dicari dengan Persamaan~\ref{eq:output-lstm}.
+
+Sel-sel LSTM pada lapisan pertama disusun dengan arsitektur \textit{many-to-many} seperti pada Gambar~\ref{gambar:many-to-one}. Masukan lapisan LSTM pertama diambil dari keluaran lapisan konvolusi $\tensorsym{H}^2$ yang bentuknya diubah dari $25 \times 2 \times 32$ menjadi $25 \times 64$ dengan meratakan anggota-anggota pada dimensi ke dua dan ke tiga. Dengan begitu, lapisan LSTM pertama dapat dibentangkan menjadi $25$ langkah waktu. Masing-masing langkah waktu menerima masukan vektor yang terdiri dari $64$ fitur. Karena lapisan LSTM menggunakan arsitektur \textit{many-to-many}, memiliki $25$ langkah waktu dan disusun dari $128$ \textit{hidden unit}, maka keluaran dari lapisan ini adalah matriks fitur dengan ukuran $25 \times 128$.
+
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}[node distance=2cm]
+        \node (x1) [cell] {$x^{(1)}$};
+        \node (x2) [cell, right of=x1] {$x^{(2)}$};
+        \node (x25) [cell, right of=x2, xshift=1cm] {$x^{(25)}$};
+        \node (h1) [cell, above of=x1] {$h^{(1)}$};
+        \node (h2) [cell, above of=x2] {$h^{(2)}$};
+        \node (h25) [cell, above of=x25] {$h^{(25)}$};
+        \node (y1) [cell, above of=h1] {$y^{(1)}$};
+        \node (y2) [cell, above of=h2] {$y^{(2)}$};
+        \node (y25) [cell, above of=h25] {$y^{(25)}$};
+
+        \draw [arrow] (x1) -- (h1);
+        \draw [arrow] (x2) -- (h2);
+        \draw [arrow] (x25) -- (h25);
+        \draw [arrow] (h1) -- (y1);
+        \draw [arrow] (h2) -- (y2);
+        \draw [arrow] (h25) -- (y25);
+        \draw [arrow] (h1) -- (h2);
+        \draw [dashed, very thick,->] (h2) -- (h25);
+    \end{tikzpicture}
+    \caption{Arsitektur lapisan LSTM \textit{many-to-many}}
+    \label{gambar:many-to-many}
+\end{figure}
+
+Sel-sel LSTM pada lapisan kedua disusun dengan arsitektur \textit{many-to-one} seperti pada Gambar~\ref{gambar:many-to-one}. Masukan lapisan LSTM kedua diambil dari keluaran lapisan LSTM pertama. Lapisan ini dapat dibentangkan menjadi $25$ langkah waktu dan masing-masing langkah waktu menerima masukan vektor yang terdiri dari $128$ fitur. Karena arsitektur yang digunakan merupakan arsitektur \textit{many-to-one} dan disusun dari $128$ \textit{hidden unit}, maka keluaran dari lapisan LSTM kedua hanya diambil dari keluaran pada langkah waktu terakhir, yaitu $\pmb{h}^{(t)}$ pada saat $t = m$. Dengan begitu, keluaran lapisan LSTM kedua merupakan vektor yang terdiri dari $128$ fitur.
+
+Perbandingan \textit{hyperparameter} lapisan LSTM pertama dan kedua dapat dilihat pada Tabel~\ref{table:hyperparameter-lapisan-lstm}.
+
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}[node distance=2cm]
+        \node (x1) [cell] {$x^{(1)}$};
+        \node (x2) [cell, right of=x1] {$x^{(2)}$};
+        \node (x25) [cell, right of=x2, xshift=1cm] {$x^{(25)}$};
+        \node (h1) [cell, above of=x1] {$h^{(1)}$};
+        \node (h2) [cell, above of=x2] {$h^{(2)}$};
+        \node (h25) [cell, above of=x25] {$h^{(25)}$};
+        \node (y) [cell, above of=h25] {$y$};
+
+        \draw [arrow] (x1) -- (h1);
+        \draw [arrow] (x2) -- (h2);
+        \draw [arrow] (x25) -- (h25);
+        \draw [arrow] (h25) -- (y);
+        \draw [arrow] (h1) -- (h2);
+        \draw [dashed, very thick,->] (h2) -- (h25);
+    \end{tikzpicture}
+    \caption{Arsitektur lapisan LSTM \textit{many-to-one}}
+    \label{gambar:many-to-one}
+\end{figure}
+
+\begin{table}[h!]
+    \centering
+    \caption{\textit{Hyperparameter} lapisan LSTM}
+    \begin{tabular}{ |p{1.5cm}|p{1.5cm}|p{2cm}|p{1.7cm}|p{2.5cm}|p{2cm}| }
+        \hline
+        \textbf{Lapisan} & \textbf{\textit{Hidden Unit}} & \textbf{Ukuran Masukan} & \textbf{Langkah Waktu} & \textbf{Arsitektur} & \textbf{Ukuran Keluaran} \\
+
+        \hline
+        1 & $128$ & $25 \times 64$ & $25$ & \textit{many-to-many} & $25 \times 128$ \\
+
+        \hline
+        2 & $128$ & $25 \times 128$ & $25$ & \textit{many-to-one} & $128$ \\
+
+        \hline
+    \end{tabular}
+    \label{table:hyperparameter-lapisan-lstm}
+\end{table}
+
+\subsection{Lapisan \textit{Softmax}}
+Setelah melalui lapisan LSTM, keluarannya masuk ke lapisan \textit{softmax}. Lapisan \textit{softmax} adalah jaringan padat yang menggunakan fungsi \textit{softmax} sebagai fungsi aktivasinya. Fungsi aktivasi \textit{softmax} digunakan untuk mencari distribusi probabilitas seluruh kelas aktivitas manusia.
+
+Jaringan padat adalah jaringan dengan neuron yang seluruhnya terhubung dengan neuron pada lapisan sebelum atau sesudahnya. Jaringan padat dengan 7 neuron dibuat dengan masukan dari hasil lapisan LSTM ke dua. Jumlah neuron tersebut dipilih sesuai dengan jumlah aktivitas yang akan diklasifikasikan.
+
+Lapisan \textit{softmax} menerima masukan vektor $\pmb{x}$ dengan $128$ fitur. Dengan bobot $\pmb{W}$ dan bias $\pmb{b}$, keluaran lapisan ini dihitung menggunakan persamaan
+
+\begin{equation}
+    \pmb{y} = softmax(\pmb{W} \pmb{x} + \pmb{b})
+\end{equation}
+
+\noindent
+dan fungsi \textit{softmax} didefinisikan sebagai
+
+\begin{equation}
+    softmax(\pmb{z})_i = \frac{\exp(z_i)}{\sum_{j=1}^n \exp(z_j)}
+\end{equation}
+
+Persamaan di atas menghasilkan vektor distribusi probabilitas dari 7 kelas aktivitas. Aktivitas yang dikenali adalah aktivitas dengan probabilitas tertinggi.
+
+
+\section{Pelatihan}
+Proses pelatihan jaringan dilakukan untuk mencari bobot dan bias yang optimal pada seluruh neuron dalam setiap lapisan. Optimasi bobot dan bias tersebut dilakukan dengan meminimal \textit{cost function} menggunakan algoritma optimasi berbasis \textit{gradient descent}. \textit{Cost function} yang digunakan adalah \textit{cross entropy} dan algoritma \textit{gradient descent} yang digunakan adalah RMSProp \citep{Dauphin-2015}.
+
+\subsection{Perhitungan \textit{loss} dengan Cross Entropy}
+
+
+\subsection{Optimasi dengan RMSProp}
+
+%------------------------------------------------------------------------------
+% Pengumpulan Data -> Masukkan saja ke rancangan perngkat lunak
+%
+% TODO:
+% - Sumber Data
+%   - Dataset publik
+%   - Pengambilan data pada ponsel cerdas
+% - Preprocessing
+% - Sliding window
+% - Pembagian data latih, validasi dan tes
+%
+%------------------------------------------------------------------------------
+\section{Data Pelatihan}
+Model klasifikasi dilatih dengan menggunakan dataset terbuka dari beberapa sumber, yaitu \textit{Activity Recognition Dataset} \citep{shoaib-2013}, \textit{Sensor Activity Dataset} \citep{shoaib-2014}, \textit{MobiAct Dataset} \citep{vavoulas-2016} dan \textit{Human Activity Recognition Using Smartphones Data Set} \citep{anguita-2013}. Partisipan pada keempat dataset tersebut dapat dilihat pada Tabel~\ref{table:partisipan-dataset}.
+
+\begin{table}[h!]
+    \centering
+    \caption{Partisipan pengambilan data}
+    \begin{tabular}{ |l|l|l|l|l|l| }
+        \hline
+        \textbf{Dataset} & \textbf{Partisipan} & \textbf{Laki-laki} & \textbf{Perempuan} & \textbf{Rentang Usia} \\
+
+        \hline
+        \citet{shoaib-2013} & 4 & 4 & 0 & 25 --- 30 \\
+
+        \hline
+        \citet{shoaib-2014} & 10 & 10 & 0 & 25 --- 30 \\
+
+        \hline
+        \citet{vavoulas-2016} & 57 & 39 & 15 & 20 --- 47 \\
+
+        \hline
+        \citet{anguita-2013} & 30 & --- & --- & 19 --- 48 \\
+
+        \hline
+    \end{tabular}
+    \label{table:partisipan-dataset}
+\end{table}
+
+Data sensor akselerometer dan giroskop dari keempat dataset tersebut diambil dengan \textit{sampling rate} 50 Hz. \textit{Sliding window} dibuat dari setiap 100 langkah waktu dengan tumpang tindih 50\%. Dengan aturan tersebut, diperoleh data pelatihan seperti pada Tabel~\ref{table:jumlah-dataset}.
+
+\begin{table}[h!]
+    \centering
+    \caption{Jumlah dataset}
+    \begin{tabular}{ |l|c| }
+        \hline
+        \textbf{Aktivitas} & \textbf{Jumlah Sample} \\
+
+        \hline
+        Berdiri & ? \\
+
+        \hline
+        Duduk & ? \\
+
+        \hline
+        Berjalan & ? \\
+
+        \hline
+        Berlari & ? \\
+
+        \hline
+        Bersepeda & ? \\
+
+        \hline
+        Menaiki Tangga & ? \\
+
+        \hline
+        Menuruni Tangga & ? \\
+
+        \hline
+    \end{tabular}
+    \label{table:jumlah-dataset}
+\end{table}
+
+Data tersebut dibagi untuk pelatihan dan pengujian. Seluruh data terlebih dulu diacak, lalu 70\% data diambil untuk data latih dan 30\% untuk data uji. Hasil pembagian data dapat dilihat pada Tabel~\ref{table:pembagian-data-latih-uji}.
+
+\begin{table}[h!]
+    \centering
+    \caption{Pembagian data latih dan data uji}
+    \begin{tabular}{ |l|c| }
+        \hline
+        \textbf{Data} & \textbf{Jumlah Sample} \\
+
+        \hline
+        Data Latih & ? \\
+
+        \hline
+        Data Uji & ? \\
+
+        \hline
+    \end{tabular}
+    \label{table:pembagian-data-latih-uji}
+\end{table}
+
+
+\section{Klasifikasi Pada Ponsel Cerdas}
+Proses klasifikasi pada ponsel cerdas ditunjukkan pada Gambar~\ref{gambar:diagram-alir-klasifikasi-ponsel-cerdas}. Sensor akselerometer dan giroskop dibaca dengan \textit{sampling rate} 50 Hz. Masing-masing sensor menghasilkan data dengan tiga sumbu, sehingga satu kali pembacaan menghasilkan enam data. Hasil bacaannya dikumpulkan menjadi jendela berisi 100 sample dengan tumpang tindih 50\%. Dengan begitu, satu jendela data terdiri dari pembacaan sensor selama dua detik dan jendela baru dibuat setiap satu detik. Setelah jendela terpenuhi, jendela tersebut dijadikan sebagai masukan model klasifikasi yang telah dibuat. Proses ini menghasilkan kelas aktivitas manusia yang sesuai dengan bacaan sensor.
+
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[node distance=2cm]
+        \node (mulai) [startstop] {Mulai};
+        \node (baca-sensor) [io, below of=mulai] {Baca sensor};
+        \node (susun-jendela) [process, below of=baca-sensor] {Susun jendela};
+        \node (jendela-siap) [decision, below of=susun-jendela, yshift=-1cm] {Jendela siap?};
+        \node (klasifikasi) [process, below of=jendela-siap, yshift=-1cm] {Klasifikasi};
+        \node (selesai) [startstop, below of=klasifikasi] {Selesai};
+
+        \draw [arrow] (mulai) -- (baca-sensor);
+        \draw [arrow] (baca-sensor) -- (susun-jendela);
+        \draw [arrow] (susun-jendela) -- (jendela-siap);
+        \draw [arrow] (jendela-siap) -- node[anchor=south] {tidak} (4,-7) -- (4,-2) -- (baca-sensor);
+        \draw [arrow] (jendela-siap) -- node[anchor=west] {ya} (klasifikasi);
+        \draw [arrow] (klasifikasi) -- (selesai);
+    \end{tikzpicture}
+    \caption{Diagram alir klasifikasi pada ponsel cerdas}
+    \label{gambar:diagram-alir-klasifikasi-ponsel-cerdas}
+\end{figure}
+
+%------------------------------------------------------------------------------
+% Pengujian
+%
+% Tabel: indikator keberhasilan
+% Menjawab judul rumusan masalah
+%------------------------------------------------------------------------------
+\section{Rencana Pengujian}
+Pengujian dilakukan untuk mengetahui kemampuan klasifikasi dari model yang telah dibuat. Terdapat tiga parameter yang diuji, yaitu akurasi klasifikasi \textit{offline}, akurasi klasifikasi \textit{online} dan kecepatan klasifikasi pada ponsel cerdas.
+
+Pada pengujian klasifikasi \textit{offline}, kemampuan model klasifikasi diukur berdasarkan akurasi klasifikasi pada data uji. Model klasifikasi menerima data uji yang diambil secara acak dari dataset dan terpisah dari data latih. Keluaran dari proses klasifikasi dibandingkan dengan label data tersebut.
+
+Pada pengujian klasifikasi \textit{online}, kemampuan model klasifikasi diukur berdasarkan akurasi klasifikasi pada data sensor ponsel cerdas yang diambil dan diolah secara \textit{real time}. Pengujian dilakukan oleh ? partisipan yang terdiri dari ? laki-laki dan ? perempuan. Partisipan memilih aktivitas yang akan diuji, lalu aktivitas tersebut dibandingkan dengan hasil klasifikasi dari data sensor. Ponsel cerdas ditempatkan di saku celana dengan posisi acak. Setiap partisipan melakukan pengujian selama ? menit untuk masing-masing aktivitas.
+
+Pengujian kecepatan klasifikasi dilakukan bersamaan dengan pengujian klasifikasi \textit{online}. Pengujian dilakukan dengan mengukur waktu yang dibutuhkan oleh setiap siklus klasifikasi, dimulai dari pengambilan data sensor sampai diperoleh kelas aktivitas dari data tersebut. Pengukuran ini dilakukan dengan beberapa model ponsel cerdas dengan kemampuan pemrosesan yang berbeda.
+
+Ketiga pengujian ini dilakukan dengan indikator pencapaian yang ditunjukkan pada Tabel~\ref{table:rencana-pengujian}.
+
+\begin{table}[h!]
+    \centering
+    \caption{Rencana Pengujian}
+    \begin{tabular}{ |p{0.5cm}|p{5cm}|p{7.5cm}| }
+        \hline
+        \textbf{No} & \textbf{Parameter} & \textbf{Pencapaian} \\
+
+        \hline
+        1 & Pengujian akurasi klasifikasi \textit{offline} & Didapatkan tingkat akurasi \dots pada data uji  \\
+
+        \hline
+        2 & Pengujian akurasi klasifikasi \textit{online} & Didapatkan tingkat akurasi \dots pada klasifikasi secara \textit{online}\\
+        
+        \hline
+        3 & Pengujian kecepatan klasifikasi pada ponsel cerdas & Klasifikasi dapat dilakukan secara \textit{real time} pada ponsel cerdas \\
+
+        \hline
+    \end{tabular}
+    \label{table:rencana-pengujian}
+\end{table}
