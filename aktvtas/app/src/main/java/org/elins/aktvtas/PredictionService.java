@@ -31,6 +31,7 @@ public class PredictionService extends SensorService {
     public static final String PREDICTION_ACCURACY = BASE_ACTION + "PREDICTION_SERVICE_ACCURACY";
     public static final String TOTAL_PREDICTION = BASE_ACTION + "PREDICTION_SERVICE_TOTAL";
     public static final String CORRECT_PREDICTION = BASE_ACTION + "PREDICTION_SERVICE_CORRECT";
+    public static final String PREDICTION_TIME = BASE_ACTION + "PREDICTION_SERVICE_TIME";
     
     public static final int DEFAULT_WINDOW_SIZE = 100;
     public static final float DEFAULT_OVERLAP = 0.5f;
@@ -52,6 +53,7 @@ public class PredictionService extends SensorService {
     private List<Recognition> lastRecognitions;
     private int totalPrediction = 0;
     private int correctPrediction = 0;
+    private long totalPredictionTime = 0;
     private float accuracy = 0f;
 
     private PredictionLogWriter logWriter;
@@ -97,6 +99,7 @@ public class PredictionService extends SensorService {
         super.onSensorDataReady();
 
         if (sensorDataSequence.size() == windowSize) {
+            long startTime = System.currentTimeMillis();
             List<Recognition> recognitions = classifier.classify(sensorDataSequence);
 
             if (! recognitions.equals(lastRecognitions)) {
@@ -119,10 +122,14 @@ public class PredictionService extends SensorService {
                         acquisition.getActivityId().ordinal()));
             }
 
+            long predictionTime = System.currentTimeMillis() - startTime;
+            totalPredictionTime += predictionTime;
+
             Log.i(TAG, String.format("Total: %d, Correct: %d, Accuracy: %f", totalPrediction,
                     correctPrediction, accuracy));
+            Log.i(TAG, String.format("Prediction time: %dms", predictionTime));
 
-            logWriter.write(recognitions.get(0).getId(), 0.0f);
+            logWriter.write(recognitions.get(0).getId(), predictionTime);
             rearrangeSequence();
         }
     }
@@ -145,12 +152,16 @@ public class PredictionService extends SensorService {
             confidences[i] = recognitions.get(i).getConfidence();
         }
 
+        long predictionTimeAvg = totalPredictionTime / totalPrediction;
+        Log.i(TAG, String.format("Average prediction time: %dms", predictionTimeAvg));
+
         Intent intent = new Intent(BROADCAST_ACTION)
                 .putExtra(PREDICTION_RESULT_ID, ids)
                 .putExtra(PREDICTION_RESULT_CONFIDENCE, confidences)
                 .putExtra(PREDICTION_ACCURACY, accuracy)
                 .putExtra(TOTAL_PREDICTION, totalPrediction)
-                .putExtra(CORRECT_PREDICTION, correctPrediction);
+                .putExtra(CORRECT_PREDICTION, correctPrediction)
+                .putExtra(PREDICTION_TIME, predictionTimeAvg);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 

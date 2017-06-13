@@ -6,8 +6,8 @@ public class PredictionLogWriter extends LogWriter {
         super(filePath);
     }
 
-    public void write(int predictedActivity, float predictionTime) {
-        String[] line = {Integer.toString(predictedActivity), Float.toString(predictionTime)};
+    public void write(int predictedActivity, long predictionTime) {
+        String[] line = {Integer.toString(predictedActivity), Long.toString(predictionTime)};
         csvWriter.writeNext(line, false);
     }
 
