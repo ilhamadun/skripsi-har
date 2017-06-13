@@ -9,6 +9,7 @@ import android.util.Log;
 import org.elins.aktvtas.human.HumanActivityClassifier;
 import org.elins.aktvtas.human.Recognition;
 import org.elins.aktvtas.sensor.DataAcquisition;
+import org.elins.aktvtas.sensor.PredictionLogWriter;
 import org.elins.aktvtas.sensor.SensorService;
 
 import java.text.SimpleDateFormat;
@@ -30,6 +31,7 @@ public class PredictionService extends SensorService {
     public static final String PREDICTION_ACCURACY = BASE_ACTION + "PREDICTION_SERVICE_ACCURACY";
     public static final String TOTAL_PREDICTION = BASE_ACTION + "PREDICTION_SERVICE_TOTAL";
     public static final String CORRECT_PREDICTION = BASE_ACTION + "PREDICTION_SERVICE_CORRECT";
+    public static final String PREDICTION_TIME = BASE_ACTION + "PREDICTION_SERVICE_TIME";
     
     public static final int DEFAULT_WINDOW_SIZE = 100;
     public static final float DEFAULT_OVERLAP = 0.5f;
@@ -51,7 +53,10 @@ public class PredictionService extends SensorService {
     private List<Recognition> lastRecognitions;
     private int totalPrediction = 0;
     private int correctPrediction = 0;
+    private long totalPredictionTime = 0;
     private float accuracy = 0f;
+
+    private PredictionLogWriter logWriter;
     
     private final IBinder binder = new PredictionBinder();
 
@@ -66,7 +71,7 @@ public class PredictionService extends SensorService {
         
         extractSensorToRead(sensors);
         createSensorDataSequence(sensorToRead, numberOfAxis);
-        createSensorDataWriter(generateFilename(new Date()));
+        createPredictionLogWriter(generateFilename(new Date()));
         createSensorDataReader(sensorToRead);
 
         classifier = new HumanActivityClassifier(getAssets());
@@ -79,12 +84,27 @@ public class PredictionService extends SensorService {
         return String.format("Prediction-%s", dateFormat.format(date));
     }
 
+    protected void createPredictionLogWriter(String filename) {
+        String basePath = getExternalFilesDir(null).getAbsolutePath();
+        filePath = basePath + "/" + filename + ".csv";
+        logWriter = new PredictionLogWriter(filePath);
+
+        logWriter.open();
+        logWriter.writeMetadata(acquisition.getActivityId().ordinal(),
+                acquisition.getSensorPlacement(), sensorToRead.size());
+    }
+
     @Override
     public void onSensorDataReady() {
         super.onSensorDataReady();
 
         if (sensorDataSequence.size() == windowSize) {
+            long startTime = System.currentTimeMillis();
+
             List<Recognition> recognitions = classifier.classify(sensorDataSequence);
+
+            long predictionTime = System.currentTimeMillis() - startTime;
+            totalPredictionTime += predictionTime;
 
             if (! recognitions.equals(lastRecognitions)) {
                 reportPredictions(recognitions);
@@ -108,15 +128,11 @@ public class PredictionService extends SensorService {
 
             Log.i(TAG, String.format("Total: %d, Correct: %d, Accuracy: %f", totalPrediction,
                     correctPrediction, accuracy));
+            Log.i(TAG, String.format("Prediction time: %dms", predictionTime));
 
-            writeBuffer();
+            logWriter.write(recognitions.get(0).getId(), predictionTime);
+            rearrangeSequence();
         }
-    }
-
-    @Override
-    protected void writeBuffer() {
-//        writeLog();
-        rearrangeSequence();
     }
 
     private void rearrangeSequence() {
@@ -131,25 +147,32 @@ public class PredictionService extends SensorService {
     private void reportPredictions(List<Recognition> recognitions) {
         int ids[] = new int[recognitions.size()];
         float confidences[] = new float[recognitions.size()];
+        long predictionTimeAvg = 0;
 
         for (int i = 0; i < recognitions.size(); i++) {
             ids[i] = recognitions.get(i).getId();
             confidences[i] = recognitions.get(i).getConfidence();
         }
 
+        if (totalPrediction > 0) {
+            predictionTimeAvg = totalPredictionTime / totalPrediction;
+        }
+        Log.i(TAG, String.format("Average prediction time: %dms", predictionTimeAvg));
+
         Intent intent = new Intent(BROADCAST_ACTION)
                 .putExtra(PREDICTION_RESULT_ID, ids)
                 .putExtra(PREDICTION_RESULT_CONFIDENCE, confidences)
                 .putExtra(PREDICTION_ACCURACY, accuracy)
                 .putExtra(TOTAL_PREDICTION, totalPrediction)
-                .putExtra(CORRECT_PREDICTION, correctPrediction);
+                .putExtra(CORRECT_PREDICTION, correctPrediction)
+                .putExtra(PREDICTION_TIME, predictionTimeAvg);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     @Override
     public void onDestroy() {
-        if (sensorDataWriter != null) {
-            sensorDataWriter.close();
+        if (logWriter != null) {
+            logWriter.close();
         }
         sensorReader.close();
     }

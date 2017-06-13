@@ -22,6 +22,7 @@ public class LogSensorService extends SensorService {
     protected int sensorPlacement;
     int logDurationInSecond;
 
+    private SensorDataWriter sensorDataWriter;
 
     private final IBinder binder = new LogSensorBinder();
     private NotificationCompat.Builder notificationBuilder;
@@ -55,6 +56,13 @@ public class LogSensorService extends SensorService {
         foregroundServiceSetup();
 
         return binder;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        writeLog();
+        sensorDataSequence.clear();
+        return false;
     }
 
     @Override
@@ -109,5 +117,23 @@ public class LogSensorService extends SensorService {
         notificationBuilder.setProgress(logDurationInSecond, timeToGo, false)
                 .setContentInfo(dateFormat.format(timeLeftMillis) + " " + timeUnit + " left");
         startForeground(NOTIFICATION_ID, notificationBuilder.build());
+    }
+
+    protected void createSensorDataWriter(String filename) {
+        String basePath = getExternalFilesDir(null).getAbsolutePath();
+        filePath = basePath + "/" + filename + ".csv";
+        sensorDataWriter = new SensorDataWriter(filePath);
+    }
+
+    protected void writeLog() {
+        int numberOfSensors = sensorToRead.size();
+        int totalSensorAxis = 0;
+        for (Integer s : numberOfAxis) {
+            totalSensorAxis += s;
+        }
+
+        sensorDataWriter.open();
+        sensorDataWriter.write(logType, numberOfSensors, totalSensorAxis, sensorDataSequence);
+        sensorDataWriter.close();
     }
 }
