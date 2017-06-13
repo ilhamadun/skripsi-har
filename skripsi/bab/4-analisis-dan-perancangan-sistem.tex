@@ -161,16 +161,16 @@ Nilai vektor sensor dan besarnya disusun menjadi matriks akselerometer $\pmb{A}$
     \end{bmatrix}
 \end{equation}
 
-Model klasifikasi menerima masukan tensor $\tensorsym{X}$. Jika $m_X$ jumlah baris $\tensorsym{X}$, $n_X$ jumlah kolom $\tensorsym{X}$ dan $c_X$ jumlah anggota masing-masing matriks anggota $\tensorsym{X}$, ukuran tensor $\tensorsym{X}$ adalah $m_X \times n_X \times c_X = 100 \times 2 \times 4$. Setiap baris pada tensor tersebut merupakan \textit{sample} dari matriks akselerometer $\pmb{A}$ dan giroskop $\pmb{G}$ yang diurutkan dari waktu $t_{0}$ sampai $t_{99}$.
+Model klasifikasi menerima masukan tensor $\tensorsym{X}$. Jika $m_X$ jumlah baris $\tensorsym{X}$, $n_X$ jumlah kolom $\tensorsym{X}$ dan $c_X$ jumlah anggota masing-masing matriks anggota $\tensorsym{X}$, ukuran tensor $\tensorsym{X}$ adalah $m_X \times n_X \times c_X = 100 \times 2 \times 4$. Setiap baris pada tensor tersebut merupakan \textit{sample} dari matriks akselerometer $\pmb{A}$ dan giroskop $\pmb{G}$ yang diurutkan dari waktu $t_{1}$ sampai $t_{100}$.
 
 \begin{equation}
     \label{eq:tensor-masukan}
     \tensorsym{X}_{m_X \times n_X \times c_X} =
     \begin{bmatrix}
-        \pmb{A}_{t_0} & \pmb{G}_{t_0} \\
         \pmb{A}_{t_1} & \pmb{G}_{t_1} \\
+        \pmb{A}_{t_2} & \pmb{G}_{t_2} \\
         \cdots & \cdots \\
-        \pmb{A}_{t_{99}} & \pmb{G}_{t_{99}} \\
+        \pmb{A}_{t_{100}} & \pmb{G}_{t_{100}} \\
     \end{bmatrix}
 \end{equation}
 
@@ -313,7 +313,7 @@ Perbandingan \textit{hyperparameter} lapisan LSTM pertama dan kedua dapat diliha
 \subsection{Lapisan \textit{Softmax}}
 Setelah melalui lapisan LSTM, keluarannya masuk ke lapisan \textit{softmax}. Lapisan \textit{softmax} adalah jaringan padat yang menggunakan fungsi \textit{softmax} sebagai fungsi aktivasinya. Fungsi aktivasi \textit{softmax} digunakan untuk mencari distribusi probabilitas seluruh kelas aktivitas manusia.
 
-Jaringan padat adalah jaringan dengan neuron yang seluruhnya terhubung dengan neuron pada lapisan sebelum atau sesudahnya. Jaringan padat dengan 10 neuron dibuat dengan masukan dari hasil lapisan LSTM ke dua. Jumlah neuron tersebut dipilih sesuai dengan jumlah aktivitas yang akan diklasifikasikan.
+Jaringan padat adalah jaringan dengan neuron yang seluruhnya terhubung dengan neuron pada lapisan sebelum atau sesudahnya. Jaringan padat dengan 7 neuron dibuat dengan masukan dari hasil lapisan LSTM ke dua. Jumlah neuron tersebut dipilih sesuai dengan jumlah aktivitas yang akan diklasifikasikan.
 
 Lapisan \textit{softmax} menerima masukan vektor $\pmb{x}$ dengan $128$ fitur. Dengan bobot $\pmb{W}$ dan bias $\pmb{b}$, keluaran lapisan ini dihitung menggunakan persamaan
 
@@ -328,7 +328,7 @@ dan fungsi \textit{softmax} didefinisikan sebagai
     softmax(\pmb{z})_i = \frac{\exp(z_i)}{\sum_{j=1}^n \exp(z_j)}
 \end{equation}
 
-Persamaan di atas menghasilkan vektor distribusi probabilitas dari 10 kelas aktivitas. Aktivitas yang dikenali adalah aktivitas dengan probabilitas tertinggi.
+Persamaan di atas menghasilkan vektor distribusi probabilitas dari 7 kelas aktivitas. Aktivitas yang dikenali adalah aktivitas dengan probabilitas tertinggi.
 
 
 \section{Pelatihan}

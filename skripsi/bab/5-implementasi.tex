@@ -168,7 +168,7 @@ Pengenalan aktivitas manusia dilakukan secara \textit{real time} pada ponsel cer
     \label{listing:callback-sensor-ready-prediction}
 \end{listing}
 
-Pada baris $84$, metode \mintinline{java}{super.onSensorDataReady()} dipanggil untuk menjalankan implementasi \mintinline{java}{onSensorDataReady()} pada kelas \mintinline{java}{SensorService}. Pemanggilan metode tersebut dilakukan untuk menyusun bacaan sensor menjadi struktur \mintinline{java}{SensorDataSequence}. Saat ukuran \mintinline{java}{SensorDataSequence} telah sesuai dengan ukuran jendela yang diinginkan, aktivitas diklasifikasikan memanggil metode \mintinline{java}{classifier.classify(SensorDataSequence)} pada baris $87$.
+Pada baris $84$, metode \mintinline{java}{super.onSensorDataReady()} dipanggil untuk menjalankan implementasi \mintinline{java}{onSensorDataReady()} pada kelas \mintinline{java}{SensorService}. Pemanggilan metode tersebut dilakukan untuk menyusun bacaan sensor menjadi struktur \mintinline{java}{SensorDataSequence}. Saat ukuran \mintinline{java}{SensorDataSequence} telah sesuai dengan ukuran jendela yang diinginkan, aktivitas diklasifikasikan dengan memanggil metode \mintinline{java}{classifier.classify(SensorDataSequence)} pada baris $87$.
 
 Akurasi pengenalan dihitung pada baris $94-103$. Pengenalan yang tepat diketahui dengan membandingkan hasil klasifikasi dengan referensi. Pada baris 102, tingkat akurasi pengenalan dihitung dengan persamaan
 
