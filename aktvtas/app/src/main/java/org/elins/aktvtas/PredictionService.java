@@ -100,7 +100,11 @@ public class PredictionService extends SensorService {
 
         if (sensorDataSequence.size() == windowSize) {
             long startTime = System.currentTimeMillis();
+
             List<Recognition> recognitions = classifier.classify(sensorDataSequence);
+
+            long predictionTime = System.currentTimeMillis() - startTime;
+            totalPredictionTime += predictionTime;
 
             if (! recognitions.equals(lastRecognitions)) {
                 reportPredictions(recognitions);
@@ -121,9 +125,6 @@ public class PredictionService extends SensorService {
                 Log.i(TAG, String.format("Prediction: %d, Expected: %d", lastRecognitions.get(0).getId(),
                         acquisition.getActivityId().ordinal()));
             }
-
-            long predictionTime = System.currentTimeMillis() - startTime;
-            totalPredictionTime += predictionTime;
 
             Log.i(TAG, String.format("Total: %d, Correct: %d, Accuracy: %f", totalPrediction,
                     correctPrediction, accuracy));
@@ -146,13 +147,16 @@ public class PredictionService extends SensorService {
     private void reportPredictions(List<Recognition> recognitions) {
         int ids[] = new int[recognitions.size()];
         float confidences[] = new float[recognitions.size()];
+        long predictionTimeAvg = 0;
 
         for (int i = 0; i < recognitions.size(); i++) {
             ids[i] = recognitions.get(i).getId();
             confidences[i] = recognitions.get(i).getConfidence();
         }
 
-        long predictionTimeAvg = totalPredictionTime / totalPrediction;
+        if (totalPrediction > 0) {
+            predictionTimeAvg = totalPredictionTime / totalPrediction;
+        }
         Log.i(TAG, String.format("Average prediction time: %dms", predictionTimeAvg));
 
         Intent intent = new Intent(BROADCAST_ACTION)
