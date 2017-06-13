@@ -27,7 +27,6 @@ public class SensorService extends Service implements SensorReader.SensorReaderE
 
     protected SensorReader sensorReader;
     protected SensorDataSequence sensorDataSequence;
-    protected SensorDataWriter sensorDataWriter;
 
     protected String filePath;
     private List<SensorData> buffer;
@@ -39,7 +38,7 @@ public class SensorService extends Service implements SensorReader.SensorReaderE
 
     @Override
     public boolean onUnbind(Intent intent) {
-        writeBuffer();
+        sensorDataSequence.clear();
         return false;
     }
 
@@ -53,11 +52,6 @@ public class SensorService extends Service implements SensorReader.SensorReaderE
             sensorDataSequence.commit();
             entryCounter++;
         }
-    }
-
-    protected void writeBuffer() {
-        writeLog();
-        sensorDataSequence.clear();
     }
 
     public List<SensorData> getLastSensorData() {
@@ -86,24 +80,6 @@ public class SensorService extends Service implements SensorReader.SensorReaderE
             SensorData sensorData = new SensorData(sensorToRead.get(i), numberOfAxis.get(i));
             sensorDataSequence.registerSensor(sensorData);
         }
-    }
-
-    protected void createSensorDataWriter(String filename) {
-        String basePath = getExternalFilesDir(null).getAbsolutePath();
-        filePath = basePath + "/" + filename + ".csv";
-        sensorDataWriter = new SensorDataWriter(filePath);
-    }
-
-    protected void writeLog() {
-        int numberOfSensors = sensorToRead.size();
-        int totalSensorAxis = 0;
-        for (Integer s : numberOfAxis) {
-            totalSensorAxis += s;
-        }
-
-        sensorDataWriter.open();
-        sensorDataWriter.write(logType, numberOfSensors, totalSensorAxis, sensorDataSequence);
-        sensorDataWriter.close();
     }
 
     public String getFilePath() {

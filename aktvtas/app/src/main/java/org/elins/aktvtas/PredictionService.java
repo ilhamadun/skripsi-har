@@ -9,6 +9,7 @@ import android.util.Log;
 import org.elins.aktvtas.human.HumanActivityClassifier;
 import org.elins.aktvtas.human.Recognition;
 import org.elins.aktvtas.sensor.DataAcquisition;
+import org.elins.aktvtas.sensor.PredictionLogWriter;
 import org.elins.aktvtas.sensor.SensorService;
 
 import java.text.SimpleDateFormat;
@@ -52,6 +53,8 @@ public class PredictionService extends SensorService {
     private int totalPrediction = 0;
     private int correctPrediction = 0;
     private float accuracy = 0f;
+
+    private PredictionLogWriter logWriter;
     
     private final IBinder binder = new PredictionBinder();
 
@@ -66,7 +69,7 @@ public class PredictionService extends SensorService {
         
         extractSensorToRead(sensors);
         createSensorDataSequence(sensorToRead, numberOfAxis);
-        createSensorDataWriter(generateFilename(new Date()));
+        createPredictionLogWriter(generateFilename(new Date()));
         createSensorDataReader(sensorToRead);
 
         classifier = new HumanActivityClassifier(getAssets());
@@ -77,6 +80,16 @@ public class PredictionService extends SensorService {
     private String generateFilename(Date date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HH-mm-ss", Locale.getDefault());
         return String.format("Prediction-%s", dateFormat.format(date));
+    }
+
+    protected void createPredictionLogWriter(String filename) {
+        String basePath = getExternalFilesDir(null).getAbsolutePath();
+        filePath = basePath + "/" + filename + ".csv";
+        logWriter = new PredictionLogWriter(filePath);
+
+        logWriter.open();
+        logWriter.writeMetadata(acquisition.getActivityId().ordinal(),
+                acquisition.getSensorPlacement(), sensorToRead.size());
     }
 
     @Override
@@ -109,14 +122,9 @@ public class PredictionService extends SensorService {
             Log.i(TAG, String.format("Total: %d, Correct: %d, Accuracy: %f", totalPrediction,
                     correctPrediction, accuracy));
 
-            writeBuffer();
+            logWriter.write(recognitions.get(0).getId(), 0.0f);
+            rearrangeSequence();
         }
-    }
-
-    @Override
-    protected void writeBuffer() {
-//        writeLog();
-        rearrangeSequence();
     }
 
     private void rearrangeSequence() {
@@ -148,8 +156,8 @@ public class PredictionService extends SensorService {
 
     @Override
     public void onDestroy() {
-        if (sensorDataWriter != null) {
-            sensorDataWriter.close();
+        if (logWriter != null) {
+            logWriter.close();
         }
         sensorReader.close();
     }
