@@ -224,15 +224,12 @@ class HARConvLSTM:
             'WALKING_UPSTAIRS',
             'WALKING_DOWNSTAIRS',
             'BIKING',
-            'LAYING',
-            'NONE',
-            'NONE'
         ]
 
         plt.imshow(normalized_cm, interpolation='nearest', cmap=plt.cm.Blues)
         plt.suptitle('Confusion Matrix')
         plt.colorbar()
-        tick_marks = np.arange(10)
+        tick_marks = np.arange(7)
         plt.xticks(tick_marks, labels, rotation=90, fontsize='x-small')
         plt.yticks(tick_marks, labels, fontsize='x-small')
         plt.ylabel('True label')
