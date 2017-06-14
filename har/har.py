@@ -16,9 +16,9 @@ class HARConvLSTM:
         self.session = tf.Session()
         self.log_train, self.log_test = None, None
         self.best_directory, self.last_directory = None, None
-        self.checkpoint_path = None
+        self.checkpoint_path, self.best_checkpoint_path = None, None
         self.features = tf.placeholder(tf.float32, [None, 600], name='input')
-        self.target = tf.placeholder(tf.float32, [None, 10], name='target')
+        self.target = tf.placeholder(tf.float32, [None, 7], name='target')
         self.keep_prob = tf.placeholder(tf.float32, name='keep_prob')
 
         features = self.__preprocessing()
@@ -27,7 +27,7 @@ class HARConvLSTM:
         conv2 = self.__conv_layer(conv1, [5, 2, 32, 32], 'conv2')
         lstm_input = tf.reshape(conv2, [-1, 25, 64])
         lstm = self.__lstm_layers(lstm_input, 128, 2)
-        self.output = slim.fully_connected(lstm, 10, activation_fn=tf.nn.softmax, scope='output')
+        self.output = slim.fully_connected(lstm, 7, activation_fn=tf.nn.softmax, scope='output')
         self.train_op, self.accuracy = self.__train_layers(self.output, self.target)
 
     def __preprocessing(self):
@@ -143,11 +143,19 @@ class HARConvLSTM:
         checkpoint_prefix = os.path.join(self.last_directory, 'saved_checkpoint')
         self.checkpoint_path = saver.save(self.session, checkpoint_prefix, global_step=step)
 
+    def save_best_checkpoint(self, saver, step):
+        checkpoint_prefix = os.path.join(self.best_directory, 'saved_checkpoint')
+        self.best_checkpoint_path = saver.save(self.session, checkpoint_prefix, global_step=step)
 
-    def train(self, features, target, batch_size, number_of_steps):
+    def train(self, features, target, batch_size, number_of_steps, load=None):
         merged_summary = tf.summary.merge_all()
-        saver = tf.train.Saver(max_to_keep=10)
+        last_saver = tf.train.Saver(max_to_keep=10)
+        best_saver = tf.train.Saver(max_to_keep=1)
         train_iterator = data.iterator(features, target, features.shape[0], batch_size)
+        best_accuracy = 0
+
+        if load is not None:
+            data.load_model(self.session, load)
 
         self.write_graph('graph.pbtxt')
 
@@ -164,7 +172,12 @@ class HARConvLSTM:
                         self.keep_prob: 1.0
                     })
                     self.log_test.add_summary(summary, step)
-                    self.save_checkpoint(saver, step)
+
+                    if accuracy >= best_accuracy:
+                        best_accuracy = accuracy
+                        self.save_best_checkpoint(best_saver, step)
+                    else:
+                        self.save_checkpoint(last_saver, step)
 
                     print("step %5d\taccuracy: %5g" % (step, accuracy))
 
@@ -175,8 +188,13 @@ class HARConvLSTM:
                 })
                 self.log_train.add_summary(summary, step)
 
-    def test(self, features, target):
+    def test(self, features, target, load=None):
         print('Testing %d sample...' % (features.shape[0]))
+
+        if load is None:
+            load = self.best_checkpoint_path
+
+        data.load_model(self.session, load)
 
         with self.session.as_default():
             predictions, accuracy = self.session.run([self.output, self.accuracy], feed_dict={
@@ -243,28 +261,32 @@ def epoch_to_steps(epoch, data_length, batch_size):
 
     return number_of_steps
 
-def main(datadir, train=True, test=True, epoch=5, batch_size=100, logdir=None):
+def main(train_dir=None, test_dir=None, epoch=5, batch_size=100, logdir=None, load=None):
     model = HARConvLSTM()
 
     if logdir:
         model.initialize_logs(os.path.join(logdir, 'summary'))
         model.initialize_checkpoint(os.path.join(logdir, 'checkpoint'))
 
-    filepath = os.path.join(datadir, '**', '*.csv')
-    filenames = glob.glob(filepath, recursive=True)
-    target_num = 10
+    target_num = 7
     window_size = 100
-    train_data, test_data, train_target, test_target = data.get(filenames, target_num,
-                                                                window_size)
 
     model.session.run(tf.global_variables_initializer())
 
-    if train:
-        number_of_steps = epoch_to_steps(epoch, train_data.shape[0], batch_size)
-        model.train(train_data, train_target, batch_size, number_of_steps)
+    if train_dir:
+        train_files = os.path.join(train_dir, '**', '*.csv')
+        train_filenames = glob.glob(train_files, recursive=True)
+        train_data, train_target = data.get(train_filenames, target_num, window_size)
 
-    if test:
-        predictions, _ = model.test(test_data, test_target)
+        number_of_steps = epoch_to_steps(epoch, train_data.shape[0], batch_size)
+        model.train(train_data, train_target, batch_size, number_of_steps, load)
+
+    if test_dir:
+        test_files = os.path.join(test_dir, '**', '*.csv')
+        test_filenames = glob.glob(test_files, recursive=True)
+        test_data, test_target = data.get(test_filenames, target_num, window_size)
+
+        predictions, _ = model.test(test_data, test_target, load)
         model.confusion_matrix(predictions, test_target, logdir)
 
 
