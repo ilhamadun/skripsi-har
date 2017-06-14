@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 
 
-def get(filenames, num_target, window_size, overlap=0.5, divider=0.7):
+def get(filenames, num_target, window_size, overlap=0.5):
     """ Get data and prepares it for training and testing
 
     This method do all the preparation needed for training and testing process,
@@ -17,16 +17,10 @@ def get(filenames, num_target, window_size, overlap=0.5, divider=0.7):
     data, target = load(filenames, window_size, overlap)
     data, target = shuffle(data, target)
 
-    data_train, data_test = divide(data, divider)
-    target_train, target_test = divide(target, divider)
-
-    target_train = tf.one_hot(target_train, num_target)
-    target_test = tf.one_hot(target_test, num_target)
-
-    return data_train, data_test, target_train, target_test
+    return data, tf.one_hot(target, num_target)
 
 
-def load(filenames, window_size, overlap, one_hot=False, target_num=10):
+def load(filenames, window_size, overlap):
     """ Load csv files
 
     filenames   -- list of filename to open
@@ -43,7 +37,7 @@ def load(filenames, window_size, overlap, one_hot=False, target_num=10):
             target_dtype=np.int,
             target_column=-1)
 
-        file_data, file_target = sliding_window(file, window_size)
+        file_data, file_target = sliding_window(file, window_size, overlap)
         if data is None or target is None:
             data = np.array(file_data)
             target = np.array(file_target)
@@ -51,32 +45,26 @@ def load(filenames, window_size, overlap, one_hot=False, target_num=10):
             data = np.concatenate((data, file_data))
             target = np.concatenate((target, file_target))
 
-    if one_hot:
-        target = tf.one_hot(target, target_num)
-
     return data, target
 
 
-def sliding_window(data_in, window_size):
+def sliding_window(data_in, window_size, overlap = 0.5):
     """ Apply sliding windows to data
 
     data_in     -- data array
     window_size -- size of window to group the data
     """
-    overlap = 0.5
     step = int(window_size * (1 - overlap))
-    data = np.empty([int(data_in.data.shape[0] / (window_size * overlap)),
-                     data_in.data.shape[1] * window_size])
-    target = np.empty([int(data_in.target.shape[0] / (window_size * overlap))])
+    data, target = [], []
 
     for i in range(0, data_in.data.shape[0] - window_size, step):
         if data_in.target[i] != data_in.target[i + window_size]:
             continue
 
-        data[int(i / step)] = data_in.data[i:i + window_size].flatten()
-        target[int(i / step)] = data_in.target[i]
+        data.append(np.array(data_in.data[i:i + window_size].flatten()))
+        target.append(data_in.target[i])
 
-    return data, target
+    return np.vstack(data), np.array(target)
 
 
 def shuffle(data, target):
