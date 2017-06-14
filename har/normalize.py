@@ -72,8 +72,8 @@ class Normalize:
 
 
             dataset = np.array(read, dtype=np.float64)
-            filtered_features = median_filter(dataset[:, :6])
-            dataset = np.concatenate([filtered_features, dataset[:, 6:7]], axis=1)
+            # filtered_features = median_filter(dataset[:, :6])
+            dataset = np.concatenate([dataset, dataset[:, 6:7]], axis=1)
             header = str(dataset.shape[0]) + ',6'
             np.savetxt(output_path, dataset, self.COLUMN_FORMAT, delimiter=',', header=header, comments='')
             print('Output:', output_path)
@@ -176,11 +176,11 @@ class Normalize:
             num_sample = _class_num_sample(activity)
             resampled_acc = signal.resample(raw_acc[:, 1:4], num_sample)
             resampled_gyro = signal.resample(raw_gyr[:, 1:4], num_sample)
-            filtered_acc = median_filter(resampled_acc)
-            filtered_gyro = median_filter(resampled_gyro)
+            # filtered_acc = median_filter(resampled_acc)
+            # filtered_gyro = median_filter(resampled_gyro)
             activity_id = np.full((num_sample, 1), _class_id(activity))
 
-            dataset = np.concatenate([filtered_acc, filtered_gyro, activity_id], 1)
+            dataset = np.concatenate([resampled_acc, resampled_gyro, activity_id], 1)
 
             header = str(num_sample) + ',6'
             np.savetxt(output_path, dataset, self.COLUMN_FORMAT, delimiter=',', header=header, comments='')
