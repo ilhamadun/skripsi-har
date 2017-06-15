@@ -352,33 +352,9 @@ Proses pelatihan jaringan dilakukan untuk mencari bobot dan bias yang optimal pa
 %
 %------------------------------------------------------------------------------
 \section{Data Pelatihan}
-Model klasifikasi dilatih dengan menggunakan dataset terbuka dari beberapa sumber, yaitu \textit{Activity Recognition Dataset} \citep{shoaib-2013}, \textit{Sensor Activity Dataset} \citep{shoaib-2014}, \textit{MobiAct Dataset} \citep{vavoulas-2016} dan \textit{Human Activity Recognition Using Smartphones Data Set} \citep{anguita-2013}. Partisipan pada keempat dataset tersebut dapat dilihat pada Tabel~\ref{table:partisipan-dataset}.
+Model klasifikasi dilatih dengan menggunakan dataset terbuka dari \textit{MobiAct Dataset} \citep{vavoulas-2016}. Dataset tersebut dikumpulkan dari 57 parisipan (42 laki-laki dan 15 perempuan) dalam rentang usia antara 20 sampai 47 tahun, rentang tinggi badan antara 160 cm sampai 189 cm dan rentang berat badan antara 50 kg sampai 120kg.
 
-\begin{table}[h!]
-    \centering
-    \caption{Partisipan pengambilan data}
-    \begin{tabular}{ |l|l|l|l|l|l| }
-        \hline
-        \textbf{Dataset} & \textbf{Partisipan} & \textbf{Laki-laki} & \textbf{Perempuan} & \textbf{Rentang Usia} \\
-
-        \hline
-        \citet{shoaib-2013} & 4 & 4 & 0 & 25 --- 30 \\
-
-        \hline
-        \citet{shoaib-2014} & 10 & 10 & 0 & 25 --- 30 \\
-
-        \hline
-        \citet{vavoulas-2016} & 57 & 39 & 15 & 20 --- 47 \\
-
-        \hline
-        \citet{anguita-2013} & 30 & --- & --- & 19 --- 48 \\
-
-        \hline
-    \end{tabular}
-    \label{table:partisipan-dataset}
-\end{table}
-
-Data sensor akselerometer dan giroskop dari keempat dataset tersebut diambil dengan \textit{sampling rate} 50 Hz. \textit{Sliding window} dibuat dari setiap 100 langkah waktu dengan tumpang tindih 50\%. Dengan aturan tersebut, diperoleh data pelatihan seperti pada Tabel~\ref{table:jumlah-dataset}.
+Data sensor akselerometer dan giroskop pada dataset tersebut diambil dengan \textit{sampling rate} tertinggi dari ponsel cerdas Android. Data tersebut di sample ulang dengan \textit{sampling rate} 50 Hz, lalu \textit{sliding window} dibuat dari setiap 100 sample dengan tumpang tindih 50\%. Dengan aturan tersebut, diperoleh data aktivitas seperti pada Tabel~\ref{table:jumlah-dataset}.
 
 \begin{table}[h!]
     \centering
@@ -400,9 +376,6 @@ Data sensor akselerometer dan giroskop dari keempat dataset tersebut diambil den
         Berlari & ? \\
 
         \hline
-        Bersepeda & ? \\
-
-        \hline
         Menaiki Tangga & ? \\
 
         \hline
@@ -412,27 +385,6 @@ Data sensor akselerometer dan giroskop dari keempat dataset tersebut diambil den
     \end{tabular}
     \label{table:jumlah-dataset}
 \end{table}
-
-Data tersebut dibagi untuk pelatihan dan pengujian. Seluruh data terlebih dulu diacak, lalu 70\% data diambil untuk data latih dan 30\% untuk data uji. Hasil pembagian data dapat dilihat pada Tabel~\ref{table:pembagian-data-latih-uji}.
-
-\begin{table}[h!]
-    \centering
-    \caption{Pembagian data latih dan data uji}
-    \begin{tabular}{ |l|c| }
-        \hline
-        \textbf{Data} & \textbf{Jumlah Sample} \\
-
-        \hline
-        Data Latih & ? \\
-
-        \hline
-        Data Uji & ? \\
-
-        \hline
-    \end{tabular}
-    \label{table:pembagian-data-latih-uji}
-\end{table}
-
 
 \section{Klasifikasi Pada Ponsel Cerdas}
 Proses klasifikasi pada ponsel cerdas ditunjukkan pada Gambar~\ref{gambar:diagram-alir-klasifikasi-ponsel-cerdas}. Sensor akselerometer dan giroskop dibaca dengan \textit{sampling rate} 50 Hz. Masing-masing sensor menghasilkan data dengan tiga sumbu, sehingga satu kali pembacaan menghasilkan enam data. Hasil bacaannya dikumpulkan menjadi jendela berisi 100 sample dengan tumpang tindih 50\%. Dengan begitu, satu jendela data terdiri dari pembacaan sensor selama dua detik dan jendela baru dibuat setiap satu detik. Setelah jendela terpenuhi, jendela tersebut dijadikan sebagai masukan model klasifikasi yang telah dibuat. Proses ini menghasilkan kelas aktivitas manusia yang sesuai dengan bacaan sensor.
@@ -483,7 +435,7 @@ Ketiga pengujian ini dilakukan dengan indikator pencapaian yang ditunjukkan pada
         \textbf{No} & \textbf{Parameter} & \textbf{Pencapaian} \\
 
         \hline
-        1 & Pengujian akurasi klasifikasi \textit{offline} & Didapatkan tingkat akurasi \dots pada data uji  \\
+        1 & Pengujian akurasi klasifikasi \textit{offline} & Didapatkan tingkat akurasi \dots pada data uji dari semua partisipan dan tingkat akurasi \dots pada data uji dengan partisipan yang terpisah dari data latih \\
 
         \hline
         2 & Pengujian akurasi klasifikasi \textit{online} & Didapatkan tingkat akurasi \dots pada klasifikasi secara \textit{online}\\
