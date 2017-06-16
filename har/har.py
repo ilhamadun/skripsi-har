@@ -19,13 +19,12 @@ class HARConvLSTM:
         self.checkpoint_path, self.best_checkpoint_path = None, None
         self.features = tf.placeholder(tf.float32, [None, 600], name='input')
         self.target = tf.placeholder(tf.float32, [None, 7], name='target')
-        self.keep_prob = tf.placeholder(tf.float32, name='keep_prob')
 
         features = self.__preprocessing()
         conv1_input = tf.reshape(features, [-1, 100, 2, 4])
         conv1 = self.__conv_layer(conv1_input, [5, 2, 4, 32], 'conv1')
         conv2 = self.__conv_layer(conv1, [5, 2, 32, 32], 'conv2')
-        lstm_input = tf.reshape(conv2, [-1, 25, 64])
+        lstm_input = tf.reshape(conv2, [-1, 100, 64])
         lstm = self.__lstm_layers(lstm_input, 128, 2)
         self.output = slim.fully_connected(lstm, 7, activation_fn=tf.nn.softmax, scope='output')
         self.train_op, self.accuracy = self.__train_layers(self.output, self.target)
@@ -53,7 +52,7 @@ class HARConvLSTM:
             weight = self.__weight_variable(filters)
             bias = self.__bias_variable([filters[3]])
 
-            conv = tf.nn.conv2d(tensor_in, weight, [1, 2, 1, 1], 'SAME')
+            conv = tf.nn.conv2d(tensor_in, weight, [1, 1, 1, 1], 'SAME')
             conv = tf.nn.bias_add(conv, bias)
             return tf.nn.relu(conv)
 
@@ -147,44 +146,50 @@ class HARConvLSTM:
         checkpoint_prefix = os.path.join(self.best_directory, 'saved_checkpoint')
         self.best_checkpoint_path = saver.save(self.session, checkpoint_prefix, global_step=step)
 
-    def train(self, features, target, batch_size, number_of_steps, load=None):
+    def train(self, train_data, train_target, batch_size, number_of_steps, checkpoint=None,
+              validation_data=None, validation_target=None):
         merged_summary = tf.summary.merge_all()
         last_saver = tf.train.Saver(max_to_keep=10)
         best_saver = tf.train.Saver(max_to_keep=1)
-        train_iterator = data.iterator(features, target, features.shape[0], batch_size)
+        train_iterator = data.iterator(train_data, train_target, train_data.shape[0], batch_size)
         best_accuracy = 0
 
-        if load is not None:
-            data.load_model(self.session, load)
+        if checkpoint is not None:
+            data.load_model(self.session, checkpoint)
 
         self.write_graph('graph.pbtxt')
 
-        print('Training %d data in %d steps...' % (features.shape[0], number_of_steps))
+        print('Training %d data in %d steps...' % (train_data.shape[0], number_of_steps))
 
         with self.session.as_default():
             for step in range(number_of_steps):
                 batch_features, batch_target = next(train_iterator)
 
-                if step % 10 == 0:
+                if step % 100 == 0:
+                    if validation_data is not None and validation_target is not None:
+                        batch_validation_data = validation_data
+                        batch_validation_target = validation_target
+                    else:
+                        batch_validation_data = batch_features
+                        batch_validation_target = batch_target
+
                     summary, accuracy = self.session.run([merged_summary, self.accuracy], {
-                        self.features: batch_features,
-                        self.target: batch_target.eval(),
-                        self.keep_prob: 1.0
+                        self.features: batch_validation_data,
+                        self.target: batch_validation_target.eval()
                     })
                     self.log_test.add_summary(summary, step)
 
                     if accuracy >= best_accuracy:
                         best_accuracy = accuracy
                         self.save_best_checkpoint(best_saver, step)
-                    else:
-                        self.save_checkpoint(last_saver, step)
+
+                    self.save_checkpoint(last_saver, step)
 
                     print("step %5d\taccuracy: %5g" % (step, accuracy))
 
                 summary, accuracy = self.session.run([merged_summary, self.train_op], feed_dict={
                     self.features: batch_features,
-                    self.target: batch_target.eval(),
-                    self.keep_prob: 0.2
+                    self.target: batch_target.eval()
                 })
                 self.log_train.add_summary(summary, step)
 
@@ -199,8 +204,7 @@ class HARConvLSTM:
         with self.session.as_default():
             predictions, accuracy = self.session.run([self.output, self.accuracy], feed_dict={
                 self.features: features,
-                self.target: target.eval(),
-                self.keep_prob: 1.0
+                self.target: target.eval()
             })
 
             print("Accuracy: %5g" % (accuracy))
@@ -217,23 +221,21 @@ class HARConvLSTM:
         normalized_cm = (cm_values / np.sum(cm_values, axis=1)[:, np.newaxis]) * 100
 
         labels = [
-            'STANDING',
-            'SITTING',
-            'WALKING',
-            'JOGGING',
-            'WALKING_UPSTAIRS',
-            'WALKING_DOWNSTAIRS',
-            'BIKING',
+            'BERDIRI',
+            'DUDUK',
+            'JALAN',
+            'LARI',
+            'NAIK TANGGA',
+            'TURUN TANGGA',
         ]
 
         plt.imshow(normalized_cm, interpolation='nearest', cmap=plt.cm.Blues)
-        plt.suptitle('Confusion Matrix')
         plt.colorbar()
-        tick_marks = np.arange(7)
-        plt.xticks(tick_marks, labels, rotation=90, fontsize='x-small')
+        tick_marks = np.arange(6)
+        plt.xticks(tick_marks, labels, fontsize='x-small')
         plt.yticks(tick_marks, labels, fontsize='x-small')
-        plt.ylabel('True label')
-        plt.xlabel('Predicted label')
+        plt.ylabel('Label')
+        plt.xlabel('Prediksi')
 
         thresh = normalized_cm.max() / 2
         for i, j in itertools.product(range(normalized_cm.shape[0]),
@@ -258,34 +260,57 @@ def epoch_to_steps(epoch, data_length, batch_size):
 
     return number_of_steps
 
-def main(train_dir=None, test_dir=None, epoch=5, batch_size=100, logdir=None, load=None):
+def get_filenames(basedir):
+    pattern = os.path.join(basedir, '**', '*.csv')
+
+    return glob.glob(pattern, recursive=True)
+
+def load(basedir, num_target, window_size):
+    filenames = get_filenames(basedir)
+    features, target = data.get(filenames, num_target, window_size)
+
+    return features, target
+
+def main(train_dir=None, validation_dir=None, test_dir=None, epoch=5,
+         batch_size=100, logdir=None, checkpoint=None):
     model = HARConvLSTM()
 
     if logdir:
         model.initialize_logs(os.path.join(logdir, 'summary'))
         model.initialize_checkpoint(os.path.join(logdir, 'checkpoint'))
 
-    target_num = 7
+    num_target = 7
     window_size = 100
 
     model.session.run(tf.global_variables_initializer())
 
     if train_dir:
-        train_files = os.path.join(train_dir, '**', '*.csv')
-        train_filenames = glob.glob(train_files, recursive=True)
-        train_data, train_target = data.get(train_filenames, target_num, window_size)
+        if validation_dir and test_dir:
+            train_data, train_target = load(train_dir, num_target, window_size)
+            validation_data, validation_target = load(validation_dir, num_target, window_size)
+        else:
+            filenames = get_filenames(train_dir)
+            train_data, test_data, train_target, test_target = data.get(
+                filenames, num_target, window_size, divider=0.7, one_hot=False)
+
+            train_data, validation_data = data.divide(train_data, 0.8)
+            train_target, validation_target = data.divide(train_target, 0.8)
+
+            train_target = tf.one_hot(train_target, num_target)
+            validation_target = tf.one_hot(validation_target, num_target)
+            test_target = tf.one_hot(test_target, num_target)
 
         number_of_steps = epoch_to_steps(epoch, train_data.shape[0], batch_size)
-        model.train(train_data, train_target, batch_size, number_of_steps, load)
+        model.train(train_data, train_target, batch_size, number_of_steps,
+                    validation_data=validation_data, validation_target=validation_target,
+                    checkpoint=checkpoint)
 
     if test_dir:
-        test_files = os.path.join(test_dir, '**', '*.csv')
-        test_filenames = glob.glob(test_files, recursive=True)
-        test_data, test_target = data.get(test_filenames, target_num, window_size)
+        test_data, test_target = load(test_dir, num_target, window_size)
 
-        predictions, _ = model.test(test_data, test_target, load)
+    if test_data.any() and test_target is not None:
+        predictions, _ = model.test(test_data, test_target, checkpoint)
         model.confusion_matrix(predictions, test_target, logdir)
-
 
 if __name__ == '__main__':
     fire.Fire(main)
