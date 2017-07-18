@@ -2,4 +2,4 @@ fire
 matplotlib
 numpy
 scipy
-tensorflow==1.1.0rc2
+tensorflow==1.2.0
