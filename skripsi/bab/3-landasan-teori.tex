@@ -234,9 +234,9 @@ dengan $\pmb{b}^{o}, \pmb{U}^{o}$ dan $\pmb{W}^{o}$ sebagai bias, bobot input da
 
 
 %------------------------------------------------------------------------------
-% Backpropagation Through Time
+% Backpropagation
 %------------------------------------------------------------------------------
-\section{Backpropagation Through Time}
+\section{Backpropagation}
 Kebanyakan algoritma \textit{deep learning} membutuhkan proses optimasi, yaitu proses meminimalkan atau memaksimalkan suatu fungsi $f(\pmb{x})$ dengan mengubah $\pmb{x}$. Fungsi yang akan diminimalkan atau dimaksimalkan disebut fungsi objektif. Dalam kasus meminimalkan, fungsi objektif bisa juga disebut \textit{cost function}, \textit{loss function} atau \textit{error function} \citep{goodfellow-2016}.
 
 \citeauthor{goodfellow-2016} menambahkan, jika diberikan fungsi $y = f(x)$ dengan $x$ dan $y$ bilangan real, derivatif dari fungsi ini adalah gradien $f(x)$ pada titik $x$, dinotasikan dengan $f'(x)$ atau $\frac{dy}{dx}$. Fungsi $f(x)$ dapat diminimalkan dengan membuat perubahan $x$ ke arah yang berlawanan dengan derivatifnya. Cara ini disebut \textit{gradient descent}, diilustrasikan pada Gambar~\ref{gambar:gradient-descent}.
@@ -271,7 +271,7 @@ Pada RNN, aktivasi \textit{hidden layer} tidak hanya mempengaruhi \textit{loss f
 \section{TensorFlow}
 TensorFlow adalah pustaka sumber terbuka pembalajaran mesin. TensorFlow melakukan komputasi yang dideskripsikan dengan model aliran data dan memetakannya ke berbagai jenis perangkat keras berbeda, mulai dari melakukan pengambilan kesimpulan pada perangkat bergerak seperti Android dan iOS, pelatihan dan sistem pengambilan keputusan berukuran sedang menggunakan satu mesin yang terdiri dari satu atau lebih kartu GPU sampai ke sistem pelatihan berskala besar yang berjalan pada ratusan mesin khusus dengan ribuan GPU \citep{abadi-2015}.
 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \includegraphics[width=6cm]{gambar/landasan-teori/tensorflow.jpg}
     \caption{Contoh graf aliran data dalam TensorFlow (tensorflow.com)}
