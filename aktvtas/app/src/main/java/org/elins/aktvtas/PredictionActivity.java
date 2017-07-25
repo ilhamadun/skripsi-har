@@ -36,7 +36,7 @@ public class PredictionActivity extends AppCompatActivity
         implements CountDownFragment.OnCountDownListener {
     private static final String TAG = "PredictionActivity";
 
-    private static final long PREPARATION_TIME = 1000;
+    private static final long PREPARATION_TIME = 10000;
 
     private CountDownFragment countDownFragment;
     private CountDownTimer predictionCountDown;
