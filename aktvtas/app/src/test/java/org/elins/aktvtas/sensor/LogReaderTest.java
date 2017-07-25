@@ -48,7 +48,7 @@ public class LogReaderTest {
         while (logReader.readNext()) {
             numberOfSample += 1;
         }
-        assertThat(numberOfSample, is(1176));
+        assertThat(numberOfSample, is(3));
         assertThat(logReader.getSensorDataSequence().size(), is(100));
         assertThat(logReader.getTarget(), is(3));
     }

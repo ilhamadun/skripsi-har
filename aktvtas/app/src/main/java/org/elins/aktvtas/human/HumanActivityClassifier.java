@@ -33,24 +33,24 @@ public class HumanActivityClassifier {
 
     public List<Recognition> classify(SensorDataSequence sequence) {
         float inputNode[] = sequence.flatten();
-        String sensorString = "";
+        StringBuilder sensorString = new StringBuilder();
 
-        for (int i = 0; i < inputNode.length; i++) {
-            sensorString += String.format("%f,", inputNode[i]);
+        for (float anInputNode : inputNode) {
+            sensorString.append(String.format("%f,", anInputNode));
         }
         Log.i(TAG, String.valueOf(inputNode.length));
-        Log.i(TAG, sensorString);
+        Log.i(TAG, sensorString.toString());
 
         inferenceInterface.feed(INPUT_NAME, inputNode, 600);
         inferenceInterface.run(new String[] {OUTPUT_NAME});
         inferenceInterface.fetch(OUTPUT_NAME, outputs);
 
-        String outputString = "";
-        for (int i = 0; i < outputs.length; i++) {
-            outputString += String.format("%f, ", outputs[i]);
+        StringBuilder outputString = new StringBuilder();
+        for (float output : outputs) {
+            outputString.append(String.format("%f, ", output));
         }
         Log.i(TAG, String.valueOf(outputs.length));
-        Log.i(TAG, outputString);
+        Log.i(TAG, outputString.toString());
 
         return findBestClassification(outputs);
     }
