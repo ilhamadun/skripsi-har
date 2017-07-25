@@ -22,7 +22,7 @@ public class LogSensorService extends SensorService {
     protected int sensorPlacement;
     int logDurationInSecond;
 
-    private SensorDataWriter sensorDataWriter;
+    protected SensorDataWriter sensorDataWriter;
 
     private final IBinder binder = new LogSensorBinder();
     private NotificationCompat.Builder notificationBuilder;
