@@ -1,37 +1,63 @@
 package org.elins.aktvtas;
 
-import android.content.res.AssetManager;
+import android.hardware.Sensor;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.elins.aktvtas.human.HumanActivityClassifier;
 import org.elins.aktvtas.human.Recognition;
+import org.elins.aktvtas.sensor.LogReader;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(AndroidJUnit4.class)
 public class HumanActivityClassifierTest {
+    private HumanActivityClassifier classifier;
+    private LogReader logReader;
 
-    @Mock
-    AssetManager assetManager;
+    @Before
+    public void initialize() {
+        classifier = new HumanActivityClassifier(getInstrumentation().getTargetContext()
+                .getResources().getAssets());
+
+        List<Integer> sensorToRead = new ArrayList<>();
+        List<Integer> numberOfAxis = new ArrayList<>();
+
+        sensorToRead.add(Sensor.TYPE_ACCELEROMETER);
+        numberOfAxis.add(3);
+
+        sensorToRead.add(Sensor.TYPE_GYROSCOPE);
+        numberOfAxis.add(3);
+
+        ClassLoader classLoader = getClass().getClassLoader();
+        InputStream inputStream = classLoader.getResourceAsStream("sample.csv");
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+        logReader = new LogReader(inputStreamReader, sensorToRead, numberOfAxis, 100);
+    }
 
     @Test
-    public void findBestClassification() {
-        HumanActivityClassifier classifier = new HumanActivityClassifier(assetManager);
+    public void classification() {
+        int correctPrediction = 0;
+        int totalPrediction = 0;
+        while (logReader.readNext()) {
+            List<Recognition> recognitions = classifier.classify(logReader.getSensorDataSequence());
 
-        float[] outputNode = new float[] {0.4f, 0.5f, 0.3f, 0.8f, 0.15f, 0.26f, 0.05f, 0.14f,
-                0.26f, 0.75f};
+            if (recognitions.get(0).getId() == logReader.getTarget()) {
+                correctPrediction++;
+            }
+            totalPrediction++;
+        }
+        float accuracy = correctPrediction / (float) totalPrediction;
 
-        List<Recognition> result =
-                classifier.findBestClassification(outputNode);
-
-        Recognition best = result.get(0);
-        assertThat(best.getConfidence(), is(0.8f));
-        assertThat(best.getId(), is(3));
+        assertThat(accuracy > 0.8f, is(true));
     }
 }

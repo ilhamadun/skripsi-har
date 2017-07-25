@@ -74,12 +74,9 @@ public class SensorService extends Service implements SensorReader.SensorReaderE
         sensorReader.enableEventCallback(this);
     }
 
-    protected void createSensorDataSequence(List<Integer> sensorToRead, List<Integer> numberOfAxis) {
-        sensorDataSequence = new SensorDataSequence();
-        for (int i = 0; i < sensorToRead.size(); i++) {
-            SensorData sensorData = new SensorData(sensorToRead.get(i), numberOfAxis.get(i));
-            sensorDataSequence.registerSensor(sensorData);
-        }
+    protected void createSensorDataSequence(List<Integer> sensorToRead,
+                                            List<Integer> numberOfAxis) {
+        sensorDataSequence = SensorDataSequence.create(sensorToRead, numberOfAxis);
     }
 
     public String getFilePath() {

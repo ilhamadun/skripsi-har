@@ -8,7 +8,7 @@ import java.util.List;
 
 public class SensorDataSequence {
     List<SensorData> buffer = new ArrayList<>();
-    private List<List<SensorData>> sequence = new ArrayList<>();
+    protected List<List<SensorData>> sequence = new ArrayList<>();
     HashMap<Integer, Integer> sensorOrder = new HashMap<>();
     private int registeredSensor = 0;
 
@@ -125,5 +125,16 @@ public class SensorDataSequence {
         } catch (IndexOutOfBoundsException e) {
             throw new IndexOutOfBoundsException();
         }
+    }
+
+    public static SensorDataSequence create(List<Integer> sensorToRead,
+                                            List<Integer> numberOfAxis) {
+        SensorDataSequence sensorDataSequence = new SensorDataSequence();
+        for (int i = 0; i < sensorToRead.size(); i++) {
+            SensorData sensorData = new SensorData(sensorToRead.get(i), numberOfAxis.get(i));
+            sensorDataSequence.registerSensor(sensorData);
+        }
+
+        return sensorDataSequence;
     }
 }
