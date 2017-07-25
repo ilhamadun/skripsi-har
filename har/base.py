@@ -161,6 +161,7 @@ class BaseModel(ABC):
                     self.is_training: False
                 })
             accuracy_sum += accuracy
+            print('Step %d: %f' % (step, accuracy))
 
             all_prediction = self._merge_prediction(all_prediction, prediction)
 

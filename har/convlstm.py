@@ -4,7 +4,6 @@ import numpy as np
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
 from base import BaseModel
-from hyperparameter import Hyperparameter, random_learning_rate
 from saver import Saver
 
 
@@ -70,7 +69,7 @@ class ConvLSTM(BaseModel):
             return lstm_outputs[-1]
 
 
-class ConvLSTMHyperparameter(Hyperparameter):
+class ConvLSTMHyperparameter:
     """Hyperparameter for `ConvLSTM` model
 
     Args:
@@ -86,10 +85,10 @@ class ConvLSTMHyperparameter(Hyperparameter):
 
     """
     def __init__(self, conv_layers, lstm_layers, keep_prob, learning_rate):
-        super(ConvLSTMHyperparameter, self).__init__(learning_rate)
         self.conv_layers = conv_layers
         self.lstm_layers = lstm_layers
         self.keep_prob = keep_prob
+        self.learning_rate = learning_rate
 
 
 def generate_hyperparameters(variations, conv_layers=None, lstm_layers=None, keep_prob=None,
@@ -158,3 +157,7 @@ def random_lstm_layers():
 def random_keep_prob():
     """Generates random dropout keep probability"""
     return np.random.uniform(0.2, 0.8)
+
+def random_learning_rate(lr_min, lr_max):
+    """Generates random learning rate"""
+    return 10 ** np.random.uniform(lr_min, lr_max)
