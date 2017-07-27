@@ -52,7 +52,7 @@ def compute_time(logdir):
     maximum = int(np.max(time))
 
     print('Mean:', mean)
-    print('Minumim:', minimum)
+    print('Minimum:', minimum)
     print('Median:', median)
     print('Maximum:', maximum)
     print('Num:', time.shape[0])
@@ -132,7 +132,7 @@ def count_confusion_matrix(logdir):
 
 def load_stacked_data(base_dir):
     """Load many log files to a stack of logs
-    
+
     The structure of the stack is:
         stack[activity_name][participant]
 
@@ -174,6 +174,7 @@ def load_compute_time(base_dir):
             activity_data = np.vstack((activity_data, data))
 
     time = activity_data[:, 1:2]
+    time = time[time < 400]
     return np.reshape(time, time.shape[0])
 
 def extract_metadata(filename):
