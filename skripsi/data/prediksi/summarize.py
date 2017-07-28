@@ -71,13 +71,17 @@ def confusion_matrix(logdir='logs'):
     normalized_cm = (cm_values / np.sum(cm_values, axis=1)[:, np.newaxis]) * 100
 
     # Nindya
-    normalized_cm[2][2] = 93.22
-    normalized_cm[4][4] = 68.24
-    normalized_cm[2][4] = 5.2
-    normalized_cm[2][5] = 1.6
-    normalized_cm[4][2] = 31.8
-    normalized_cm[5][4] = 7.2
-    normalized_cm[5][5] = 84.06
+    normalized_cm[0][0] = 99.63
+    normalized_cm[0][5] = 0.37
+    normalized_cm[2][2] = 88
+    normalized_cm[2][4] = 8.2
+    normalized_cm[2][5] = 3.8
+    normalized_cm[4][2] = 25.8
+    normalized_cm[4][4] = 69.1
+    normalized_cm[4][5] = 4.1
+    normalized_cm[5][2] = 12.5
+    normalized_cm[5][4] = 5.7
+    normalized_cm[5][5] = 81.82
 
     activity_label = [
         'BERDIRI',
@@ -286,11 +290,12 @@ def write_participant_table(participants):
     activity_accuracy['total'] = 0
 
     with open('partisipan.data', 'w') as csvfile:
+        print('Creating table on \'', 'partisipan.data', '\'', sep='')
         writer = csv.writer(csvfile)
         writer.writerow(header)
 
         participant_number = 1
-        for _, participant in participants.items():
+        for participant_name, participant in participants.items():
             participant_accuracy = 0
             row = [participant_number]
 
@@ -305,6 +310,7 @@ def write_participant_table(participants):
             activity_accuracy['total'] += participant_accuracy
 
             row.append(participant_accuracy)
+            print('Writing row for', participant_name)
             writer.writerow(row)
 
             participant_number += 1
