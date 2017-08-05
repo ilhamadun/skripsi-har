@@ -1,13 +1,44 @@
 \documentclass{ugmskripsi}
 
+
+%------------------------------------------------------------
+% Math
+%------------------------------------------------------------
 \usepackage{amsmath}
 \usepackage{isomath}
+\usepackage{siunitx}
+
+%------------------------------------------------------------
+% Tables, plot, images
+%------------------------------------------------------------
 \usepackage{booktabs}
-\usepackage[justification=centering, font=bf]{caption}
 \usepackage{array}
+\usepackage{multirow}
+\usepackage[table]{xcolor}
+\usepackage{pgfplotstable}
+\usepackage{threeparttable}
+\usepackage{pgfplots}
+\usepackage[justification=centering, font=bf, labelsep=period]{caption}
+\usepackage{subcaption}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows}
+\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black]
+\tikzstyle{io} = [trapezium, trapezium left angle=70, trapezium right angle=110, minimum width=3cm, minimum height=1cm, text centered, draw=black]
+\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black]
+\tikzstyle{decision} = [diamond, minimum width=3cm, minimum height=1cm, text centered, draw=black]
+\tikzstyle{state} = [circle, minimum width=1.5cm, minimum height=1.5cm, text centered, draw=black, font=\footnotesize]
+\tikzstyle{cell} = [circle, minimum width=1.2cm, minimum height=1.2cm, text centered, draw=black, font=\footnotesize]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+\usetikzlibrary{patterns}
 \newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
 \renewcommand{\arraystretch}{1.2}
+\def\checkmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;}
 
+%------------------------------------------------------------
+% Code highlight
+%------------------------------------------------------------
 \usepackage[section]{minted}
 \setminted{
 	linenos,
@@ -24,19 +55,7 @@
 \setmintedinline{
 	fontsize=\small
 }
-\renewcommand{\listoflistingscaption}{Daftar Listing}
 
-\usepackage[labelsep=period]{caption}
-
-\usepackage{tikz}
-\usetikzlibrary{shapes.geometric, arrows}
-\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black]
-\tikzstyle{io} = [trapezium, trapezium left angle=70, trapezium right angle=110, minimum width=3cm, minimum height=1cm, text centered, draw=black]
-\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black]
-\tikzstyle{decision} = [diamond, minimum width=3cm, minimum height=1cm, text centered, draw=black]
-\tikzstyle{state} = [circle, minimum width=1.5cm, minimum height=1.5cm, text centered, draw=black, font=\footnotesize]
-\tikzstyle{cell} = [circle, minimum width=1.2cm, minimum height=1.2cm, text centered, draw=black, font=\footnotesize]
-\tikzstyle{arrow} = [thick,->,>=stealth]
 
 %------------------------------------------------------------------------------
 % Title
@@ -63,6 +82,8 @@
 \dept{Ilmu Komputer dan Elektronika}
 \firstsupervisor{Raden Sumiharto S.Si., M.Kom}
 
+\addbibresource{pustaka.bib}
+
 %------------------------------------------------------------------------------
 % Content
 % TODO:
@@ -78,26 +99,24 @@
 \declarepage{}
 
 % \acknowledment{}
-% \begin{flushright}
-% \end{flushright}
+\begin{flushright}
+\end{flushright}
 
-\input{bab/0.1-prakata.tex}
+% \input{bab/0.1-prakata.tex}
 
 \tableofcontents
 \listoftables
 \listoffigures
-\listoflistings
 
-\input{bab/0.2-intisari.tex}
+% \input{bab/0.2-intisari.tex}
 \input{bab/1-pendahuluan.tex}
 \input{bab/2-tinjauan-pustaka.tex}
 \input{bab/3-landasan-teori.tex}
-\input{bab/4-analisis-dan-perancangan-sistem.tex}
-\input{bab/5-implementasi.tex}
-\input{bab/6-hasil-penelitian.tex}
-\input{bab/7-kesimpulan.tex}
+% \input{bab/4-analisis-dan-perancangan-sistem.tex}
+% \input{bab/5-implementasi.tex}
+% \input{bab/6-hasil-penelitian.tex}
+% \input{bab/7-kesimpulan.tex}
 
-
-\bibliography{pustaka}
+\printbibliography
 
 \end{document}

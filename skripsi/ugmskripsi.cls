@@ -31,10 +31,21 @@
 \ExecuteOptions{skripsi,satusetengahspasi,indonesia}
 \ProcessOptions
 \LoadClass[a4paper,12pt]{report}
-\RequirePackage[round, comma]{natbib}
-\bibliographystyle{agsm}
 \RequirePackage{nomencl}%
 \renewcommand{\nomname}{\nomenclaturename}%
+\RequirePackage{csquotes}
+\RequirePackage[
+  backend=biber,
+  sorting=nty,
+  maxnames=2,
+  language=english,
+  citestyle=authoryear,
+  bibstyle=authoryear
+]{biblatex}
+\renewcommand*{\nameyeardelim}{\addcomma\space}
+\DefineBibliographyStrings{english}{%
+  andothers = {dkk\adddot}
+}
 \makeglossary%
 
 %------------------------------------------------------------
