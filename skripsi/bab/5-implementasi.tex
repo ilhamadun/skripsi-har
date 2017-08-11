@@ -1,187 +1,616 @@
 \chapter{IMPLEMENTASI}
 
-% \section{Implementasi Perangkat Lunak}
 \section{Implementasi Model Klasifikasi}
-Model klasifikasi diimplementasikan dalam bahasa Python menggunakan pustaka TensorFlow. Pustaka-pustaka yang dibutuhkan di-\mintinline{python}{import} pada Gambar~\ref{listing:har-import}.
+Model klasifikasi diimplementasikan dalam bahasa Python menggunakan pustaka TensorFlow. Model didefinisikan sebagai kelas \mintinline{python}{ConvLSTM} yang memperluas kelas \mintinline{python}{BaseModel}. Gambar~\ref{listing:har-ConvLSTM-constructor} menunjukkan \textit{constructor} dari kelas \mintinline{python}{ConvLSTM} dan Gambar~\ref{listing:har-BaseModel-constructor} menunjukkan \textit{constructor} kelas \mintinline{python}{BaseModel}.
 
 \begin{figure}[h]
-\begin{minted}[linenos=true]{python}
-import tensorflow as tf
-import tensorflow.contrib.slim as slim
-import data
+\begin{minted}[linenos=true,firstnumber=10]{python}
+class ConvLSTM(BaseModel):
+    def __init__(self, hyperparameter, logdir):
+        super(ConvLSTM, self).__init__()
+
+        self.hyperparameter = hyperparameter
+
+        self.build_graph()
+
+        self.session = tf.InteractiveSession(graph=self.target.graph)
+        self.saver = Saver(self.session, logdir)
+
+        self.session.run(tf.global_variables_initializer())
+        self.session.run(tf.local_variables_initializer())
 \end{minted}
-\caption{\textit{Import} pustaka yang dibutuhkan model klasifikasi}
-\label{listing:har-import}
+\caption{\textit{Constructor} kelas ConvLSTM}
+\label{listing:har-ConvLSTM-constructor}
 \end{figure}
-
-
-Model klasifikasi didefiniskan sebagai kelas \mintinline{python}{HARConvLSTM}. Gambar~\ref{listing:har-HARConvLSTM-constructor} menunjukkan \textit{constructor} dari kelas \mintinline{python}{HARConvLSTM}.
 
 \begin{figure}[h]
-    \inputminted[firstline=14,firstnumber=14,lastline=31,fontsize=\scriptsize]{python}{../har/har.py}
-    \caption{\textit{Constructor} kelas HARConvLSTM}
-    \label{listing:har-HARConvLSTM-constructor}
+\begin{minted}[linenos=true,firstnumber=10]{python}
+class BaseModel(ABC):
+    def __init__(self):
+        self.session = None
+
+        # Training placeholders
+        self.input = tf.placeholder(tf.float32, [None, 600], name='input')
+        self.target = tf.placeholder(tf.float32, [None, 6], name='target')
+
+        self.output, self.train_op, self.accuracy_op = None, None, None
+        self.saver = None
+\end{minted}
+\caption{\textit{Constructor} kelas BaseModel}
+\label{listing:har-BaseModel-constructor}
 \end{figure}
 
-Pada \textit{constructor} tersebut didefinikan beberapa atribut dari kelas \mintinline{python}{HARConvLSTM}. Atribut \mintinline{python}{self.features} adalah atribut untuk menyimpan data sensor yang akan diklasifikasi dan \mintinline{python}{self.target} adalah target aktivitas dari data tersebut. Atribut \mintinline{python}{self.features} menyimpan data sensor akselerometer dan giroskop sebagai matriks berukuran $1 \times 600$ dengan susunan
+Pada \textit{constructor} tersebut didefinisikan beberapa atribut dari kelas \mintinline{python}{ConvLSTM}. Atribut \mintinline{python}{self.input} adalah atribut untuk menyimpan data sensor yang akan diklasifikasikan dan \mintinline{python}{self.target} adalah target aktivitas dari data tersebut. Atribut \mintinline{python}{self.input} menyimpan data sensor akselerometer dan giroskop sebagai matriks berukuran $1 \times 600$ dengan susunan
 
 \begin{equation}
-    \mintinline{python}{self.features} = [a_x^1, a_y^1, a_z^1, g_x^1, g_y^1, g_z^1,\dots, a_x^{100}, a_y^{100}, a_z^{100}, g_x^{100}, g_y^{100}, g_z^{100}]
+    \mintinline{python}{self.input} = [a_x^1, a_y^1, a_z^1, g_x^1, g_y^1, g_z^1,\dots, a_x^{100}, a_y^{100}, a_z^{100}, g_x^{100}, g_y^{100}, g_z^{100}]
+    \label{eq:har-graph-input}
 \end{equation}
 
-Graf komputasi dibuat sesuai dengan arsitektur yang telah disusun. Pada baris $23$ dan $24$, data masukan dikondisikan menjadi tensor \mintinline{python}{conv_input} seperti pada Persamaan~\ref{eq:tensor-masukan}. Perhitungan besar vektor data sensor dilakukan dengan metode \mintinline{python}{self.__preprocessing()}. Hasil dari metode tersebut diubah bentuknya dari $100 \times 8$ menjadi $100 \times 2 \times 4$ dengan instruksi pada baris $24$. Selanjutnya dua lapisan konvolusi didefinikan berurutan pada baris $25$ dan $26$ dengan fungsi \mintinline{python}{self.__conv_layer()}. Lapisan konvolusi pertama menerima input dari tensor \mintinline{python}{conv1_input} dan menghasilkan tensor \mintinline{python}{conv1}. Kemudian tensor \mintinline{python}{conv1} masuk ke lapisan konvolusi ke dua yang menghasilkan tensor \mintinline{python}{conv2}.
+\textit{Constructor} kelas \mintinline{python}{ConvLSTM} menerima dua argumen, \mintinline{python}{hyperparameter} dan \mintinline{python}{logdir}. Argumen \mintinline{python}{hyperparameter} adalah konfigurasi \textit{hyperparameter} yang digunakan untuk menyusun graf komputasi model. Pada argumen tersebut diatur beberapa hal berikut:
 
-Dua lapisan LSTM dibuat dengan metode \mintinline{python}{self.__lstm_layer()} pada baris $28$. Lapisan LSTM ini menerima tensor \mintinline{python}{lstm_input} sebagai masukannya. Tensor \mintinline{python}{lstm_input} dibuat dengan mengubah bentuk tensor \mintinline{python}{conv2} dari $25 \times 2 \times 32$ menjadi $25 \times 64$ pada baris $27$. Setelah itu keluaran dari lapisan LSTM dimasukkan ke lapisan softmax pada baris $29$.
+\begin{itemize}
+    \item Pengaturan lapisan konvolusi (\mintinline{python}{hyperparameter.conv_layers}), meliputi jumlah lapisan, jumlah output dan ukuran kernel per lapisannya
+    \item Pengaturan lapisan LSTM (\mintinline{python}{hyperparameter.lstm_layers}), meliputi jumlah lapisan dan jumlah unit LSTM per lapisannya
+    \item Peluang \textit{dropout} (\mintinline{python}{hyperparameter.keep_prob})
+    \item Laju pembelajaran (\mintinline{python}{hyperparameter.learning_rate})
+\end{itemize}
+
+Graf komputasi dibuat pada metode \mintinline{python}{self.build_graph()} dengan konfigurasi sesuai \textit{hyperparameter} yang telah diberikan. Metode tersebut diimplementasikan pada Gambar~\ref{listing:har-build-graph}.
 
 \begin{figure}[h]
-    \inputminted[firstline=32,firstnumber=32,lastline=48,gobble=4]{python}{../har/har.py}
-    \caption{Implementasi pengondisian data masukan}
-    \label{listing:har-masukan}
+\begin{minted}[linenos=true,firstnumber=34]{python}
+def build_graph(self):
+    features = self.magnitude()
+    conv_input = tf.reshape(features, [-1, 100, 8])
+    conv = slim.stack(conv_input, slim.convolution, self.hyperparameter.conv_layers,
+                      scope='conv')
+    lstm = self._lstm_stack(conv)
+    lstm_dropout = slim.dropout(lstm, self.hyperparameter.keep_prob,
+                                is_training=self.is_training, scope='lstm_dropout')
+    self.output = slim.fully_connected(lstm_dropout, 6, activation_fn=tf.nn.softmax,
+                                    scope='output')
+    self.train_op = self.create_train_op(self.hyperparameter.learning_rate)
+    self.accuracy_op = self.create_accuracy_op()
+\end{minted}
+\caption{Implementasi penyusunan graf komputasi}
+\label{listing:har-build-graph}
 \end{figure}
 
-Metode \mintinline{python}{self.__preprocessing()} diimplementasikan pada Gambar~\ref{listing:har-masukan}. Metode ini digunakan untuk menghitung besar dari vektor akselerometer dan giroskop dan membentuk matriks akselerometer dan giroskop seperti pada Persamaan~\ref{eq:matriks-akselerometer} dan~\ref{eq:matriks-giroskop}. Besar vektor akselerometer dan giroskop dihitung dengan memanggi metode \mintinline{python}{self.__magnitude()} pada baris $38$ dan $39$. Adapun metode \mintinline{python}{self.__magnitude()} didefinisikan pada baris $43 - 48$.
+Pada baris $35$, besar vektor input dihitung dengan metode \mintinline{python}{self.magnitude()}. Selanjutnya lapisan konvolusi didefinisikan pada baris $37$. Fungsi \mintinline{python}{slim.stack()} menerima input tensor \mintinline{python}{conv_input} dan membuat sejumlah lapisan konvolusi dengan konfigurasi sesuai dengan \mintinline{python}{self.hyperparameter.conv_layers}. Output dari lapisan konvolusi disimpan pada tensor \mintinline{python}{conv}.
 
-Pembuatan lapisan konvolusi dengan metode \mintinline{python}{self.__conv_layer()} diimplementasikan pada Gambar~\ref{listing:har-konvolusi}. Metode tersebut menerima parameter \mintinline{python}{tensor_in} sebagai masukan lapisan konvolusi dan \mintinline{python}{filters} sebagai ukuran kernel yang digunakan. Bobot dan bias jaringan saraf diinisialisasi pada baris $52 - 53$ dengan metode \mintinline{python}{self.__weight_variable()} dan \mintinline{python}{self.__bias_variable()}. Kedua metode tersebut menginisialisasi nilai-nilai secara acak dari distribusi normal, seperti yang diimplementasikan pada baris $59 - 65$ dan $67 - 73$. Selanjutnya pada baris $55 - 57$ konvolusi dilakukan terhadap masukan dan bobot sesuai dengan Persamaan~\ref{eq:konvolusi-3d}, lalu hasilnya ditambahkan dengan bias dan dimasukkan pada fungsi aktivasi ReLU seperti pada Persamaan~\ref{eq:konvolusi-kernel}.
+Selanjutnya lapisan LSTM dibuat dengan memasukkan tensor \mintinline{python}{conv} ke metode \mintinline{python}{self._lstm_stack()} pada baris ke $39$. Metode tersebut diimplementasikan pada Gambar~\ref{listing:har-lstm-stack}. Baris $63$ sampai $64$ menyusun lapisan LSTM  sesuai dengan konfigurasi pada \mintinline{python}{self.hyperparameter.lstm_layers}. Output seluruh lapisan LSTM diambil dari langkah waktu terakhir pada lapisan LSTM terakhir.
 
 \begin{figure}[h]
-    \inputminted[firstline=50,firstnumber=50,lastline=73,gobble=4]{python}{../har/har.py}
-    \caption{Implementasi lapisan konvolusi}
-    \label{listing:har-konvolusi}
+\begin{minted}[linenos=true,firstnumber=60]{python}
+def _lstm_stack(self, tensor_in):
+    with tf.name_scope('LSTM'):
+        lstm_input = tf.transpose(tensor_in, [1, 0, 2])
+        lstm = [tf.contrib.rnn.BasicLSTMCell(num_units) for num_units in
+                self.hyperparameter.lstm_layers]
+        lstm_cells = tf.contrib.rnn.MultiRNNCell(lstm)
+        lstm_outputs, _ = tf.nn.dynamic_rnn(lstm_cells, lstm_input,
+                                            dtype=tf.float32, time_major=True)
+
+        return lstm_outputs[-1]
+\end{minted}
+\caption{Implementasi pembuatan lapisan LSTM}
+\label{listing:har-lstm-stack}
 \end{figure}
 
-Gambar~\ref{listing:har-lstm} mengimplementasikan metode \mintinline{python}{self.__lstm_layer()} untuk pembuatan lapisan LSTM\@. Metode tersebut menerima parameter \mintinline{python}{tensor_in} sebagai masukan lapisan LSTM, \mintinline{python}{num_unit} sebagai jumlah sel LSTM pada masing-masing lapisan dan \mintinline{python}{num_layers} sebagai jumlah lapisan LSTM yang akan dibuat. Sesuai dengan paramter yang diberikan, sejumlah \mintinline{python}{num_layers} lapisan LSTM akan dibuat dengan \mintinline{python}{num_units} sel LSTM pada masing-masing lapisannya. Lapisan LSTM pertama menerima masukan dari \mintinline{python}{tensor_in}, sedangkan lapisan selanjutnya menerima masukan dari keluaran lapisan sebelumnya. Sesuai dengan arsitektur \textit{many-to-one}, pada baris $86$ dikembalikan keluaran pada langkah waktu terakhir dari lapisan LSTM terakhir.
+Output dari LSTM diregulasi dengan \textit{dropout} pada baris ke $40$. Lalu hasil \textit{dropout} masuk ke lapisan \textit{softmax} pada baris $42$. Lapisan \textit{softmax} ini menghasilkan distribusi probabilitas dari enam aktivitas yang diklasifikasikan. Output dari lapisan \textit{softmax} disimpan dalam \mintinline{python}{self.output}.
+
+Graf pelatihan dibuat dengan memanggil metode  \mintinline{python}{self.create_train_op()} pada baris ke $44$. Metode tersebut diimplementasikan pada Gambar~\ref{listing:har-create-train-op}. Pada metode itu dihitung \textit{loss} dengan \textit{cross entropy}, lalu algoritme RMSProp digunakan untuk meminimalisir \textit{loss} tersebut. RMSProp digunakan dengan laju pembelajaran awal sesuai dengan \mintinline{python}{learning_rate} yang diatur pada \mintinline{python}{hyperparameter}. Selanjutnya graf pengukuran akurasi disusun dengan metode \mintinline{python}{self.create_accuracy_op()} yang diimplementasikan pada Gambar~\ref{listing:har-create-accuracy-op}.
 
 \begin{figure}[h]
-    \inputminted[firstline=75,firstnumber=75,lastline=86,gobble=4]{python}{../har/har.py}
-    \caption{Implementasi lapisan LSTM}
-    \label{listing:har-lstm}
-\end{figure}
+\begin{minted}[linenos=true,firstnumber=45]{python}
+def create_train_op(self, learning_rate):
+    loss = tf.losses.softmax_cross_entropy(self.target, self.output, scope='loss')
 
-% \section{Implementasi Pelatihan}
-
-% \begin{figure}[h]
-%     \inputminted[firstline=89,firstnumber=89,lastline=104,gobble=4]{python}{../har/har.py}
-%     \caption{Implementasi \textit{cross entropy} dan RMSProp}
-%     \label{listing:har-cross-entropy-rmsprop}
-% \end{figure}
-
-% \begin{figure}[h]
-%     \inputminted[firstline=147,firstnumber=147,lastline=176,gobble=4]{python}{../har/har.py}
-%     \caption{Implementasi proses pelatihan}
-%     \label{listing:har-pelatihan}
-% \end{figure}
-
-% \begin{figure}[h]
-%     \inputminted[firstline=178,firstnumber=178,lastline=190,gobble=4]{python}{../har/har.py}
-%     \caption{Implementasi pengujian model}
-%     \label{listing:har-pengujian-model}
-% \end{figure}
-
-
-\section{Implementasi Pengambilan dan Pengondisian Data}
-Data latih dan data uji dipersiapkan dengan fungsi \mintinline{python}{get()} yang diimplementasikan pada Gambar~\ref{listing:data-pengambilan-data-latih-uji}. Fungsi tersebut menerima parameter \mintinline{python}{filenames} sebagai daftar nama file dataset, \mintinline{python}{num_target} sebagai jumlah kelas aktivitas yang akan dikenali, \mintinline{python}{windows_size} sebagai lebar jendela, \mintinline{python}{overlap} sebagai aturan tumpang tindih jendela dan \mintinline{python}{divider} sebagai pembagi data latih dan uji.
-
-\begin{figure}[h]
-    \inputminted[firstline=5,firstnumber=5,lastline=22]{python}{../har/data.py}
-    \caption{Implementasi pengambilan data latih dan data uji}
-    \label{listing:data-pengambilan-data-latih-uji}
-\end{figure}
-
-Pada baris ke $6$, fungsi \mintinline{python}{load()} mengekstrak data sensor dan target aktivitas dari file serta mengaplikasikan \textit{sliding window} pada data tersebut. Lalu hasil \textit{sliding window} diacak dengan fungsi \mintinline{python}{shuffle()} pada baris $7$. Jika diberikan parameter \mintinline{python}{divider}, maka data dan target dibagi untuk data latih dan data uji dengan fungsi \mintinline{python}{divide()} pada baris $10 - 11$.
-
-\begin{figure}[h]
-    \inputminted[firstline=25,firstnumber=25,lastline=44]{python}{../har/data.py}
-    \caption{Implementasi pengambilan data dari file}
-    \label{listing:data-pengambilan-data-file}
-\end{figure}
-
-Implementasi fungsi \mintinline{python}{load()} dapat dilihat pada Gambar~\ref{listing:data-pengambilan-data-file}. Pada baris $30$ data dari seluruh \mintinline{python}{filename} diekstrak menghasilkan tuple \mintinline{python}{file} dengan anggota \mintinline{python}{data} dan \mintinline{python}{target}. Baris $36$ mengaplikasikan fungsi \textit{sliding\_window}, lalu data dan target dari seluruh \mintinline{python}{filename} digabungkan pada baris $37-42$.
-
-Proses \textit{sliding window} diimplementasikan pada Gambar~\ref{listing:data-sliding-window}. Pada baris $51-56$ dilakukan iterasi pada seluruh \mintinline{python}{data} dan \mintinline{python}{target} untuk membuat jendela dengan ukuran \mintinline{python}{windows_size} dan dan aturan tumpang tindih \mintinline{python}{overlap}.
-
-\begin{figure}[h]
-    \inputminted[firstline=47,firstnumber=47,lastline=58]{python}{../har/data.py}
-    \caption{Implementasi \textit{sliding windows}}
-    \label{listing:data-sliding-window}
-\end{figure}
-
-Setelah diperoleh rangkaian jendela \mintinline{python}{data} dan \mintinline{python}{target} dari fungsi \mintinline{python}{load()}, rangkaian jendela tersebut diacak fungsi \mintinline{python}{shuffle()} yang diimplementasikan pada Gambar~\ref{listing:data-pengacakan-data}. Pada baris $62-63$, \mintinline{python}{data} dan \mintinline{python}{target} digabungkan agar urutan pasangan keduanya tetap konsisten setelah melalui proses pengacakan. Pengacakan dilakukan pada baris $64$, lalu \mintinline{python}{data} dan \mintinline{python}{target} dipisahkan kembali pada baris $66-67$.
-
-\begin{figure}[h]
-    \inputminted[firstline=61,firstnumber=61,lastline=69]{python}{../har/data.py}
-    \caption{Implementasi pengacakan data}
-    \label{listing:data-pengacakan-data}
-\end{figure}
-
-Pembagian data latih dan data uji dilakukan dengan fungsi \mintinline{python}{divide()} yang diimplementasikan pada Gambar~\ref{listing:data-pembagian-data-latih-uji}. Fungsi \mintinline{python}{divide()} menerima parameter \mintinline{python}{arr} sebagai data yang akan dibagi dan \mintinline{python}{divider} sebagai rasio pembagian data. Sejumlah $(divider \times 100) \%$ data dari \mintinline{python}{arr} dijadikan data latih dan sisanya dijadikan data uji.
-
-\begin{figure}[h]
-    \inputminted[firstline=72,firstnumber=72,lastline=76]{python}{../har/data.py}
-    \caption{Implementasi pembagian data latih dan data uji}
-    \label{listing:data-pembagian-data-latih-uji}
-\end{figure}
-
-\section{Implementasi Klasifikasi Pada Ponsel Cerdas}
-Sistem diimplemantasikan pada ponsel cerdas dengan sistem operasi Android. Proses klasifikasi dimulai dengan pengambilan dan pengondisian data sensor akselerometer dan giroskop. Kedua sensor tersebut diinisialisasi oleh kelas \mintinline{java}{SensorReader} pada Gambar~\ref{listing:inisialisasi-sensor}. \textit{Constructor} \mintinline{java}{SensorReader()} menerima \mintinline{java}{List} berisi jenis sensor yang akan dibaca, lalu pada baris $28-30$ seluruhnya didaftarkan untuk pembacaan dengan fungsi \mintinline{java}{registerSensorIfAvailable()}.
-
-\begin{figure}[h]
-    \inputminted[firstline=14,firstnumber=14,lastline=32]{java}{../aktvtas/app/src/main/java/org/elins/aktvtas/sensor/SensorReader.java}
-    \caption{Inisialisasi sensor}
-    \label{listing:inisialisasi-sensor}
-\end{figure}
-
-Fungsi \mintinline{java}{registerSensorIfAvailable()} pada Gambar~\ref{listing:mendaftarkan-sensor} digunakan untuk mendaftarkan \textit{listener} pada masing-masing sensor dan mengatur \textit{sampling rate} menjadi 50 Hz. Sehingga setiap 20 milisekon, ketika bacaan baru dari sensor telah siap, fungsi \textit{callback} \mintinline{java}{onSensorDataReady()} akan dipanggil.
-
-\begin{figure}[h]
-    \inputminted[firstline=38,firstnumber=38,lastline=44,gobble=4]{java}{../aktvtas/app/src/main/java/org/elins/aktvtas/sensor/SensorReader.java}
-    \caption{Mendaftarkan sensor}
-    \label{listing:mendaftarkan-sensor}
-\end{figure}
-
-Data sensor disimpan dan dikelola dalam dua struktur data, yaitu \mintinline{java}{SensorData} dan \mintinline{java}{SensorDataSequence}. Struktur \mintinline{java}{SensorData} (Gambar~\ref{listing:sensor-data}) digunakan untuk menyimpan dan mengelola data satu sensor dalam satu waktu, sedangkan struktur \mintinline{java}{SensorDataSequence} (Gambar~\ref{listing:sensor-data-sequence}) digunakan untuk menyimpan dan mengelola jendela data dari seluruh sensor.
-
-\begin{figure}[h]
-    \inputminted[firstline=6,firstnumber=6,lastline=16]{java}{../aktvtas/app/src/main/java/org/elins/aktvtas/sensor/SensorData.java}
-    \caption{Struktur SensorData}
-    \label{listing:sensor-data}
+    with tf.name_scope('optimizer'):
+        optimizer = tf.train.RMSPropOptimizer(learning_rate)
+        return optimizer.minimize(loss)
+\end{minted}
+\caption{Implementasi pembuatan graf pelatihan}
+\label{listing:har-create-train-op}
 \end{figure}
 
 \begin{figure}[h]
-    \inputminted[firstline=9,firstnumber=9,lastline=13]{java}{../aktvtas/app/src/main/java/org/elins/aktvtas/sensor/SensorDataSequence.java}
-    \caption{Struktur SensorDataSequence}
-    \label{listing:sensor-data-sequence}
+\begin{minted}[linenos=true,firstnumber=52]{python}
+def create_accuracy_op(self):
+with tf.name_scope('accuracy'):
+    with tf.name_scope('correct_prediction'):
+        correct_prediction = tf.equal(tf.argmax(self.output, 1),
+                                      tf.argmax(self.target, 1))
+
+    with tf.name_scope('accuracy'):
+        accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+        tf.summary.scalar('accuracy', accuracy)
+
+return accuracy
+\end{minted}
+\caption{Implementasi pengukuran akurasi}
+\label{listing:har-create-accuracy-op}
 \end{figure}
 
-Pengambilan data sensor dilakukan dalam kelas \mintinline{java}{SensorService}. Kelas \mintinline{java}{SensorService} mengimplementasikan \textit{interface} \mintinline{java}{SensorReaderEvent} dari kelas \mintinline{java}{SensorReader}, sehingga setiap kali bacaan sensor baru tersedia, implementasi metode \mintinline{java}{onSensorDataReady()} pada kelas \mintinline{java}{SensorService} akan dipanggil (Gambar~\ref{listing:callback-sensor-ready}). Pada baris $47$, data sensor dibaca dan menghasilkan \mintinline{java}{List} berisi \mintinline{java}{SensorData} terbaru dari seluruh sensor. Kemudian data tersebut disusun menjadi \mintinline{java}{SensorDataSequence} pada baris $59-52$.
+Proses pelatihan dilakukan dengan iterasi pada Gambar~\ref{listing:har-iterasi-pelatihan}. Baris 53 mengambil \textit{mini batch} untuk pelatihan dari dataset. Selanjutnya kondisi pada baris 55 menentukan agar instruksi pada baris $56-68$ dijalankan satu kali setiap \textit{epoch}. Pada baris $70-74$, seluruh graf pelatihan dijalankan. Data merambat dari node input ke setiap layer selanjutnya sampai ke output, lalu error dirambatkan ke belakang untuk mencari gradiennya. Dari gradien tersebut nilai parameter-parameter jaringan saraf dioptimasi untuk menghasilkan akurasi klasifikasi terbaik.
 
 \begin{figure}[h]
-    \inputminted[firstline=45,firstnumber=45,lastline=56,gobble=4]{java}{../aktvtas/app/src/main/java/org/elins/aktvtas/sensor/SensorService.java}
-    \caption{Struktur SensorDataSequence}
-    \label{listing:callback-sensor-ready}
+\begin{minted}[linenos=true,firstnumber=52]{python}
+for step in range(number_of_step):
+    batch_features, batch_target = next(data_iterator)
+
+    if step % one_epoch_step == 0 or step == number_of_step - 1:
+        accuracy = self._evaluate(validation, merged_summary, step)
+        best_accuracy, best_step = self._compare_accuracy(
+            accuracy, best_accuracy, step, best_step)
+        self.saver.save_checkpoint('last', step)
+
+        early_stop = self._early_stop(
+            self._step_to_epoch(step, data_length, batch_size),
+            self._step_to_epoch(best_step, data_length, batch_size),
+            10
+        )
+
+        if early_stop:
+            break
+
+    summary, _ = self.session.run([merged_summary, self.train_op], {
+        self.input: batch_features,
+        self.target: batch_target.eval(),
+        self.is_training: True
+    })
+\end{minted}
+\caption{Iterasi pelatihan}
+\label{listing:har-iterasi-pelatihan}
 \end{figure}
 
-Pengenalan aktivitas manusia dilakukan secara \textit{real time} pada ponsel cerdas dengan kelas \mintinline{java}{PredictionService} yang memperluas kelas \mintinline{java}{SensorService}. Kelas \mintinline{java}{PredictionService} mengimplementasikan metode \mintinline{java}{onSensorDataReady()} seperti pada Gambar~\ref{listing:callback-sensor-ready-prediction}.
+\section{Implementasi Pengujian \textit{Hyperparameter}}
+
+Pengujian ini dilakukan dengan melatih model \mintinline{python}{ConvLSTM} dengan konfigurasi \textit{hyperparameter} yang berbeda, lalu menguji tingkat akurasi klasifikasi terhadap data uji. Implementasi pengujian ditunjukkan pada Gambar~\ref{listing:har-pengujian-hyperparameter}.
 
 \begin{figure}[h]
-    \inputminted[firstline=97,firstnumber=97,lastline=123,gobble=4]{java}{../aktvtas/app/src/main/java/org/elins/aktvtas/PredictionService.java}
-    \caption{Struktur SensorDataSequence}
-    \label{listing:callback-sensor-ready-prediction}
+\begin{minted}[linenos=true,firstnumber=108]{python}
+def main(train_dataset=None, validation_dataset=None, test_dataset=None, epoch=30,
+         batch_size=128, logdir=None, run=1, variation=1, checkpoint=None):
+    hyperparameters = generate_hyperparameters(variation)
+    for i, hyperparameter in enumerate(hyperparameters):
+        run_logdir = os.path.join(logdir, 'run' + str(i + run))
+        model = ConvLSTM(hyperparameter, run_logdir)
+        print('Run %d/%d' % (i + 1, variation))
+        print_hyperparameter_notes(hyperparameter)
+        write_hyperparameter_notes(hyperparameter, run_logdir)
+
+        if train_dataset and validation_dataset:
+            train_data = load(train_dataset, NUM_TARGET, WINDOW_SIZE)
+            validation_data = load(validation_dataset, NUM_TARGET, WINDOW_SIZE)
+
+            if train_data.data.any() and validation_data.data.any():
+                model.train(train_data, validation_data, epoch, batch_size,
+                            checkpoint)
+
+        if test_dataset:
+            test_data = load(test_dataset, NUM_TARGET, WINDOW_SIZE)
+
+            if test_data.data.any():
+                prediction = model.test(test_data, batch_size, checkpoint)
+                model.confusion_matrix(prediction, test_data.target)
+
+        tf.reset_default_graph()
+\end{minted}
+\caption{Pengujian \textit{Hyperparameter}}
+\label{listing:har-pengujian-hyperparameter}
 \end{figure}
 
-Pada baris $99$, metode \mintinline{java}{super.onSensorDataReady()} dipanggil untuk menjalankan implementasi \mintinline{java}{onSensorDataReady()} pada kelas \mintinline{java}{SensorService}. Pemanggilan metode tersebut dilakukan untuk menyusun bacaan sensor menjadi struktur \mintinline{java}{SensorDataSequence}. Saat ukuran \mintinline{java}{SensorDataSequence} telah sesuai dengan ukuran jendela yang diinginkan, aktivitas diklasifikasikan dengan memanggil metode \mintinline{java}{classifier.classify(SensorDataSequence)} pada baris $104$.
+Pemilihan \textit{hyperparameter} dilakukan secara acak dengan memanggil fungsi \mintinline{python}{generate_hyperparameters()} pada baris 110. Argumen \mintinline{python}{variation} menentukan jumlah \textit{hyperparameter} yang akan dibuat. Pada barus 113 objek dari model \mintinline{python}{ConvLSTM} dibuat untuk setiap \textit{hyperparameter}. Data latih dan data validasi dibuka pada baris 119 dan 120, lalu model dilatih dengan memanggil \mintinline{python}{model.train()} pada baris 123. Setelah pelatihan model selesai, model diuji dengan data uji pada baris 127-133. Sebuah \textit{confusion matrix} dibuat dari hasil pengujian pada baris 131.
 
-Akurasi pengenalan dihitung pada baris $116-123$. Pengenalan yang tepat diketahui dengan membandingkan hasil klasifikasi dengan referensi. Pada baris $122$, tingkat akurasi pengenalan dihitung dengan persamaan
+Implementasi fungsi \mintinline{python}{generate_hyperparameters()} dapat dilihat pada Gambar~\ref{listing:har-generate-hyperparameter}. Fungsi tersebut menerima argumen \mintinline{python}{variation} sebagai jumlah variasi \textit{hyperparameter} yang akan dibuat, lalu menghasilkan \textit{hyperparameter} acak dengan fungsi-fungsi berikut:
 
-\begin{equation}
-    accuracy = \frac{correctPrediction}{totalPrediction} \times 100
-\end{equation}
-
-Klasifikasi dengan metode \mintinline{java}{classify()} diimplementasikan pada Gambar~\ref{listing:klasifikasi-aktivitas}. Metode tersebut menerima parameter \mintinline{java}{SensorDataSequence} sebagai masukan dari model klasifikasi. Pada baris $35$, \mintinline{java}{SensorDataSequence} diratakan menjadi matriks satu dimensi dengan memanggil metode \mintinline{java}{sequence.flatten()}. Pada baris $44-46$, data dimasukkan ke model klasifikasi dengan \mintinline{java}{inferenceInterface.feed()}, klasifikasi dijalankan dengan \mintinline{java}{inferenceInterface.run()} dan keluaran diambil dengan \mintinline{java}{inferenceInterface.fetch()}. Objek \mintinline{java}{inferenceInterface} sendiri merupakan \textit{instance} dari kelas \mintinline{java}{TensorFlowInferenceInterface}. Hasil klasifikasi terbaik dicari dengan metode \mintinline{java}{findBestClassification()}.
+\begin{itemize}
+    \item Fungsi \mintinline{python}{random_conv_layers()} untuk lapisan konvolusi
+    \item Fungsi \mintinline{python}{random_lstm_layers()} untuk lapisan LSTM
+    \item Fungsi \mintinline{python}{random_keep_prob()} untuk peluang dropout
+    \item Fungsi \mintinline{python}{random_learning_rate()} untuk laju pembelajaran
+\end{itemize}
 
 \begin{figure}[h]
-    \inputminted[firstline=34,firstnumber=34,lastline=56,gobble=4]{java}{../aktvtas/app/src/main/java/org/elins/aktvtas/human/HumanActivityClassifier.java}
-    \caption{Pengklasifikasian Aktivitas Manusia}
-    \label{listing:klasifikasi-aktivitas}
+\begin{minted}[linenos=true,firstnumber=94]{python}
+def generate_hyperparameters(variations, conv_layers=None, lstm_layers=None,
+                             keep_prob=None, learning_rate=None):
+    hyperparameters = []
+
+    for _ in range(variations):
+        hyperparameter = ConvLSTMHyperparameter(
+            conv_layers if conv_layers else random_conv_layers(),
+            lstm_layers if lstm_layers else random_lstm_layers(),
+            keep_prob if keep_prob else random_keep_prob(),
+            learning_rate if learning_rate else random_learning_rate(-4, -3)
+        )
+        hyperparameters.append(hyperparameter)
+
+    return hyperparameters
+\end{minted}
+\caption{Pengujian \textit{Hyperparameter}}
+\label{listing:har-generate-hyperparameter}
 \end{figure}
 
-\section{Implementasi Pengujian}
+Fungsi \mintinline{python}{random_conv_layers()} diimplementasikan pada Gambar~\ref{listing:har-random-conv-layers}. Pada fungsi tersebut dipilih variasi jumlah lapisan konvolusi antara 2 sampai 4 dan jumlah output masing-masing lapisan antara 32, 64 atau 128.
+
+\begin{figure}[h]
+\begin{minted}[linenos=false]{python}
+def random_conv_layers():
+    number_of_layers = np.random.randint(2, 5)
+    num_outputs = np.random.choice([32, 64, 128])
+
+    layers = []
+    for _ in range(number_of_layers):
+        layers.append((num_outputs, 5))
+
+    return layers
+\end{minted}
+\caption{Pengacakan \textit{hyperparameter} lapisan konvolusi}
+\label{listing:har-random-conv-layers}
+\end{figure}
+
+Fungsi \mintinline{python}{random_lstm_layers()} diimplementasikan pada Gambar~\ref{listing:har-random-lstm-layers}. Seperti pada fungsi \mintinline{python}{random_conv_layers()}, pada fungsi ini dipilih variasi jumlah lapisan LSTM antara 2 sampai 4 dan jumlah unit LSTM masing-masing lapisan antara 32, 64 atau 128.
+
+\begin{figure}[h]
+\begin{minted}[linenos=false]{python}
+def random_lstm_layers():
+    number_of_layers = np.random.randint(2, 5)
+    num_units = np.random.choice([32, 64, 128])
+
+    layers = []
+    for _ in range(number_of_layers):
+        layers.append(num_units)
+
+    return layers
+\end{minted}
+\caption{Pengacakan \textit{hyperparameter} lapisan LSTM}
+\label{listing:har-random-lstm-layers}
+\end{figure}
+
+Fungsi \mintinline{python}{random_keep_prob()} diimplementasikan pada Gambar~\ref{listing:har-random-keep-prob} dan fungsi \mintinline{python}{random_learning_rate()} diimplementasikan pada Gambar~\ref{listing:har-random-learning-rate}. Peluang dropout divariasikan antara 0,2 sampai 0,8, sedangkan laju pembelajaran divariasikan antara 0,0001 sampai 0,001.
+
+\begin{figure}[h]
+\begin{minted}[linenos=false]{python}
+def random_keep_prob():
+    return np.random.uniform(0.2, 0.8)
+\end{minted}
+\caption{Pengacakan \textit{hyperparameter} peluang dropout}
+\label{listing:har-random-keep-prob}
+\end{figure}
+
+\begin{figure}[h]
+\begin{minted}[linenos=false]{python}
+def random_learning_rate(lr_min, lr_max):
+    return 10 ** np.random.uniform(lr_min, lr_max)
+\end{minted}
+\caption{Pengacakan \textit{hyperparameter} laju pembelajaran}
+\label{listing:har-random-learning-rate}
+\end{figure}
+
+\section{Implementasi Pengujian Klasifikasi Online}
+
+Pengujian klasifikasi online diimplementasikan pada ponsel cerdas Android. Proses klasifikasi dimulai dengan pengambilan dan pengondisian data sensor, kemudian data tersebut dijadikan sebagai input model \mintinline{python}{ConvLSTM}.
+
+Data dari sensor diorganisir dalam dua kelas, yaitu kelas \mintinline{java}{SensorData} dan kelas \mintinline{java}{SensorDataSequence}. Kelas \mintinline{java}{SensorData} digunakan untuk menyimpan data sensor pada satu waktu, sedangkan kelas \mintinline{java}{SensorDataSequence} digunakan untuk menyimpan kumpulan \mintinline{java}{SensorData} pada langkah waktu yang berbeda.
+
+Gambar~\ref{listing:aktvtas-sensordata} menunjukkan potongan implementasi kelas \mintinline{java}{SensorData}. Nilai sensor untuk masing-masing sumbu disimpan dalam sebuah \mintinline{java}{ArrayList}. Objek \mintinline{java}{SensorData} diinisialisasi dengan memberikan argumen \mintinline{java}{sensorType}, yang menyatakan jenis sensor, dan \mintinline{java}{numberOfAxis}, yang menyatakan jumlah sumbu pada jenis sensor tersebut. Selanjutnya nilai sensor dapat disimpan dengan memanggil metode \mintinline{java}{setValues()}.
+
+\begin{figure}[h]
+\begin{minted}[linenos=false]{java}
+public class SensorData {
+    private List<Float> values;
+    private int sensorType;
+
+    protected SensorData(int SensorType, int numberOfAxis) {
+        this.sensorType = SensorType;
+
+        Float[] initialData = new Float[numberOfAxis];
+        values = Arrays.asList(initialData);
+    }
+
+    public void setValues(float[] values) {
+        for (int i = 0; i < this.values.size(); i++) {
+            this.values.set(i, values[i]);
+        }
+    }
+    ...
+}
+\end{minted}
+\caption{Potongan Kelas SensorData}
+\label{listing:aktvtas-sensordata}
+\end{figure}
+
+Kelas \mintinline{java}{SensorDataSequence} diimplementasikan pada Gambar~\ref{listing:aktvtas-sensordatasequence}. Rangkaian data sensor disimpan dalam \mintinline{java}{ArrayList} berisi \mintinline{java}{SensorData} yang bernama \mintinline{java}{sequence}. Sebuah \mintinline{java}{buffer} digunakan untuk penyimpanan data sensor sementara selama proses pengisian masih berlangsung. Kelas tersebut juga menyimpan referensi terhadap jumlah sensor yang didaftarkan pada atribut \mintinline{java}{registeredSensor}, dan urutan \mintinline{java}{SensorData} pada \mintinline{java}{buffer} disimpan dalam \mintinline{java}{sensorOrder}.
+
+\begin{figure}[h!]
+\begin{minted}[linenos=false]{java}
+public class SensorDataSequence {
+    List<SensorData> buffer = new ArrayList<>();
+    protected List<List<SensorData>> sequence = new ArrayList<>();
+    HashMap<Integer, Integer> sensorOrder = new HashMap<>();
+    private int registeredSensor = 0;
+    
+    public SensorDataSequence registerSensor(SensorData sensorData) {
+        sensorOrder.put(sensorData.sensorType(), registeredSensor++);
+        buffer.add(sensorData);
+
+        return this;
+    }
+
+    public SensorDataSequence setData(SensorData sensorData) {
+        int index = sensorOrder.get(sensorData.sensorType());
+
+        SensorData newSensorData = new SensorData(sensorData.sensorType(),
+                                                  sensorData.numberOfAxis());
+        newSensorData.setValues(sensorData.getValues());
+        buffer.set(index, newSensorData);
+
+        return this;
+    }
+
+    public void commit() {
+        if (! dataCorrupted()) {
+            sequence.add(buffer);
+        }
+        resetBuffer();
+    }
+}
+\end{minted}
+\caption{Potongan Kelas SensorDataSequence}
+\label{listing:aktvtas-sensordatasequence}
+\end{figure}
+
+Sebelum digunakan, \mintinline{java}{buffer} perlu diinisialisasi dengan mendaftarkan seluruh jenis sensor yang datanya akan disimpan. Pendaftaran ini dilakukan dengan memanggil metode \mintinline{java}{registerSensor()} dan memberikan argumen \mintinline{java}{SensorData}. Setelah pendaftaran seluruh sensor selesai, data sensor pada \mintinline{java}{buffer} dapat diisi dengan memberikan \mintinline{java}{SensorData} pada metode \mintinline{java}{setData()}. Ketika data seluruh jenis sensor pada satu langkah waktu telah selesai diisikan pada \mintinline{java}{buffer}, data dapat disusun pada \mintinline{java}{sequence} dengan memanggil metode \mintinline{java}{commit()}. Selain menyimpan  \mintinline{java}{buffer} pada urutan langkah waktu dalam \mintinline{java}{sequence}, metode tersebut juga mereset \mintinline{java}{buffer} agar siap digunakan pada langkah waktu selanjutnya.
+
+Pembacaan sensor dilakukan oleh kelas \mintinline{java}{SensorReader} yang diimplementasikan pada Gambar~\ref{listing:aktvtas-sensorreader}. Pada \textit{constructor} kelas \mintinline{java}{SensorReader}, seluruh sensor yang diberikan pada argumen \mintinline{java}{sensorToRead} diinisialisasi dengan memanggil metode \mintinline{java}{registerSensorIfAvailable()}. Metode tersebut mendaftarkan sensor pada \textit{listener} dalam sistem operasi Android, sehingga sensor dapat dibaca. Kelas \mintinline{java}{SensorReader} juga memiliki atribut \mintinline{java}{sensorDataBuffer} sebagai penyimpanan sementara selama proses pembacaan pada satu langkah waktu dilakukan.
+
+\begin{figure}[h]
+\begin{minted}[linenos=false]{java}
+public class SensorReader implements SensorEventListener {
+    private final SensorManager sensorManager;
+    private List<Sensor> availableSensors = new ArrayList<>();
+    private List<SensorData> sensorDataBuffer;
+
+    public SensorReader(Context context, List<Integer> sensorToRead) {
+        sensorManager = (SensorManager) context.getSystemService(
+            Context.SENSOR_SERVICE);
+
+        for (Integer sensorType : sensorToRead) {
+            registerSensorIfAvailable(sensorType);
+        }
+        resetBuffer();
+    }
+
+    private void registerSensorIfAvailable(int sensorType) {
+        if (sensorManager.getDefaultSensor(sensorType) != null) {
+            Sensor sensor = sensorManager.getDefaultSensor(sensorType);
+            sensorManager.registerListener(this, sensor,
+                                           SensorManager.SENSOR_DELAY_GAME);
+            availableSensors.add(sensor);
+        }
+    }
+    ...
+}
+\end{minted}
+\caption{Potongan Kelas SensorReader}
+\label{listing:aktvtas-sensorreader}
+\end{figure}
+
+Perubahan data sensor yang telah didaftarkan memicu dipanggilnya metode \mintinline{java}{onSensorChanged()} yang diimplementasikan pada Gambar~\ref{listing:aktvtas-pembacaan-sensorreader}. Pada metode tersebut dibuat objek \mintinline{java}{SensorData} sesuai dengan jenis data sensor yang baru diterima, lalu data baru tersebut disimpan pada \mintinline{java}{SensorData} dengan memanggil metode \mintinline{java}{sensorData.setValues()}. Selanjutnya objek \mintinline{java}{SensorData} tersebut disimpan dalam \mintinline{java}{sensorDataBuffer}.
+
+\begin{figure}[h]
+\begin{minted}[linenos=false]{java}
+public class SensorReader implements SensorEventListener {
+    ...
+    @Override
+    public final void onSensorChanged(SensorEvent event) {
+        storeAvailableSensorDataToBuffer(event);
+
+        if (readyToRead() && sensorReaderEvent != null) {
+            sensorReaderEvent.onSensorDataReady();
+        }
+    }
+
+    void storeAvailableSensorDataToBuffer(SensorEvent event) {
+        if (availableSensors.contains(event.sensor)) {
+            int bufferIndex = availableSensors.indexOf(event.sensor);
+            SensorData sensorData = new SensorData(event.sensor.getType(),
+                                                   event.values.length);
+            sensorData.setValues(event.values);
+            sensorDataBuffer.set(bufferIndex, sensorData);
+        }
+    }
+    ...
+}
+\end{minted}
+\caption{Pembacaan sensor pada SensorReader}
+\label{listing:aktvtas-pembacaan-sensorreader}
+\end{figure}
+
+\begin{figure}[h!]
+\begin{minted}[linenos=false]{java}
+public class SensorReader implements SensorEventListener {
+    ...
+    public boolean readyToRead() {
+        for (SensorData buffer : sensorDataBuffer) {
+            if (buffer == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public List<SensorData> read() {
+        if (readyToRead()) {
+            List<SensorData> sensorDataList = new ArrayList<>(sensorDataBuffer);
+            resetBuffer();
+            return sensorDataList;
+        } else {
+            return new ArrayList<>();
+        }
+    }
+    ...
+\end{minted}
+\caption{Pengambilan data dari SensorReader}
+\label{listing:aktvtas-pengambilan-sensorreader}
+\end{figure}
+
+Apabila \mintinline{java}{sensorDataBuffer} telah dipenuhi oleh data setiap sensor pada satu langkah waktu, data dapat diambil dengan memanggil metode \mintinline{java}{read()} yang diimplementasikan pada Gambar~\ref{listing:aktvtas-pengambilan-sensorreader}. Selain mengembalikan data dari seluruh sensor yang dibaca, metode tersebut juga mengosongkan \mintinline{java}{sensorDataBuffer} untuk penggunaan pada langkah waktu selanjutnya. Adapun penentuan siap atau tidaknya data diambil dari \mintinline{java}{sensorDataBuffer} dilakukan oleh metode \mintinline{java}{readyToRead()} yang memeriksa setiap anggota \mintinline{java}{sensorDataBuffer}. Jika sudah tidak terdapat anggota yang kosong, pengambilan data dapat dilakukan.
+
+Kelas \mintinline{java}{SensorReader} juga menyediakan \textit{interface} \mintinline{java}{SensorReaderEvent} seperti yang ditunjukkan pada Gambar~\ref{listing:aktvtas-sensorreaderevent}. \textit{Interface} ini dapat diimplementasikan oleh kelas lain untuk menerima fungsi \textit{callback} \mintinline{java}{onSensorDataReady()} yang dipanggil ketika data sensor pada satu langkah waktu telah siap digunakan.
+
+\begin{figure}[h]
+\begin{minted}[linenos=false]{java}
+public class SensorReader implements SensorEventListener {
+    ...
+    private SensorReaderEvent sensorReaderEvent;
+
+    public interface SensorReaderEvent {
+        void onSensorDataReady();
+    }
+
+    public void enableEventCallback(SensorReaderEvent event) {
+        sensorReaderEvent = event;
+    }
+    ...
+}
+\end{minted}
+\caption{\textit{Interface} SensorReaderEvent pada SensorReader}
+\label{listing:aktvtas-sensorreaderevent}
+\end{figure}
+
+Rutin pengambilan data sensor dilakukan dengan \textit{service} \mintinline{java}{SensorService} yang diimplementasikan pada Gambar~\ref{listing:aktvtas-sensorservice}. Kelas ini mengimplementasikan \textit{interface} \mintinline{java}{SensorReader.SensorReaderEvent}, sehingga dapat menerima \textit{callback} \mintinline{java}{onSensorDataReady()} ketika data sensor telah selesai dibaca.
+
+\begin{figure}[h]
+\begin{minted}[linenos=false]{java}
+public class SensorService extends Service
+                           implements SensorReader.SensorReaderEvent {
+    protected int entryCounter = 0;
+    private List<SensorData> buffer;
+    protected SensorReader sensorReader;
+    protected SensorDataSequence sensorDataSequence;
+
+    protected void createSensorDataReader(List<Integer> sensorToRead) {
+        sensorReader = new SensorReader(this, sensorToRead);
+        sensorReader.enableEventCallback(this);
+    }
+
+    protected void createSensorDataSequence(List<Integer> sensorToRead,
+                                            List<Integer> numberOfAxis) {
+        sensorDataSequence = SensorDataSequence.create(sensorToRead, numberOfAxis);
+    }
+
+    @Override
+    public void onSensorDataReady() {
+        buffer = sensorReader.read();
+        if (buffer != null) {
+            for (SensorData data : buffer) {
+                sensorDataSequence.setData(data);
+            }
+            sensorDataSequence.commit();
+            entryCounter++;
+        }
+    }
+    ...
+}
+\end{minted}
+\caption{Kelas SensorService}
+\label{listing:aktvtas-sensorservice}
+\end{figure}
+
+Kelas \mintinline{java}{SensorService} memiliki atribut dari kelas \mintinline{java}{SensorReader} dan kelas \mintinline{java}{SensorDataSequence}. Keduanya diinisialisasi secara berurutan dengan memanggil metode \mintinline{java}{createSensorDataReader()} dan \mintinline{java}{createSensorDataSequence()}. Pada fungsi \textit{callback} \mintinline{java}{onSensorDataReady()}, sensor dibaca dengan memanggil \mintinline{java}{sensorReader.read()}, lalu hasilnya disusun dalam \mintinline{java}{SensorDataSequence} dengan memasukkan data sensor ke \mintinline{java}{sensorDataSequence.setData(data)}.
+
+Rutin klasifikasi aktivitas dilakukan dengan \textit{service} \mintinline{java}{PredictionService} yang memperluas \mintinline{java}{SensorService}. Implementasi \mintinline{java}{PredictionService} dapat dilihat pada Gambar~\ref{listing:aktvtas-predictionservice}.
+
+\begin{figure}[h!]
+\begin{minted}[linenos=false]{java}
+public class PredictionService extends SensorService {
+    private HumanActivityClassifier classifier;
+    private List<Recognition> lastRecognitions;
+    private int totalPrediction = 0;
+    private int correctPrediction = 0;
+    private long totalPredictionTime = 0;
+    private float accuracy = 0f;
+
+    @Override
+    public void onSensorDataReady() {
+        super.onSensorDataReady();
+
+        if (sensorDataSequence.size() == windowSize) {
+            long startTime = System.currentTimeMillis();
+
+            List<Recognition> recognitions = classifier.classify(
+                sensorDataSequence);
+
+            long predictionTime = System.currentTimeMillis() - startTime;
+            totalPredictionTime += predictionTime;
+
+            if (! recognitions.equals(lastRecognitions)) {
+                reportPredictions(recognitions);
+                lastRecognitions = recognitions;
+            }
+            totalPrediction += 1;
+
+            if (recognitions.size() > 0) {
+                if (recognitions.get(0).getId() == acquisition.getActivityId()
+                    .ordinal()) {
+                    correctPrediction += 1;
+                }
+                if (correctPrediction > 0) {
+                    accuracy = ((float) correctPrediction / (float) totalPrediction) * 100;
+                }
+            }
+
+            logWriter.write(recognitions.get(0).getId(), predictionTime);
+            rearrangeSequence();
+        }
+    }
+    ...
+}
+\end{minted}
+\caption{Kelas PredictionService}
+\label{listing:aktvtas-predictionservice}
+\end{figure}
+
+Implementasi fungsi \mintinline{java}{onSensorDataReady()} kelas \mintinline{java}{PredictionService} menjalankan instruksi \mintinline{java}{super.onSensorDataReady()}. Hal ini dilakukan untuk menjalankan implementasi \mintinline{java}{onSensorDataReady()} pada kelas \mintinline{java}{SensorService}, sehingga rangkaian data sensor diisi pada \mintinline{java}{sensorDataSequence}. Setelah panjang rangkaian \mintinline{java}{sensorDataSequence} sesuai dengan panjang jendela yang diinginkan, proses klasifikasi dimulai.
+
+Klasifikasi dilakukan dengan memasukkan \mintinline{java}{sensorDataSequence} pada metode \mintinline{java}{classifier.classify()}. Metode tersebut mengembalikan \mintinline{java}{ArrayList} berisi persebaran peluang kelas aktivitas, diurutkan dari kelas aktivitas dengan peluang terbesar sampai terkecil. Perhitungan akurasi dilakukan dengan membandingkan prediksi aktivitas berpeluang terbesar dengan referensi aktivitas. Setelah proses klasifikasi selesai, data pada \mintinline{java}{sensorDataSequence} disusun ulang mengikuti aturan \textit{sliding window} dengan memanggil metode \mintinline{java}{rearrangeSequence()}. Metode tersebut mengambil sebagian data \mintinline{java}{sensorDataSequence} terakhir, lalu pengisian data dilanjutkan pada potongan baru tersebut. Aturan ini mengikuti parameter \textit{sliding window} yang diberikan. Selama \textit{service} \mintinline{java}{PredictionService} dijalankan, akurasi akan terus diperbarui dengan prediksi aktivitas terbaru. Selain itu hasil klasifikasi pada setiap langkah waktu disimpan dalam sebuah file dengan metode \mintinline{java}{logWriter.write()}.
+
+Atribut \mintinline{java}{classifier} yang digunakan untuk mengklasifikasikan aktivitas merupakan objek dari kelas \mintinline{java}{HumanActivityClassifier}. Implementasi kelas tersebut dapat dilihat pada Gambar~\ref{listing:aktvtas-humanactivityclassifier}. Proses klasifikasi dilakukan dengan metode \mintinline{java}{classify()}. Data pada parameter \mintinline{java}{sequence} diratakan menjadi array seperti pada Persamaan~\ref{eq:har-graph-input} dengan memanggil metode \mintinline{java}{flatten()} dari \mintinline{java}{sensorDataSequence}. Kemudian data yang telah diratakan dimasukkan pada graf komputasi yang dimuat dari \mintinline{java}{MODEL_FILE}. Instuksi \mintinline{java}{inferenceInterface.run()} merambatkan data pada jaringan yang telah disusun. Komputasi pada graf tersebut menghasilkan distribusi peluang kelas aktivitas dari output lapisan \textit{softmax}. Lalu hasil klasifikasi diurutkan berdasarkan peluang terbesar dengan metode \mintinline{java}{findBestClassification()}.
+
+\begin{figure}[h!]
+\begin{minted}[linenos=false]{java}
+public class HumanActivityClassifier {
+    private static final String MODEL_FILE = "file:///android_asset/graph.pb";
+
+    private static final String INPUT_NAME = "input:0";
+    private static final String OUTPUT_NAME = "output/Softmax:0";
+
+    private TensorFlowInferenceInterface inferenceInterface;
+
+    public HumanActivityClassifier(AssetManager assetManager) {
+        inferenceInterface = new TensorFlowInferenceInterface(assetManager,
+                                                              MODEL_FILE);
+    }
+
+    public List<Recognition> classify(SensorDataSequence sequence) {
+        float inputNode[] = sequence.flatten();
+
+        inferenceInterface.feed(INPUT_NAME, inputNode, 600);
+        inferenceInterface.run(new String[] {OUTPUT_NAME});
+        inferenceInterface.fetch(OUTPUT_NAME, outputs);
+
+        return findBestClassification(outputs);
+    }
+}
+\end{minted}
+\caption{Kelas HumanActivityClassifier}
+\label{listing:aktvtas-humanactivityclassifier}
+\end{figure}
+
+\section{Implementasi Pengujian Kecepatan Klasifikasi pada Ponsel Cerdas}
+
+Pengujian kecepatan klasifikasi pada ponsel cerdas dilakukan bersamaan dengan pengujian klasifikasi online. Pada kelas \mintinline{java}{PredictionService} dalam metode \mintinline{java}{onSensorDataReady()} (Gambar~\ref{listing:aktvtas-predictionservice}), diukur waktu yang dibutuhkan untuk menjalankan instruksi \mintinline{java}{classifier.classify()}. Waktu yang diperoleh kemudian disimpan dalam file dengan instruksi \mintinline{java}{logWriter.write()}. Pengukuran ini dilakukan selama \mintinline{java}{PredictionService} berjalan.
