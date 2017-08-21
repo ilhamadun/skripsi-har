@@ -1,13 +1,22 @@
 \begin{abstractind}
-    Intisari
+    Pengenalan aktivitas manusia adalah salah satu masalah yang berusaha diselesaikan dalam pengembangan lingkungan cerdas. Agar dapat digunakan secara praktis, berbagai percobaan dilakukan untuk mengenali aktivitas manusia menggunakan sensor yang tertanam pada ponsel cerdas. Beberapa metode pembelajaran mesin telah digunakan untuk mengklasifikasikan aktivitas dengan cukup baik, namun terhambat oleh kesulitan pemilihan representasi data yang terbaik. Pada penelitian ini dilakukan penyusunan sistem pengenalan aktivitas manusia berdasarkan data sensor akselerometer dan giroskop dari ponsel cerdas dengan \textit{deep learning} untuk pencarian representasi data secara otomatis.
+
+    Model klasifikasi dibuat dengan menyusun lapisan-lapisan \textit{convolutional neural network} dan \textit{long short-term memory} untuk mengekstrak fitur dari data sensor. Fitur-fitur tersebut kemudian diklasifikasi dengan lapisan \textit{softmax} untuk menghasilkan enam aktivitas yang berbeda, yaitu duduk, berdiri, berjalan, berlari, menaiki tangga dan menuruni tangga. Jaringan tersebut diregulasi dengan \textit{dropout} untuk mencegah \textit{overfitting}.
+
+    Pengujian sistem dilakukan untuk mengoptimasi \textit{hyperparameter} model, mengukur akurasi klasifikasi \textit{online} dan mengukur kecepatan klasifikasi pada ponsel cerdas. Hasil pengujian dengan \textit{hyperparameter} optimal menunjukkan tingkat akurasi klasifikasi \textit{offline} sebesar 93,15\% dan klasifikasi \textit{online} sebesar 90,92\%. Pengujian pada tiga ponsel cerdas yang berbeda juga menunjukkan waktu komputasi yang cukup cepat untuk klasifikasi secara \textit{realtime}.
 
     \bigskip
-    Kata-kata kunci:
+    Kata-kata kunci: \textit{deep learning}, optimasi \textit{hyperparameter}, ekstraksi fitur
 \end{abstractind}
 
 \begin{abstracteng}
-    Abstract
+    \itshape
+    Human activity recognition is an unsolved problem in the development of smart environment. Researchers have been using embedded sensor on smartphone to practically recognize human activity. Several machine learning method have been used with good result, but it requires the researcher to hand-design the best data representation. This research is an attempt to create a human activity recognition system based on accelerometer and gyroscope data from smartphone with deep learning to find an optimal data representation.
+
+    A classification model is created by stacking layers of convolutional neural networks and long short-term memory to extract abstract features from sensor data. Those features are classified with a softmax layer to predict six different activities: sit, stand, walk, jog, walking upstairs and walking downstairs. The network is regulated with dropout to prevent overfitting.
+
+    The system are tested to optimize the model's hyperparameter, to measure accuracy of online classification and to measure computation time on smartphones. A test with optimized hyperparameter resulted in 93.15\% accuracy on offline classification and 90,92\% accuracy on online classification. Computation time are tested on three different smartphone, the result shows that the computation time is fast enough to do classification in realtime.
 
     \bigskip
-    Keywords:
+    Keywords: deep learning, hyperparameter optimization, feature extraction
 \end{abstracteng}

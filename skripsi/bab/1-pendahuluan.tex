@@ -7,7 +7,7 @@ Berbagai penelitian dilakukan untuk mengenali aktivitas dari gerakan tubuh. Pada
 
 Seiring dengan berkembangnya teknologi, berbagai penelitian pun dilakukan dengan memanfaatkan sensor-sensor yang tertanam pada ponsel cerdas. Ponsel cerdas dilengkapi dengan beberapa sensor seperti akselerometer, giroskop, GPS dan kamera yang dapat dimanfaatkan untuk mengumpulkan informasi mengenai perangkat dan konteksnya. Selain itu ponsel cerdas juga memiliki kemampan komputasi yang tinggi yang memungkinkan kita untuk memproses tugas komputasi secara lokal.
 
-Beberapa metode pembelajaran mesin telah digunakan dan menghasilkan klasifikasi aktivitas yang cukup baik. Penelitian yang dilakukan oleh \citet{Chiang-201413} menghasilkan tingkat akurasi terbaik ketika menggunakan metode \textit{Support Vector Machine (SVM)}, sedangkan penelitian yang dilakukan oleh \citet{shoaib-2013} menunjukkan bahwa metode terbaik berbeda-beda untuk setiap aktivitas. Perbedaan ini terjadi karena masing-masing peneliti memilih representasi data yang berbeda, sedangkan performa suatu algoritma sangat bergantung pada representasi dari data yang digunakan \citep{Goodfellow-2016}. Selain itu salah satu kesulitan dalam klasifikasi aktivitas adalah setiap orang melakukan aktivitas dengan cara yang beragam. Penelitain yang dilakukan oleh \citet{tapia-2007} menghasilkan tingkat akurasi 94,6\% pada pelatihan yang bergantung pada subjek, namun menurun drastis menjadi 56,3\% pada pelatihan yang independen terhadap subjek.
+Beberapa metode pembelajaran mesin telah digunakan dan menghasilkan klasifikasi aktivitas yang cukup baik. Penelitian yang dilakukan oleh \Textcite{Chiang-201413} menghasilkan tingkat akurasi terbaik ketika menggunakan metode \textit{Support Vector Machine (SVM)}, sedangkan penelitian yang dilakukan oleh \Textcite{shoaib-2013} menunjukkan bahwa metode terbaik berbeda-beda untuk setiap aktivitas. Perbedaan ini terjadi karena masing-masing peneliti memilih representasi data yang berbeda, sedangkan performa suatu algoritma sangat bergantung pada representasi dari data yang digunakan \Parencite{Goodfellow-2016}. Selain itu salah satu kesulitan dalam klasifikasi aktivitas adalah setiap orang melakukan aktivitas dengan cara yang beragam. Penelitain yang dilakukan oleh \Textcite{tapia-2007} menghasilkan tingkat akurasi 94,6\% pada pelatihan yang bergantung pada subjek, namun menurun drastis menjadi 56,3\% pada pelatihan yang independen terhadap subjek.
 
 \textit{Deep learning} adalah salah satu bidang pembelajaran mesin yang populer dalam beberapa tahun terakhir. Berbagai masalah yang semula sulit bagi metode pembelajaran mesin tradisional kini dapat diselesaikan dengan baik menggunakan \textit{deep learning}. Berbeda dengan metode pembelajaran mesin tradisional yang memerlukan pemilihan representasi data secara manual, \textit{deep learning} mampu mencari representasi data secara otomatis. \textit{Deep learning} merepresentasikan suatu konsep yang kompleks sebagai rangkaian konsep-konsep yang lebih sederhana. Kemampuan ini menjadi salah satu alasan \textit{deep learning} memiliki performa yang lebih baik dari metode pembelajaran mesin lainnya.
 
@@ -22,7 +22,7 @@ Penelitian ini memiliki batasan masalah sebagai berikut:
 \begin{enumerate}
     \item Ponsel cerdas yang digunakan bersistem operasi Android, memiliki sensor akselerometer dan giroskop.
     \item Pengenalan aktivitas dibatas menjadi enam aktivitas sederhana, yaitu duduk, berdiri, berjalan, berlari, menaiki tangga dan menuruni tangga.
-    \item Pada saat proses pengenalan, ponsel cerdas ditempatkan pada saku celana dengan posisi acak.
+    \item Pada saat proses pengenalan, ponsel cerdas ditempatkan pada saku celana.
 \end{enumerate}
 
 \section{Tujuan Penelitian}
@@ -39,7 +39,7 @@ Penelitian ini dilakukan dalam beberapa tahap yang meliputi studi pustaka dan li
     \item Diskusi dan konsultasi dilakukan bersama dosen pembimbing untuk mempelajari lebih lanjut topik yang dibahas. Pada tahap ini dicari metode-metode yang sebaiknya digunakan untuk menyelesaikan masalah dalam penelitian ini.
     \item Perancangan sistem dibuat sesuai dengan analisis kebutuhan. Rancangan yang dibuat terdiri dari model klasifikasi, proses pelatihan model, proses klasifikasi pada ponsel cerdas, dan rencana pengujian.
     \item Implementasi dibuat untuk rancangan sistem yang telah disusun. Pembuatan dan pelatihan model diimplementasikan dengan bahasa Python pada sistem operasi Ubuntu 16.04, sedangkan sistem klasifikasi \textit{online} diimplementasikan pada ponsel cerdas dengan sistem operasi Android menggunakan bahasa Java. Keduanya memanfaatkan TensorFlow sebagai pustaka komputasi numerik.
-    \item Pengujian dilakukan untuk mengetahui kemampuan klasifikasi dari model yang telah dibuat. Parameter yang diuji adalah akurasi klasifikasi \textit{offline}, akurasi klasifikasi \textit{online} dan kecepatan klasifikasi pada ponsel cerdas.
+    \item Pengujian dilakukan untuk mengetahui kemampuan klasifikasi dari model yang telah dibuat. Parameter yang diuji adalah \textit{hyperparameter} jaringan, akurasi klasifikasi \textit{online} dan kecepatan klasifikasi pada ponsel cerdas.
 \end{enumerate}
 
 \section{Sistematika Penulisan}
@@ -61,7 +61,7 @@ Bab ini menjelaskan analisis kebutuhan dan perancangan sistem yang akan digunaka
 Bab ini membahas implementasi dari rancangan sistem yang telah dibuat, meliputi implementasi model klasifikasi, implementasi pengambilan dan pengondisian data, implementasi klasifikasi pada ponsel cerdas dan implementasi pengujian.
 
 \subsubsection{BAB VI HASIL DAN PEMBAHASAN}
-Bab ini menjelaskan hasil dari pengujian akurasi klasifikasi \textit{offline}, akurasi klasifikasi \textit{offline} dan kecepatan klasifikasi pada ponsel cerdas.
+Bab ini menjelaskan hasil dari pengujian \textit{hyperparameter}, akurasi klasifikasi \textit{offline} dan kecepatan klasifikasi pada ponsel cerdas.
 
 \subsubsection{BAB VII PENUTUP}
 Bab ini berisi kesimpulan dari penelitian yang telah dilakukan serta saran untuk pengembangan sistem selanjutnya.
