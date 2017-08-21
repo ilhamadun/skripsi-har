@@ -1,6 +1,6 @@
 \chapter{TINJAUAN PUSTAKA}
 
-Dalam pengenalan aktivitas, berbagai jenis teknologi pengindraan telah dieksplorasi untuk meningkatkan pengenalan dan adaptasi ke berbagai skenario aplikasi. Pada umumnya, pengenalan aktivitas dapat dikelompokkan menjadi tiga kategori: pendekatan berbasis \textit{vision}, pendekatan berbasis sensor interaksi lingkungan, dan pendekatan berbasis \textit{wearable sensor} \Parencite{wang-2016}. Beberapa penelitian terkahir mengenai pengenalan aktivitas dengan \textit{wearable sensor} dirangkum dalam Tabel~\ref{table:perbandingan-pustaka}.
+Dalam pengenalan aktivitas manusia, berbagai jenis teknologi pengindraan telah dieksplorasi untuk meningkatkan pengenalan dan adaptasi ke berbagai skenario aplikasi. Pada umumnya, pengenalan aktivitas dapat dikelompokkan menjadi tiga kategori: pendekatan berbasis \textit{vision}, pendekatan berbasis sensor interaksi lingkungan, dan pendekatan berbasis \textit{wearable sensor} \Parencite{wang-2016}. Beberapa penelitian terkahir mengenai pengenalan aktivitas dengan \textit{wearable sensor} dirangkum dalam Tabel~\ref{table:perbandingan-pustaka}.
 
 \Textcite{tapia-2007} melakukan penelitian untuk mengenali 30 aktivitas fisik dengan menggunakan lima akselerometer tiga sumbu yang ditempatkan pada pergelangan tangan, pergelangan kaki, lengan atas, paha atas dan pinggul. Data dari sensor-sensor tersebut diklasifikasikan dengan \textit{Decision Tree} dan menghasilkan tingkat akurasi 94,6\% pada pelatihan yang bergantung subjek, namun menurun drastis menjadi 56,3\% pada pelatihan yang independen terhadap subjek.
 
@@ -12,7 +12,9 @@ Implementasi yang dilakukan pada kedua penelitian tersebut memiliki tantangan un
 
 \Textcite{Chiang-201413} memanfaatkan GPS pada ponsel cerdas Android untuk mengetahui lokasi dilakukannya satu aktivitas. Klasifikasi aktivitas yang diekstrak dari akselerometer dapat diintegrasikan dengan lokasi dari GPS untuk menghasilkan pola aktivitas sehari-hari yang dilakukan seseorang. Dalam penelitian ini digunakan empat jenis \textit{classifier} untuk mengenali aktivitas, yaitu Decision Tree, Nearest Neighbor, Naive Bayes dan Support Vector Machine (SVM). Setelah diuji dan dibandingkan, SVM menunjukkan tingkat akurasi yang paling tinggi.
 
-Salah satu kelemahan dalam metode seperti SVM, KNN, Naive Bayes dan metode-metode \textit{supervised learning} tradisional lainnya adalah sulit mengetahui fitur yang paling baik digunakan dalam suatu kasus. Fitur dari suatu set data biasanya dipilih secara manual dengan mengandalkan pengalaman dari penelitian-penelitian yang telah dilakukan sebelumnya, sehingga bisa saja fitur tersebut tidak memiliki kemampuan yang baik untuk membedakan berbagai jenis aktivitas \Textcite{zhang-2015}. Dalam penelitiannya \citeauthor{zhang-2015} menggunakan Deep Neural Network (DNN) untuk mengklasifikasikan aktivitas berdasarkan akselerometer pada ponsel cerdas. DNN mempelajari fitur yang sesuai secara otomatis dalam proses \textit{pre-training}. Proses tersebut menghasilkan model yang belum menggunakan informasi label. Setelah fitur-fitur diperolah dari proses \textit{pre-training}, model tersebut disesuaikan lebih lanjut dengan menambahkan informasi label dengan lapisan \textit{softmax}. Model dari proses pelatihan tersebut diimplementasikan secara online dalam ponsel cerdas.
+Salah satu kelemahan dalam metode seperti SVM, KNN, Naive Bayes dan metode-metode \textit{supervised learning} tradisional lainnya adalah sulit mengetahui fitur yang paling baik digunakan dalam suatu kasus. Fitur dari suatu set data biasanya dipilih secara manual dengan mengandalkan pengalaman dari penelitian-penelitian yang telah dilakukan sebelumnya, sehingga bisa saja fitur tersebut tidak memiliki kemampuan yang baik untuk membedakan berbagai jenis aktivitas \Parencite{zhang-2015}. Dalam penelitiannya \citeauthor{zhang-2015} menggunakan Deep Neural Network (DNN) untuk mengklasifikasikan aktivitas berdasarkan akselerometer pada ponsel cerdas. DNN mempelajari fitur yang sesuai secara otomatis dalam proses \textit{pre-training}. Proses tersebut menghasilkan model yang belum menggunakan informasi label. Setelah fitur-fitur diperolah dari proses \textit{pre-training}, model tersebut disesuaikan lebih lanjut dengan menambahkan informasi label dengan lapisan \textit{softmax}. Model dari proses pelatihan tersebut diimplementasikan secara online dalam ponsel cerdas.
+
+Seperti pendekatan yang dilakukan oleh \citeauthor{zhang-2015}, \Textcite{ordonez-2016} menggunakan metode yang melakukan pencarian fitur secara otomatis. \citeauthor{ordonez-2016} mengklasifikasikan aktivitas manusia dari dataset OPPORTUNITY \Parencite{roggen-2010}. Dataset tersebut terdiri dari berbagai sensor yang ditempatkan di lingkunan dan beberapa bagian tubuh. Menggunakan \textit{Convolutional Neural Network} (CNN) dan \textit{Long Short-Term Memory} (LSTM), \citeauthor{ordonez-2016} memperoleh akurasi klasifikasi sebesar 93\%.
 
 \begin{table}[p!]
     \centering
@@ -43,7 +45,10 @@ Salah satu kelemahan dalam metode seperti SVM, KNN, Naive Bayes dan metode-metod
         \Textcite{zhang-2015} & Akselerometer (pada ponsel cerdas) & Saku celana & Deep Neural Network \\
 
         \hline
-        Imaduddin (2017) & Akselerometer, giroskop (pada ponsel cerdas) & Saku celana & Convolutional Neural Network dan LSTM \\
+        \Textcite{ordonez-2016} & 19 sensor pada tubuh, 12 sensor pada objek, 21 sensor lingkungan & Saku celana & CNN dan LSTM \\
+
+        \hline
+        Imaduddin (2017) & Akselerometer, giroskop (pada ponsel cerdas) & Saku celana & CNN dan LSTM \\
 
         \hline
     \end{tabular}
