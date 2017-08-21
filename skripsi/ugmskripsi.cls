@@ -43,7 +43,8 @@
   bibstyle=authoryear
 ]{biblatex}
 \renewcommand*{\nameyeardelim}{\addcomma\space}
-\DefineBibliographyStrings{english}{%
+\DefineBibliographyStrings{english}{
+  and = {dan},
   andothers = {dkk\adddot}
 }
 \makeglossary%

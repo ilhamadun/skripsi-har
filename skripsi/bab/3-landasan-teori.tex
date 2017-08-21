@@ -33,12 +33,12 @@ Sensor pada Android dapat diakses dengan membuat \mintinline{java}{SensorManager
 % Akselerometer
 %------------------------------------------------------------------------------
 \section{Akselerometer}
-Akselerometer adalah sensor yang digunakan untuk mengukur percepatan. Pada akselerometer \textit{Microelectrochemical System (MEMS)}, percepatan diukur dengan mengaitkan massa pada pegas dan melihat penyimpangan massa dari posisi setimbangnya \citep{milette-2012}, seperti yang diilustrasikan pada Gambar~\ref{gambar:akselerometer-mems}.
+Akselerometer adalah sensor yang digunakan untuk mengukur percepatan. Pada akselerometer \textit{Microelectrochemical System (MEMS)}, percepatan diukur dengan mengaitkan massa pada pegas dan melihat penyimpangan massa dari posisi setimbangnya \Parencite{milette-2012}, seperti yang diilustrasikan pada Gambar~\ref{gambar:akselerometer-mems}.
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=10cm]{gambar/landasan-teori/akselerometer-mems.png}
-    \caption{Gaya dikenakan pada massa yang terikat pada pegas \citep{milette-2012}}
+    \caption{Gaya dikenakan pada massa yang terikat pada pegas \Parencite{milette-2012}}
     \label{gambar:akselerometer-mems}
 \end{figure}
 
@@ -77,7 +77,7 @@ Data bacaan sensor disimpan dalam larik multidimensi pada \mintinline{java}{Sens
 % Giroskop
 %------------------------------------------------------------------------------
 \section{Giroskop}
-Seperti akselerometer MEMS, giroskop MEMS juga merupakan massa yang dikaitkan pada pegas. Giroskop MEMS digunakan untuk mengukur gaya coriolis yang terjadi karena rotasi. Giroskop MEMS bekerja dengan mendorong massa bolak-balik dalam satu sumbu. Ketika giroskop berputar, gaya coriolis membuat massa menyimpang dari arah getarannya sehingga bergerak ke arah sumbu yang berbeda. Pergerakan ini diukur secara elektrik dengan plat kapasitor, satu plat ditempatkan pada kerangka dan satu plat pada massa yang bergerak. Gaya coriolis hanya berlaku ketika perangkat berputar, sehingga giroskop dapat digunakan untuk mengukur kecepatan sudutnya \citep{milette-2012}.
+Seperti akselerometer MEMS, giroskop MEMS juga merupakan massa yang dikaitkan pada pegas. Giroskop MEMS digunakan untuk mengukur gaya coriolis yang terjadi karena rotasi. Giroskop MEMS bekerja dengan mendorong massa bolak-balik dalam satu sumbu. Ketika giroskop berputar, gaya coriolis membuat massa menyimpang dari arah getarannya sehingga bergerak ke arah sumbu yang berbeda. Pergerakan ini diukur secara elektrik dengan plat kapasitor, satu plat ditempatkan pada kerangka dan satu plat pada massa yang bergerak. Gaya coriolis hanya berlaku ketika perangkat berputar, sehingga giroskop dapat digunakan untuk mengukur kecepatan sudutnya \Parencite{milette-2012}.
 
 Pada sistem operasi Android, sensor giroskop dapat diakses dengan menggunakan argumen \mintinline{java}{Sensor.TYPE_GYROSCOPE} pada metode \mintinline{java}{getDefaultSensor()}, seperti contoh pada Gambar~\ref{listing:teori-akses-giroskop}.
 
@@ -101,18 +101,18 @@ Seperti pada akselerometer, data bacaan sensor disimpan dalam larik multidimensi
 % Deep Learning
 %------------------------------------------------------------------------------
 \section{Deep Learning}
-Pembelajaran mesin adalah kemampuan komputer untuk beradaptasi dengan keadaan baru dan mendeteksi serta meramalkan kemungkinan pola \citep{Russell:2009:AIM:1671238}. Dalam pembelajaran mesin, performa suatu algoritma sangat bergantung pada representasi dari data yang digunakan. Setiap informasi yang menjadi representasi data disebut sebagai fitur.
+Pembelajaran mesin adalah kemampuan komputer untuk beradaptasi dengan keadaan baru dan mendeteksi serta meramalkan kemungkinan pola \Parencite{Russell:2009:AIM:1671238}. Dalam pembelajaran mesin, performa suatu algoritma sangat bergantung pada representasi dari data yang digunakan. Setiap informasi yang menjadi representasi data disebut sebagai fitur.
 
-Salah satu masalah dalam pembelajaran mesin adalah sulitnya mengetahui fitur-fitur apa saja yang harus diekstrak dari suatu set data. Masalah ini dapat diatasi dengan menggunakan pembelajaran mesin bukan hanya untuk menemukan pemetaan dari representasi ke output, tapi juga menemukan representasi itu sendiri. Pendekatan ini dikenal dengan \textit{representation learning} \citep{goodfellow-2016}.
+Salah satu masalah dalam pembelajaran mesin adalah sulitnya mengetahui fitur-fitur apa saja yang harus diekstrak dari suatu set data. Masalah ini dapat diatasi dengan menggunakan pembelajaran mesin bukan hanya untuk menemukan pemetaan dari representasi ke output, tapi juga menemukan representasi itu sendiri. Pendekatan ini dikenal dengan \textit{representation learning} \Parencite{Goodfellow-2016}.
 
 Pada aplikasinya di dunia nyata, \textit{representation learning} sering mengalami kesulitan dalam menemukan representasi dari data yang kompleks. \textit{Deep learning} mengatasi masalah ini dengan membuat representasi yang disusun oleh representasi-representasi lain yang lebih sederhana.
 
-\citeauthor{goodfellow-2016} mendefinisikan \textit{deep learning} sebagai salah satu jenis pembelajaran mesin yang memiliki kemampuan dan fleksibilitas tinggi dengan belajar merepresentasikan dunia sebagai hierarki konsep yang bersarang. Setiap konsep didefinisikan oleh kaitannya terhadap konsep-konsep yang lebih sederhana dan representasi yang lebih abstrak dihitung berdasarkan representasi yang kurang abstrak. Perbandingan \textit{deep learning} dengan sistem inteligensia buatan lainnya dapat dilihat pada Gambar~\ref{gambar:perbandingan-ai}.
+\citeauthor{Goodfellow-2016} mendefinisikan \textit{deep learning} sebagai salah satu jenis pembelajaran mesin yang memiliki kemampuan dan fleksibilitas tinggi dengan belajar merepresentasikan dunia sebagai hierarki konsep yang bersarang. Setiap konsep didefinisikan oleh kaitannya terhadap konsep-konsep yang lebih sederhana dan representasi yang lebih abstrak dihitung berdasarkan representasi yang kurang abstrak. Perbandingan \textit{deep learning} dengan sistem inteligensia buatan lainnya dapat dilihat pada Gambar~\ref{gambar:perbandingan-ai}.
 
 \begin{figure}
     \centering
     \includegraphics[width=12cm]{gambar/landasan-teori/perbandingan-ai.png}
-    \caption{Perbandingan sistem AI. Kotak berwarna abu-abu menunjukkan komponen yang dapat belajar dari data \citep{goodfellow-2016}}
+    \caption{Perbandingan sistem AI. Kotak berwarna abu-abu menunjukkan komponen yang dapat belajar dari data \Parencite{Goodfellow-2016}}
     \label{gambar:perbandingan-ai}
 \end{figure}
 
@@ -127,7 +127,7 @@ Pada aplikasinya di dunia nyata, \textit{representation learning} sering mengala
 %
 %------------------------------------------------------------------------------
 \section{Convolutional Neural Network}
-Convolutional Neural Network (CNN) adalah jenis jaringan saraf untuk mengolah data dengan topologi berbentuk \textit{grid}, seperti data \textit{time-series} yang dapat dianggap sebagai \textit{grid} 1D dengan sample pada interval tertentu, dan data citra yang dapat dianggap sebagai \textit{grid} 2D dari pixel. CNN menggunakan operasi konvolusi untuk menggantikan operasi perkalian matriks pada setidaknya satu lapisan \citep{goodfellow-2016}. Operasi konvolusi dinotasikan sebagai:
+Convolutional Neural Network (CNN) adalah jenis jaringan saraf untuk mengolah data dengan topologi berbentuk \textit{grid}, seperti data \textit{time-series} yang dapat dianggap sebagai \textit{grid} 1D dengan sample pada interval tertentu, dan data citra yang dapat dianggap sebagai \textit{grid} 2D dari pixel. CNN menggunakan operasi konvolusi untuk menggantikan operasi perkalian matriks pada setidaknya satu lapisan \Parencite{Goodfellow-2016}. Operasi konvolusi dinotasikan sebagai:
 
 \begin{equation}
     \label{eq:konvolusi}
@@ -152,7 +152,7 @@ Pada umumnya, konvolusi digunakan pada lebih dari satu sumbu. Misalnya, jika inp
 \begin{figure}[t!]
     \centering
     \includegraphics[width=10cm]{gambar/landasan-teori/konvolusi-2d.png}
-    \caption{Contoh operasi konvolusi pada data dua dimensi \citep{goodfellow-2016}}
+    \caption{Contoh operasi konvolusi pada data dua dimensi \Parencite{Goodfellow-2016}}
     \label{gambar:konvolusi-2d}
 \end{figure}
 
@@ -164,12 +164,12 @@ Pada umumnya, konvolusi digunakan pada lebih dari satu sumbu. Misalnya, jika inp
 % - Ganti gambar RNN
 %------------------------------------------------------------------------------
 \section{Recurrent Neural Network}
-Recurrent Neural Network (RNN) adalah keluarga jaringan saraf untuk memproses data sekuensial. RNN merupakan \textit{feedforward neural network} dengan hubungan yang berputar. Gambar~\ref{gambar:rnn} menunjukkan graf RNN dan graf yang setara namun telah dibentangkan untuk setiap langkah waktu. RNN dapat memetakan riwayat dari input sebelumnya ke setiap output. Dengan kata lain, koneksi yang berulang ini memungkinkan memori dari input sebelumnya tersimpan dalam kondisi internal jaringan, sehingga mempengaruhi output~\citep{graves-2012}.
+Recurrent Neural Network (RNN) adalah keluarga jaringan saraf untuk memproses data sekuensial. RNN merupakan \textit{feedforward neural network} dengan hubungan yang berputar. Gambar~\ref{gambar:rnn} menunjukkan graf RNN dan graf yang setara namun telah dibentangkan untuk setiap langkah waktu. RNN dapat memetakan riwayat dari input sebelumnya ke setiap output. Dengan kata lain, koneksi yang berulang ini memungkinkan memori dari input sebelumnya tersimpan dalam kondisi internal jaringan, sehingga mempengaruhi output~\Parencite{graves-2012}.
 
 \begin{figure}
     \centering
     \includegraphics[width=10cm]{gambar/landasan-teori/rnn.png}
-    \caption{Graf komputasi \textit{recurrent neural network} \citep{goodfellow-2016}}
+    \caption{Graf komputasi \textit{recurrent neural network} \Parencite{Goodfellow-2016}}
     \label{gambar:rnn}
 \end{figure}
 
@@ -178,12 +178,12 @@ Recurrent Neural Network (RNN) adalah keluarga jaringan saraf untuk memproses da
 % Long Short-Term Memory
 %------------------------------------------------------------------------------
 \section{Long Short-Term Memory}
-Long Short-Term Memory (LSTM) adalah salah satu jenis RNN bergerbang. Arsitektur LSTM terdiri dari kumpulan jaringan dengan hubungan internal berulang yang disebut dengan blok memori. Setiap blok memiliki satu atau lebih sel memori \textit{self-loop} dan tiga unit pengali, yaitu gerbang \textit{input, output} dan \textit{forget} \citep{graves-2012}.
+Long Short-Term Memory (LSTM) adalah salah satu jenis RNN bergerbang. Arsitektur LSTM terdiri dari kumpulan jaringan dengan hubungan internal berulang yang disebut dengan blok memori. Setiap blok memiliki satu atau lebih sel memori \textit{self-loop} dan tiga unit pengali, yaitu gerbang \textit{input, output} dan \textit{forget} \Parencite{graves-2012}.
 
 \begin{figure}
     \centering
     \includegraphics[width=10cm]{gambar/landasan-teori/lstm.png}
-    \caption{Graf komputasi sel LSTM \citep{goodfellow-2016}}
+    \caption{Graf komputasi sel LSTM \Parencite{Goodfellow-2016}}
     \label{gambar:lstm}
 \end{figure}
 
@@ -216,42 +216,48 @@ Output LSTM $h_{i}^{(t)}$ dapat dimatikan melalui gerbang output $q_{i}^{(t)}$, 
 \end{align}
 
 \noindent
-dengan $\pmb{b}^{o}, \pmb{U}^{o}$ dan $\pmb{W}^{o}$ sebagai bias, bobot input dan bobot pengulangan \citep{goodfellow-2016}.
+dengan $\pmb{b}^{o}, \pmb{U}^{o}$ dan $\pmb{W}^{o}$ sebagai bias, bobot input dan bobot pengulangan \Parencite{Goodfellow-2016}.
 
+
+%------------------------------------------------------------------------------
+% Dropout
+%------------------------------------------------------------------------------
+\section{Dropout}
+Salah satu masalah utama dalam pembelajaran mesin adalah membuat algoritme yang bekerja dengan baik bukan hanya pada data latih, namun juga pada masukan baru. Regularisasi adalah strategi-strategi yang didesain untuk mengurangi error pada pengujian~\Parencite{Goodfellow-2016}.
+
+Dropout merupakan salah satu metode regularisasi yang bekerja dengan baik tanpa membutuhkan komputasi yang tinggi. Dropout melatih kelompok jaringan yang dibentuk dengan menghilangkan unit non-output dari jaringan dasarnya (Gambar~\ref{gambar:dropout}). Setiap kali sampel dimuat ke dalam minibatch, sebuah \textit{binary mask} dibuat secara acak untuk dikenakan pada seluruh input dan hidden unit pada jaringan. Peluang \textit{mask} bernilai satu (menyebabkan unit untuk dimasukkan ke dalam jaringan) didefinisikan sebagai hyperparameter sebelum pelatihan dimulai.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=12cm]{gambar/landasan-teori/dropout.png}
+    \caption{Dropout melatih kelompok jaringan dengan menghilangkan unit non-output dari jaringan dasarnya \Parencite{Goodfellow-2016}}
+    \label{gambar:dropout}
+\end{figure}
 
 %------------------------------------------------------------------------------
 % Backpropagation
 %------------------------------------------------------------------------------
 \section{Backpropagation}
-Kebanyakan algoritma \textit{deep learning} membutuhkan proses optimasi, yaitu proses meminimalkan atau memaksimalkan suatu fungsi $f(\pmb{x})$ dengan mengubah $\pmb{x}$. Fungsi yang akan diminimalkan atau dimaksimalkan disebut fungsi objektif. Dalam kasus meminimalkan, fungsi objektif bisa juga disebut \textit{cost function}, \textit{loss function} atau \textit{error function} \citep{goodfellow-2016}.
+Kebanyakan algoritma \textit{deep learning} membutuhkan proses optimasi, yaitu proses meminimalkan atau memaksimalkan suatu fungsi $f(\pmb{x})$ dengan mengubah $\pmb{x}$. Fungsi yang akan diminimalkan atau dimaksimalkan disebut fungsi objektif. Dalam kasus meminimalkan, fungsi objektif bisa juga disebut \textit{cost function}, \textit{loss function} atau \textit{error function} \Parencite{Goodfellow-2016}.
 
 Jika diberikan fungsi $y = f(x)$ dengan $x$ dan $y$ bilangan real, derivatif dari fungsi ini adalah gradien $f(x)$ pada titik $x$, dinotasikan dengan $f'(x)$ atau $\frac{dy}{dx}$. Fungsi $f(x)$ dapat diminimalkan dengan membuat perubahan $x$ ke arah yang berlawanan dengan derivatifnya. Cara ini disebut \textit{gradient descent}, diilustrasikan pada Gambar~\ref{gambar:gradient-descent}.
 
 \begin{figure}
     \centering
     \includegraphics[width=12cm]{gambar/landasan-teori/gradient-descent.png}
-    \caption{\textit{Gradient descent} menggunakan derivatif untuk meminimalkan sebuah fungsi \citep{goodfellow-2016}}.
+    \caption{\textit{Gradient descent} menggunakan derivatif untuk meminimalkan sebuah fungsi \Parencite{Goodfellow-2016}}.
     \label{gambar:gradient-descent}
 \end{figure}
 
-Ketika \textit{feedforward neural network} menerima input $\pmb{x}$ dan menghasilkan output $\pmb{\hat{y}}$, informasi mengalir maju melalui jaringan. Input $\pmb{x}$ menyediakan informasi awal yang merambat ke \textit{hidden unit} pada setiap layer hingga akhirnya menghasilkan $\pmb{\hat{y}}$. Proses ini disebut \textit{forward propagation}. Dalam proses latihan, \textit{forward propagation} dapat terus maju sampai menghasilkan nilai skalar \textit{cost} $J(\theta)$. Algoritma \textit{backpropagation} memungkinkan informasi dari \textit{cost} mengalir mundur melalui jaringan untuk menghitung gradiennya. Gradien tersebut dihitung dengan mencari derivatif $\nabla_x J(\theta)$ dengan aturan rantai kalkulus \citep{goodfellow-2016}.
+Ketika \textit{feedforward neural network} menerima input $\pmb{x}$ dan menghasilkan output $\pmb{\hat{y}}$, informasi mengalir maju melalui jaringan. Input $\pmb{x}$ menyediakan informasi awal yang merambat ke \textit{hidden unit} pada setiap layer hingga akhirnya menghasilkan $\pmb{\hat{y}}$. Proses ini disebut \textit{forward propagation}. Dalam proses latihan, \textit{forward propagation} dapat terus maju sampai menghasilkan nilai skalar \textit{cost} $J(\theta)$. Algoritma \textit{backpropagation} memungkinkan informasi dari \textit{cost} mengalir mundur melalui jaringan untuk menghitung gradiennya. Gradien tersebut dihitung dengan mencari derivatif $\nabla_x J(\theta)$ dengan aturan rantai kalkulus \Parencite{Goodfellow-2016}.
 
-Pada RNN, aktivasi \textit{hidden layer} tidak hanya mempengaruhi \textit{loss function} pada \textit{output layer}, namun juga mempengaruhi \textit{hidden layer} pada langkah waktu selanjutnya. Maka, gradien dihitung dengan menggunakan \textit{backpropagation} pada graf yang telah dibentangkan. Metode ini bernama \textit{Backpropagation Through Time (BPTT)} \citep{graves-2012}.
+Pada RNN, aktivasi \textit{hidden layer} tidak hanya mempengaruhi \textit{loss function} pada \textit{output layer}, namun juga mempengaruhi \textit{hidden layer} pada langkah waktu selanjutnya. Maka, gradien dihitung dengan menggunakan \textit{backpropagation} pada graf yang telah dibentangkan. Metode ini bernama \textit{Backpropagation Through Time (BPTT)} \Parencite{graves-2012}.
 
 
 %------------------------------------------------------------------------------
 % Tensorflow
 %------------------------------------------------------------------------------
 \section{TensorFlow}
-TensorFlow adalah pustaka sumber terbuka pembalajaran mesin. TensorFlow melakukan komputasi yang dideskripsikan dengan model aliran data dan memetakannya ke berbagai jenis perangkat keras berbeda, mulai dari melakukan pengambilan kesimpulan pada perangkat bergerak seperti Android dan iOS, pelatihan dan sistem pengambilan keputusan berukuran sedang menggunakan satu mesin yang terdiri dari satu atau lebih kartu GPU sampai ke sistem pelatihan berskala besar yang berjalan pada ratusan mesin khusus dengan ribuan GPU \citep{abadi-2015}.
+TensorFlow adalah pustaka sumber terbuka pembalajaran mesin. TensorFlow melakukan komputasi yang dideskripsikan dengan model aliran data dan memetakannya ke berbagai jenis perangkat keras berbeda, mulai dari melakukan pengambilan kesimpulan pada perangkat bergerak seperti Android dan iOS, pelatihan dan sistem pengambilan keputusan berukuran sedang menggunakan satu mesin yang terdiri dari satu atau lebih kartu GPU sampai ke sistem pelatihan berskala besar yang berjalan pada ratusan mesin khusus dengan ribuan GPU \Parencite{abadi-2015}.
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=6cm]{gambar/landasan-teori/tensorflow.jpg}
-    \caption{Contoh graf aliran data dalam TensorFlow (tensorflow.com)}
-    \label{gambar:tensorflow}
-\end{figure}
-
-Graf aliran data dalam TensorFlow mendeskripsikan komputasi matematis dengan graf \textit{node} dan \textit{edge} terarah. \textit{Edge} memuat array multidimensi berukuran dinamis yang disebut dengan tensor. Para \textit{node} bekerja secara asinkron dan paralel ketika seluruh tensor pada \textit{edge} yang masuk telah tersedia. Contoh graf aliran data pada TensorFlow dapat dilihat pada Gambar~\ref{gambar:tensorflow}. Aliran data tersebut direpresentasikan oleh TensorFlow melalui API yang tersedia untuk bahasa Python, C++, Java dan Go.
-
-
+Graf aliran data dalam TensorFlow mendeskripsikan komputasi matematis dengan graf \textit{node} dan \textit{edge} terarah. \textit{Edge} memuat array multidimensi berukuran dinamis yang disebut dengan tensor. Para \textit{node} bekerja secara asinkron dan paralel ketika seluruh tensor pada \textit{edge} yang masuk telah tersedia. Aliran data tersebut direpresentasikan oleh TensorFlow melalui API yang tersedia untuk bahasa Python, C++, Java dan Go.
