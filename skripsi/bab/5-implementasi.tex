@@ -202,7 +202,7 @@ def main(train_dataset=None, validation_dataset=None, test_dataset=None, epoch=3
 \label{listing:har-pengujian-hyperparameter}
 \end{figure}
 
-Pemilihan \textit{hyperparameter} dilakukan secara acak dengan memanggil fungsi \mintinline{python}{generate_hyperparameters()} pada baris 110. Argumen \mintinline{python}{variation} menentukan jumlah \textit{hyperparameter} yang akan dibuat. Pada barus 113 objek dari model \mintinline{python}{ConvLSTM} dibuat untuk setiap \textit{hyperparameter}. Data latih dan data validasi dibuka pada baris 119 dan 120, lalu model dilatih dengan memanggil \mintinline{python}{model.train()} pada baris 123. Setelah pelatihan model selesai, model diuji dengan data uji pada baris 127-133. Sebuah \textit{confusion matrix} dibuat dari hasil pengujian pada baris 131.
+Pemilihan \textit{hyperparameter} dilakukan secara acak dengan memanggil fungsi \mintinline{python}{generate_hyperparameters()} pada baris 110. Argumen \mintinline{python}{variation} menentukan jumlah \textit{hyperparameter} yang akan dibuat. Pada baris 113 objek dari model \mintinline{python}{ConvLSTM} dibuat untuk setiap \textit{hyperparameter}. Data latih dan data validasi dibuka pada baris 119 dan 120, lalu model dilatih dengan memanggil \mintinline{python}{model.train()} pada baris 123. Setelah pelatihan model selesai, model diuji dengan data uji pada baris 127-133. Sebuah \textit{confusion matrix} dibuat dari hasil pengujian pada baris 131.
 
 Implementasi fungsi \mintinline{python}{generate_hyperparameters()} dapat dilihat pada Gambar~\ref{listing:har-generate-hyperparameter}. Fungsi tersebut menerima argumen \mintinline{python}{variation} sebagai jumlah variasi \textit{hyperparameter} yang akan dibuat, lalu menghasilkan \textit{hyperparameter} acak dengan fungsi-fungsi berikut:
 
@@ -223,7 +223,7 @@ def generate_hyperparameters(variations, conv_layers=None, lstm_layers=None,
         hyperparameter = ConvLSTMHyperparameter(
             conv_layers if conv_layers else random_conv_layers(),
             lstm_layers if lstm_layers else random_lstm_layers(),
-            keep_prob if keep_prob else random_keep_prob(),
+            keep_prob if keep_prob else random_keep_prob(0.2, 0.8),
             learning_rate if learning_rate else random_learning_rate(-4, -3)
         )
         hyperparameters.append(hyperparameter)
@@ -274,8 +274,8 @@ Fungsi \mintinline{python}{random_keep_prob()} diimplementasikan pada Gambar~\re
 
 \begin{figure}[h]
 \begin{minted}[linenos=false]{python}
-def random_keep_prob():
-    return np.random.uniform(0.2, 0.8)
+def random_keep_prob(kp_min, kp_max):
+    return np.random.uniform(kp_min, kp_max)
 \end{minted}
 \caption{Pengacakan \textit{hyperparameter} peluang dropout}
 \label{listing:har-random-keep-prob}
