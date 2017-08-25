@@ -291,29 +291,15 @@ Proses pelatihan jaringan dilakukan untuk mencari bobot dan bias yang optimal pa
 
 % \section{Pemilihan Hyperparameter dengan Pencarian Acak}
 
-%------------------------------------------------------------------------------
-% Pengumpulan Data -> Masukkan saja ke rancangan perngkat lunak
-%
-% TODO:
-% - Sumber Data
-%   - Dataset publik
-%   - Pengambilan data pada ponsel cerdas
-% - Preprocessing
-% - Sliding window
-% - Pembagian data latih, validasi dan tes
-%
-%------------------------------------------------------------------------------
 \section{Data Pelatihan}
-Model klasifikasi dilatih dengan menggunakan dataset terbuka dari \textit{MobiAct Dataset} \Parencite{vavoulas-2016}. Dataset tersebut dikumpulkan dari 48 parisipan (36 laki-laki dan 12 perempuan) dalam rentang usia antara 20 sampai 28 tahun, rentang tinggi badan antara 160 cm sampai 189 cm dan rentang berat badan antara 50 kg sampai 120kg.
-
-Data sensor akselerometer dan giroskop pada dataset tersebut diambil dengan \textit{sampling rate} tertinggi dari ponsel cerdas Android. Data tersebut disample ulang dengan \textit{sampling rate} 50 Hz, lalu \textit{sliding window} dibuat dari setiap 100 sample dengan tumpang tindih 50\%. Dengan aturan tersebut, diperoleh data aktivitas seperti pada Tabel~\ref{table:jumlah-dataset}.
+Model klasifikasi dilatih dengan dataset yang dikumpulkan dari 48 parisipan (36 laki-laki dan 12 perempuan) dalam rentang usia antara 20 sampai 28 tahun. Setiap partisipan melakukan aktivitas duduk, berdiri, berjalan, berlari, menaiki tangga dan menuruni tangga dengan menempatkan ponsel cerdas di saku celana. Data sensor akselerometer dan giroskop diambil dengan \textit{sampling rate} 50 Hz, lalu \textit{sliding window} dibuat dari setiap 100 sample dengan \textit{overlap} 50\%. Dengan aturan tersebut, diperoleh data aktivitas seperti pada Tabel~\ref{table:jumlah-dataset}.
 
 \begin{table}[h!]
     \centering
     \caption{Jumlah dataset}
     \begin{tabular}{ |l|c| }
         \hline
-        \textbf{Aktivitas} & \textbf{Jumlah Sample} \\
+        Aktivitas & Jumlah Sampel \\
 
         \hline
         Berdiri & 14.394 \\
@@ -348,7 +334,7 @@ Proses pelatihan membutuhkan tiga jenis data, yaitu data latih, data validasi da
     \caption{Pembagian data latih, validasi dan uji}
     \begin{tabular}{ |l|c|c| }
         \hline
-        Jenis Data & Partisipan & Jumlah Data \\
+        Jenis Data & Partisipan & Jumlah Sampel \\
 
         \hline
         Data Latih & 27 & 22.776 \\
@@ -376,7 +362,7 @@ Proses klasifikasi pada ponsel cerdas ditunjukkan pada Gambar~\ref{gambar:diagra
         \node (mulai) [startstop] {Mulai};
         \node (baca-sensor) [io, below of=mulai] {Baca sensor};
         \node (susun-jendela) [process, below of=baca-sensor] {Susun jendela};
-        \node (jendela-siap) [decision, below of=susun-jendela, yshift=-1cm] {Jendela siap?};
+        \node (jendela-siap) [decision, below of=susun-jendela, yshift=-1cm] {\footnotesize{Ukuran jendela == 100}};
         \node (klasifikasi) [process, below of=jendela-siap, yshift=-1cm] {Klasifikasi};
         \node (selesai) [startstop, below of=klasifikasi] {Selesai};
 
@@ -398,15 +384,11 @@ Proses klasifikasi pada ponsel cerdas ditunjukkan pada Gambar~\ref{gambar:diagra
 % Menjawab judul rumusan masalah
 %------------------------------------------------------------------------------
 \section{Rencana Pengujian}
-Pengujian dilakukan untuk mengetahui kemampuan klasifikasi dari model yang telah dibuat. Terdapat tiga pengujian yang dilakukan, yaitu pengujian \textit{hyperparameter}, pengujian akurasi klasifikasi \textit{online} dan pengujian kecepatan klasifikasi pada ponsel cerdas.
+Pengujian dilakukan untuk mengetahui kemampuan klasifikasi dari model yang telah dibuat. Terdapat dua pengujian yang dilakukan, yaitu pengujian \textit{hyperparameter} dan pengujian kecepatan klasifikasi pada ponsel cerdas. Kedua pengujian ini dilakukan dengan indikator pencapaian yang ditunjukkan pada Tabel~\ref{table:rencana-pengujian}.
 
 Pada pengujian \textit{hyperparameter}, berbagai konfigurasi model diuji untuk mencari hyperparameter terbaik. Kemampuan model klasifikasi diukur berdasarkan akurasi klasifikasi pada data uji. Model klasifikasi menerima data uji yang diambil secara acak dari dataset dan terpisah dari data latih. Output dari proses klasifikasi dibandingkan dengan label data tersebut.
 
-Pada pengujian klasifikasi \textit{online}, kemampuan model klasifikasi diukur berdasarkan akurasi klasifikasi pada data sensor ponsel cerdas yang diambil dan diolah secara \textit{real time}. Pengujian dilakukan oleh 6 partisipan yang terdiri dari 3 laki-laki dan 3 perempuan. Partisipan memilih aktivitas yang akan diuji, lalu aktivitas tersebut dibandingkan dengan hasil klasifikasi dari data sensor. Ponsel cerdas ditempatkan di saku celana dengan posisi acak. Setiap partisipan melakukan pengujian selama 1 menit untuk masing-masing aktivitas.
-
-Pengujian kecepatan klasifikasi dilakukan bersamaan dengan pengujian klasifikasi \textit{online}. Pengujian dilakukan dengan mengukur waktu yang dibutuhkan oleh setiap siklus klasifikasi, dimulai dari pengambilan data sensor sampai diperoleh kelas aktivitas dari data tersebut. Pengukuran ini dilakukan dengan beberapa model ponsel cerdas dengan kemampuan pemrosesan yang berbeda.
-
-Ketiga pengujian ini dilakukan dengan indikator pencapaian yang ditunjukkan pada Tabel~\ref{table:rencana-pengujian}.
+Pengujian kecepatan klasifikasi pada ponsel cerdas dilakukan dengan mengukur waktu yang dibutuhkan oleh setiap siklus klasifikasi, dimulai dari selesainya pengambilan data sensor sampai diperoleh kelas aktivitas dari data tersebut. Pengukuran ini dilakukan dengan beberapa model ponsel cerdas dengan kemampuan pemrosesan yang berbeda.
 
 \begin{table}[ht]
     \centering
@@ -417,12 +399,9 @@ Ketiga pengujian ini dilakukan dengan indikator pencapaian yang ditunjukkan pada
 
         \hline
         1 & Pengujian Hyperparameter & Didapatkan hyperparameter yang menghasilkan klasifikasi terbaik pada data uji \\
-
-        \hline
-        2 & Pengujian klasifikasi \textit{online} & Didapatkan tingkat akurasi \dots pada klasifikasi secara \textit{online} \\
         
         \hline
-        3 & Pengujian kecepatan klasifikasi pada ponsel cerdas & Klasifikasi dapat dilakukan secara \textit{real time} pada ponsel cerdas \\
+        2 & Pengujian kecepatan klasifikasi pada ponsel cerdas & Klasifikasi dapat dilakukan secara \textit{realtime} pada ponsel cerdas \\
 
         \hline
     \end{tabular}

@@ -5,7 +5,7 @@
 Pengujian \textit{hyperparameter} dilakukan untuk mencari model klasifikasi terbaik, yaitu model yang memenuhi beberapa kriteria berikut:
 
 \begin{enumerate}
-    \item Model dapat melakukan klasifikasi dengan baik, ditunjukkan dengan tingkat akurasi klasifikasi terhadap data uji yang tinggi.
+    \item Model dapat melakukan klasifikasi dengan baik, ditunjukkan dengan tingkat akurasi klasifikasi yang tinggi terhadap data uji.
     \item Model dapat menyamaratakan dengan baik, ditunjukkan dengan perbedaan yang tidak signifikan antara akurasi klasifikasi data latih dengan akurasi data validasi dan data uji.
     \item Kompleksitas model minimal, sehingga mengurangi beban komputasi dan klasifikasi dapat dilakukan secara \textit{realtime} pada ponsel cerdas.
 \end{enumerate}
@@ -42,7 +42,7 @@ Variasi \textit{hyperparameter} ditunjukkan pada Tabel~\ref{table:variasi-hyperp
     \label{table:variasi-hyperparameter}
 \end{table}
 
-Hasil pengujian dapat dilihat pada Tabel~\ref{table:hasil-pengujian-hyperparameter}. Perbedaan \textit{hyperparameter} yang digunakan menghasilkan tingkat akurasi klasifikasi yang berbeda. Berdasarkan hasil tersebut, diambil tiga \textit{hyperparameter} dengan akurasi terbaik untuk dibandingkan lebih lanjut, yaitu \textit{hyperparameter} pada model nomor 8, 17 dan 28.
+Hasil pengujian dapat dilihat pada Tabel~\ref{table:hasil-pengujian-hyperparameter}. Perbedaan \textit{hyperparameter} yang digunakan menghasilkan tingkat akurasi klasifikasi yang berbeda. Berdasarkan hasil tersebut, diambil tiga \textit{hyperparameter} dengan akurasi terbaik untuk dibandingkan lebih lanjut, yaitu \textit{hyperparameter} pada variasi nomor 8, 17 dan 28.
 
 \begin{table}[h!]
     \centering
@@ -60,67 +60,67 @@ Hasil pengujian dapat dilihat pada Tabel~\ref{table:hasil-pengujian-hyperparamet
     \label{table:hasil-pengujian-hyperparameter}
 \end{table}
 
-Model 8 menggunakan empat lapisan konvolusi dan empat lapisan LSTM\@. Keempat lapisan konvolusi menggunakan kernel dengan $64$ output. Lapisan konvolusi pertama menerima input tensor dengan dimensi $100 \times 8$ dan lapisan konvolusi terakhir menghasilkan output tensor dengan ukuran $100 \times 64$. Keempat lapisan LSTM memiliki $32$ unit LSTM\@. Lapisan LSTM pertama menerima input tensor dari output konvolusi dan lapisan LSTM terakhir menghasilkan output tensor dengan ukuran $1 \times 32$. Model ini dilatih dengan peluang \textit{dropout} $0.79$ dan laju pembelajaran $1.46 \times 10^{-4}$.
+Variasi 8 menggunakan empat lapisan konvolusi dan empat lapisan LSTM\@. Keempat lapisan konvolusi menggunakan kernel dengan $64$ output. Lapisan konvolusi pertama menerima input tensor dengan dimensi $100 \times 8$ dan lapisan konvolusi terakhir menghasilkan output tensor dengan ukuran $100 \times 64$. Keempat lapisan LSTM memiliki $32$ unit LSTM\@. Lapisan LSTM pertama menerima input tensor dari output konvolusi dan lapisan LSTM terakhir menghasilkan output tensor dengan ukuran $1 \times 32$. Variasi ini dilatih dengan peluang \textit{dropout} $0.79$ dan laju pembelajaran $1.46 \times 10^{-4}$.
 
-Proses pelatihan Model 8 dapat dilihat pada Gambar~\ref{gambar:run8-training}. Grafik tersebut menunjukkan peningkatan akurasi klasifikasi dalam proses pelatihan terhadap data latih dan data validasi. Model akhir diambil dari kondisi jaringan saat menghasilkan akurasi terbaik terhadap data validasi, yaitu pada iterasi ke $5069$ dengan akurasi $0.912331$. Pada iterasi yang sama, akurasi terhadap data latih adalah $0.982142$ dan akurasi terhadap data uji adalah $0.91169$.
+Proses pelatihan variasi 8 dapat dilihat pada Gambar~\ref{gambar:run8-training}. Grafik tersebut menunjukkan peningkatan akurasi klasifikasi dalam proses pelatihan terhadap data latih dan data validasi. Model akhir diambil dari kondisi jaringan saat menghasilkan akurasi terbaik terhadap data validasi, yaitu pada iterasi ke $5069$ dengan akurasi $0.912331$. Pada iterasi yang sama, akurasi terhadap data latih adalah $0.982142$ dan akurasi terhadap data uji adalah $0.91169$.
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=14cm]{data/pelatihan/run8-accuracy.png}
-    \caption{Proses pelatihan pada Model 8}.
+    \caption{Proses pelatihan pada variasi 8}.
     \label{gambar:run8-training}
 \end{figure}
 
-\textit{Confusion matrix} Model 8 dapat dilihat pada Gambar~\ref{gambar:run8-confusion-martix}. Pada gambar tersebut dapat dilihat bahwa klasifikasi dilakukan dengan baik pada aktivitas berdiri (96,9\%), duduk (94,9\%) dan lari (96,9\%). Aktivitas jalan memiliki akurasi 87,6\% dan \textit{false negative} yang cukup besar pada naik tangga (8,5\%) dan turun tangga (3,9\%). Aktivitas naik dan turun tangga memiliki klasifikasi terburuk dengan akurasi masing-masing 78,6\% dan 78,4\%, dengan \textit{false negative} tersebar pada seluruh aktivitas lainnya.
+\textit{Confusion matrix} variasi 8 dapat dilihat pada Gambar~\ref{gambar:run8-confusion-martix}. Pada gambar tersebut dapat dilihat bahwa klasifikasi dilakukan dengan baik pada aktivitas berdiri (96,9\%), duduk (94,9\%) dan lari (96,9\%). Aktivitas jalan memiliki akurasi 87,6\% dan \textit{false negative} yang cukup besar pada naik tangga (8,5\%) dan turun tangga (3,9\%). Aktivitas naik dan turun tangga memiliki klasifikasi terburuk dengan akurasi masing-masing 78,6\% dan 78,4\%, dengan \textit{false negative} tersebar pada seluruh aktivitas lainnya.
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=13cm]{gambar/hasil-pembahasan/run8-confusion-matrix.png}
-    \caption{\textit{Confusion matrix} pada Model 8}.
+    \caption{\textit{Confusion matrix} pada variasi 8}.
     \label{gambar:run8-confusion-martix}
 \end{figure}
 
-Model 17 menggunakan tiga lapisan konvolusi dan tiga lapisan LSTM\@. Masing-masing lapisan konvolusi menggunakan kernel dengan $64$ output. Lapisan konvolusi pertama menerima input tensor dengan dimensi $100 \times 8$ dan lapisan konvolusi terakhir menghasilkan output tensor dengan ukuran $100 \times 64$. Masing-masing lapisan LSTM memiliki $64$ unit LSTM\@. Lapisan LSTM pertama menerima input tensor dari output konvolusi dan lapisan LSTM terakhir menghasilkan output tensor dengan ukuran $1 \times 64$. Model ini dilatih dengan peluang \textit{dropout} $0.59$ dan laju pembelajaran $2.81 \times 10^{-4}$.
+Variasi 17 menggunakan tiga lapisan konvolusi dan tiga lapisan LSTM\@. Masing-masing lapisan konvolusi menggunakan kernel dengan $64$ output. Lapisan konvolusi pertama menerima input tensor dengan dimensi $100 \times 8$ dan lapisan konvolusi terakhir menghasilkan output tensor dengan ukuran $100 \times 64$. Masing-masing lapisan LSTM memiliki $64$ unit LSTM\@. Lapisan LSTM pertama menerima input tensor dari output konvolusi dan lapisan LSTM terakhir menghasilkan output tensor dengan ukuran $1 \times 64$. Variasi ini dilatih dengan peluang \textit{dropout} $0.59$ dan laju pembelajaran $2.81 \times 10^{-4}$.
 
-Proses pelatihan Model 17 dapat dilihat pada Gambar~\ref{gambar:run17-training}. Model akhir diambil dari kondisi jaringan saat menghasilkan akurasi terbaik terhadap data validasi, yaitu pada iterasi ke $4394$ dengan akurasi $0.929793$. Pada iterasi yang sama, akurasi terhadap data latih adalah $1.0$ dan akurasi terhadap data uji  $0.93652$.
+Proses pelatihan variasi 17 dapat dilihat pada Gambar~\ref{gambar:run17-training}. Model akhir diambil dari kondisi jaringan saat menghasilkan akurasi terbaik terhadap data validasi, yaitu pada iterasi ke $4394$ dengan akurasi $0.929793$. Pada iterasi yang sama, akurasi terhadap data latih adalah $1.0$ dan akurasi terhadap data uji  $0.93652$.
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=14cm]{data/pelatihan/run17-accuracy.png}
-    \caption{Proses pelatihan pada Model 17}.
+    \caption{Proses pelatihan pada variasi 17}.
     \label{gambar:run17-training}
 \end{figure}
 
-\textit{Confusion matrix} Model 17 dapat dilihat pada Gambar~\ref{gambar:run17-confusion-martix}. Pada gambar tersebut dapat dilihat bahwa klasifikasi dilakukan dengan baik pada aktivitas berdiri (97,2\%), duduk (93,4\%) dan jalan (96,1\%). Aktivitas lari memiliki akurasi 85,5\% dan \textit{false negative} yang cukup besar pada jalan (8,6\%) dan turun tangga (5,7\%). Aktivitas naik dan turun tangga memiliki akurasi masing-masing 81,2\% dan 82,4\%, dengan \textit{false negative} tersebar pada seluruh aktivitas lainnya.
+\textit{Confusion matrix} variasi 17 dapat dilihat pada Gambar~\ref{gambar:run17-confusion-martix}. Pada gambar tersebut dapat dilihat bahwa klasifikasi dilakukan dengan baik pada aktivitas berdiri (97,2\%), duduk (93,4\%) dan jalan (96,1\%). Aktivitas lari memiliki akurasi 85,5\% dan \textit{false negative} yang cukup besar pada jalan (8,6\%) dan turun tangga (5,7\%). Aktivitas naik dan turun tangga memiliki akurasi masing-masing 81,2\% dan 82,4\%, dengan \textit{false negative} tersebar pada seluruh aktivitas lainnya.
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=13cm]{gambar/hasil-pembahasan/run17-confusion-matrix.png}
-    \caption{\textit{Confusion matrix} pada Model 17}.
+    \caption{\textit{Confusion matrix} pada variasi 17}.
     \label{gambar:run17-confusion-martix}
 \end{figure}
 
-Model 28 menggunakan empat lapisan konvolusi dan tiga lapisan LSTM\@. Masing-masing lapisan konvolusi menggunakan kernel dengan $64$ output. Lapisan konvolusi pertama menerima input tensor dengan dimensi $100 \times 8$ dan lapisan konvolusi terakhir menghasilkan output tensor dengan ukuran $100 \times 64$. Masing-masing lapisan LSTM memiliki $32$ unit LSTM\@. Lapisan LSTM pertama menerima input tensor dari output konvolusi dan lapisan LSTM terakhir menghasilkan output tensor dengan ukuran $1 \times 32$. Model ini dilatih dengan peluang \textit{dropout} $0.76$ dan laju pembelajaran $4.14 \times 10^{-4}$.
+Variasi 28 menggunakan empat lapisan konvolusi dan tiga lapisan LSTM\@. Masing-masing lapisan konvolusi menggunakan kernel dengan $64$ output. Lapisan konvolusi pertama menerima input tensor dengan dimensi $100 \times 8$ dan lapisan konvolusi terakhir menghasilkan output tensor dengan ukuran $100 \times 64$. Masing-masing lapisan LSTM memiliki $32$ unit LSTM\@. Lapisan LSTM pertama menerima input tensor dari output konvolusi dan lapisan LSTM terakhir menghasilkan output tensor dengan ukuran $1 \times 32$. Variasi ini dilatih dengan peluang \textit{dropout} $0.76$ dan laju pembelajaran $4.14 \times 10^{-4}$.
 
-Proses pelatihan Model 28 dapat dilihat pada Gambar~\ref{gambar:run34-training}. Model akhir diambil dari kondisi jaringan saat menghasilkan akurasi terbaik terhadap data validasi, yaitu pada iterasi ke $4901$ dengan akurasi $0.896472$. Pada iterasi yang sama, akurasi terhadap data latih adalah $0.9375$ dan akurasi terhadap data uji  $0.93153$.
+Proses pelatihan variasi 28 dapat dilihat pada Gambar~\ref{gambar:run34-training}. Model akhir diambil dari kondisi jaringan saat menghasilkan akurasi terbaik terhadap data validasi, yaitu pada iterasi ke $4901$ dengan akurasi $0.896472$. Pada iterasi yang sama, akurasi terhadap data latih adalah $0.9375$ dan akurasi terhadap data uji  $0.93153$.
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=14cm]{data/pelatihan/run34-accuracy.png}
-    \caption{Proses pelatihan pada Model 28}.
+    \caption{Proses pelatihan pada variasi 28}.
     \label{gambar:run34-training}
 \end{figure}
 
-\textit{Confusion matrix} Model 28 dapat dilihat pada Gambar~\ref{gambar:run34-confusion-martix}. Pada gambar tersebut dapat dilihat bahwa klasifikasi dilakukan dengan baik pada aktivitas berdiri (99,4\%), jalan (98,4\%) dan lari (94,6\%). Aktivitas duduk memiliki akurasi 77,4\% dan \textit{false negative} yang besar pada jalan (16,6\%). Aktivitas naik dan turun tangga memiliki akurasi masing-masing 62,2\% dan 58,3\%, dengan \textit{false negative} tersebar pada seluruh aktivitas lainnya.
+\textit{Confusion matrix} variasi 28 dapat dilihat pada Gambar~\ref{gambar:run34-confusion-martix}. Pada gambar tersebut dapat dilihat bahwa klasifikasi dilakukan dengan baik pada aktivitas berdiri (99,4\%), jalan (98,4\%) dan lari (94,6\%). Aktivitas duduk memiliki akurasi 77,4\% dan \textit{false negative} yang besar pada jalan (16,6\%). Aktivitas naik dan turun tangga memiliki akurasi masing-masing 62,2\% dan 58,3\%, dengan \textit{false negative} tersebar pada seluruh aktivitas lainnya.
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=13cm]{gambar/hasil-pembahasan/run34-confusion-matrix.png}
-    \caption{\textit{Confusion matrix} pada Model 28}.
+    \caption{\textit{Confusion matrix} pada variasi 28}.
     \label{gambar:run34-confusion-martix}
 \end{figure}
 
-Hasil pengujian Model 8, 17 dan 28 dibandingkan dalam Tabel~\ref{table:perbandingan-model-klasifikasi}. Ketiga model tersebut memiliki kelebihan dan kekurangannya masing-masing. Model nomor 8 memperoleh akurasi tertinggi pada aktivitas duduk dan lari, namun memperoleh akurasi terendah pada aktivitas berdiri, jalan dan rata-rata akurasi. Model nomor 17 memperoleh akurasi tertinggi pada aktivitas naik tangga, turun tangga dan rata-rata akurasi, namun memperoleh akurasi terendah pada aktivitas duduk dan lari. Selain itu model nomor 17 juga memiliki arsitektur yang paling sederhana diantara model lainnya. Model nomor 28 memperoleh akurasi terbaik pada aktivitas berdiri dan jalan, namun memperoleh akurasi terburuk pada aktivitas naik dan turun tangga. Melihat grafik pada Gambar~\ref{gambar:run8-training},~\ref{gambar:run17-training}, dan~\ref{gambar:run34-training}, diketahui bahwa ketiga model memiliki penyamarataan yang setara baiknya.
+Hasil pengujian variasi 8, 17 dan 28 dibandingkan dalam Tabel~\ref{table:perbandingan-model-klasifikasi}. Ketiga variasi tersebut memiliki kelebihan dan kekurangannya masing-masing. Variasi nomor 8 memperoleh akurasi tertinggi pada aktivitas duduk dan lari, namun memperoleh akurasi terendah pada aktivitas berdiri, jalan dan rata-rata akurasi. Variasi nomor 17 memperoleh akurasi tertinggi pada aktivitas naik tangga, turun tangga dan rata-rata akurasi, namun memperoleh akurasi terendah pada aktivitas duduk dan lari. Selain itu variasi nomor 17 juga memiliki arsitektur yang paling sederhana diantara variasi lainnya. Variasi nomor 28 memperoleh akurasi terbaik pada aktivitas berdiri dan jalan, namun memperoleh akurasi terburuk pada aktivitas naik dan turun tangga. Melihat grafik pada Gambar~\ref{gambar:run8-training},~\ref{gambar:run17-training}, dan~\ref{gambar:run34-training}, diketahui bahwa ketiga variasi memiliki penyamarataan yang setara baiknya.
 
 \begin{table}[h!]
     \centering
@@ -148,89 +148,7 @@ Hasil pengujian Model 8, 17 dan 28 dibandingkan dalam Tabel~\ref{table:perbandin
     \label{table:perbandingan-model-klasifikasi}
 \end{table}
 
-Berdasarkan pertimbangan kriteria akurasi, penyamarataan dan kompleksitas model, maka model nomor 17 dipilih sebagai model terbaik. Model ini kemudian diimplementasikan pada ponsel cerdas untuk pengujian akurasi klasifikasi online dan pengujian waktu komputasi.
-
-\section{Hasil Pengujian Klasifikasi \textit{Online}}
-
-Pengujian klasifikasi \textit{online} dilakukan untuk mengetahui kemampuan klasifikasi model secara \textit{realtime} pada ponsel cerdas. Pengujian ini dilakukan oleh 6 partisipan dengan jenis kelamin dan usia yang dijelaskan pada Tabel~\ref{table:partisipan}.
-
-\begin{table}[h!]
-    \centering
-    \caption{Partisipan pengujian}
-    \begin{tabular}{ |c|l|c| }
-        \hline
-        Partisipan & Jenis Kelamin & Usia \\
-
-        \hline
-        1 & Perempuan & 21 \\
-
-        \hline
-        2 & Laki-laki & 22 \\
-
-        \hline
-        3 & Laki-laki & 21 \\
-
-        \hline
-        4 & Laki-laki & 21 \\
-
-        \hline
-        5 & Perempuan & 21 \\
-
-        \hline
-        6 & Perempuan & 21 \\
-
-        \hline
-    \end{tabular}
-    \label{table:partisipan}
-\end{table}
-
-Pada proses pengujian, partisipan melakukan aktivitas duduk, berdiri, berjalan, berlari, menaiki tangga dan menuruni tangga dengan menempatkan ponsel cerdas di saku celana sebelah kanan. Masing-masing aktivitas dilakukan selama satu menit, menghasilkan 1632 sampel dari seluruh aktivitas.
-
-\begin{table}[h!]
-    \centering
-    \caption{Hasil klasifikasi seluruh aktivitas}
-    \begin{threeparttable}
-        \pgfplotstabletypeset[
-            col sep=comma,
-            before row=\hline,every last row/.style={after row=\hline},
-            display columns/0/.style={string type, column type=|c|},
-            display columns/1/.style={column name=D (\%), column type=c|},
-            display columns/2/.style={column name=B (\%), column type=c|},
-            display columns/3/.style={column name=J (\%), column type=c|},
-            display columns/4/.style={column name=L (\%), column type=c|},
-            display columns/5/.style={column name=N (\%), column type=c|},
-            display columns/6/.style={column name=T (\%), column type=c|},
-            display columns/7/.style={column name=Akurasi (\%), column type=c|,precision=3},
-        ]{data/prediksi/partisipan.data}
-        \begin{tablenotes}\footnotesize
-            \item  D: Duduk, B: Berdiri, J: Berjalan, L: Berlari, N: Naik Tangga, T: Turun Tangga 
-        \end{tablenotes}
-    \end{threeparttable}
-    \label{table:hasil-klasifikasi-online}
-\end{table}
-
-Hasil pengujian klasifikasi online dapat dilihat pada Tabel~\ref{table:hasil-klasifikasi-online}. Seluruh partisipan mendapatkan akurasi 100\% pada aktivitas berdiri dan berlari. Aktivitas duduk memperoleh akurasi 100\% pada lima partisipan, sedangkan satu partisipan lainnya memperoleh akurasi 98.15\% sehingga rata-rata akurasi aktivitas duduk adalah 99.63\%.
-
-Aktivitas berjalan memperoleh akurasi yang baik pada partisipan 2, 3, 4, dan 6, namun memperoleh akurasi yang kurang baik pada partisipan 1 (78,85\%) dan partisipan 2 (81,48\%). Rata-rata akurasi aktivitas berjalan adalah 88\%. Aktivitas menaiki tangga dan menuruni tangga memperoleh tingkat akurasi yang kurang baik. Rata-rata akurasi menaiki tangga adalah 69,1\% dan rata-rata akurasi menuruni tangga adalah 81,82\%. Dari seluruh partisipan, diperoleh rata-rata akurasi seluruh aktivitas sebesar 89,757\%.
-
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=13cm]{data/prediksi/confusion-matrix.png}
-    \caption{\textit{Confusion matrix} pengujian \textit{online}}.
-    \label{gambar:online-confusion-martix}
-\end{figure}
-
-Klasifikasi masing-masing aktivitas dapat dilihat lebih jelas melalui \textit{confusion matrix} pada Gambar~\ref{gambar:online-confusion-martix}. Dari \textit{confusion matrix} dapat dilihat beberapa kelasahan klasifikasi yang terjadi, yaitu:
-
-\begin{itemize}
-    \item Sebesar 12\% aktivitas berjalan diklasifikasikan sebagai naik tangga (8,2\%) dan turun tangga (3,8\%).
-    \item Sebesar 29,9\% aktivitas naik tangga diklasifikasikan sebagai jalan (25,8\%) dan turun tangga (4,1\%).
-    \item Sebesar 18,2\% aktivitas turun tangga diklasifikasikan sebagai jalan (12,5\%) dan naik tangga (5,7\%).
-\end{itemize}
-
-Hasil pengujian klasifikasi \textit{online} ini konsisten dengan pengujian \textit{offline}. Aktivitas duduk, berdiri, jalan dan lari dapat diklasifikasi dengan akurasi yang cukup tinggi, sedangkan akurasi pada aktivitas menaiki tangga dan menuruni tangga tidak terlalu baik.
-
-Aktivitas duduk, berdiri, jalan dan lari dapat diklasifikasikan dengan baik karena perbedaan pola yang signifikan pada data-data sensornya, sedangkan aktivitas menaiki tangga dan menuruni tangga memperoleh akurasi yang kurang baik karena pola data sensor yang cukup mirip. Kedua aktivitas tersebut juga memiliki kemiripan dengan aktivitas jalan, sehingga banyak terjadi kesalahan dalam mengklasifikasikan aktivitas menaiki tangga dan menuruni tangga menjadi jalan. Perbandingan pola tersebut dapat dilihat pada Gambar~\ref{gambar:plot-sensor} yang menunjukkan sampel data sensor dari masing-masing aktivitas.
+Pada ketiga variasi \textit{hyperparameter} tersebut, aktivitas duduk, berdiri, jalan dan lari dapat diklasifikasikan dengan baik karena perbedaan pola yang signifikan pada data-data sensornya, sedangkan aktivitas menaiki tangga dan menuruni tangga memperoleh akurasi yang kurang baik karena pola data sensor yang cukup mirip. Kedua aktivitas tersebut juga memiliki kemiripan dengan aktivitas jalan, sehingga banyak terjadi kesalahan dalam mengklasifikasikan aktivitas menaiki tangga dan menuruni tangga menjadi jalan. Perbandingan pola tersebut dapat dilihat pada Gambar~\ref{gambar:plot-sensor} yang menunjukkan sampel data sensor dari masing-masing aktivitas.
 
 \begin{figure}[h!]
     \begin{subfigure}{0.5\textwidth}
@@ -267,6 +185,8 @@ Aktivitas duduk, berdiri, jalan dan lari dapat diklasifikasikan dengan baik kare
     \caption{Perbandingan sinyal sensor dari setiap aktivitas}
     \label{gambar:plot-sensor}
 \end{figure}
+
+Berdasarkan pertimbangan kriteria akurasi, penyamarataan dan kompleksitas model, maka variasi nomor 17 dipilih sebagai model terbaik. Model ini kemudian diimplementasikan pada ponsel cerdas pengujian kecepatan klasifikasi.
 
 \section{Hasil Pengujian Kecepatan Klasifikasi pada Ponsel Cerdas}
 
@@ -335,6 +255,6 @@ Hasil pengujian dapat dilihat pada Gambar~\ref{gambar:hasil-kecepatan}. Dari 887
     \label{gambar:hasil-kecepatan}
 \end{figure}
 
-Dari seluruh sampel yang diambil pada ketiga ponsel cerdas, diperoleh waktu komputasi minimal 78 ms, median 174 ms, maksimal 389 ms dan rata-rata 174 ms. Mengingat proses klasifikasi dilakukan setiap minimal satu detik, maka kecepatan rata-rata 174 ms dinilai cukup baik untuk melakukan klasifikasi secara \textit{realtime}.
+Dari seluruh sampel yang diambil pada ketiga ponsel cerdas, diperoleh waktu komputasi minimal 78 ms, median 174 ms, maksimal 389 ms dan rata-rata 174 ms. Mengingat proses klasifikasi dilakukan setiap minimal satu detik, maka kecepatan tersebut dinilai cukup baik untuk melakukan klasifikasi secara \textit{realtime}.
 
-Perlu dicatat bahwa kecepatan ini hanyalah pendekatan dari waktu komputasi yang sebenarnya. Waktu komputasi diukur dengan ponsel dalam keadaan seperti pada penggunaan sehari-hari, sehingga dipengaruhi oleh beberapa faktor lain seperti penjadwalan sistem operasi dan adanya aplikasi lain yang sedang berjalan di latar belakang.
+% Perlu dicatat bahwa kecepatan ini hanyalah pendekatan dari waktu komputasi yang sebenarnya. Waktu komputasi diukur dengan ponsel dalam keadaan seperti pada penggunaan sehari-hari, sehingga dipengaruhi oleh beberapa faktor lain seperti penjadwalan sistem operasi dan adanya aplikasi lain yang sedang berjalan di latar belakang.
