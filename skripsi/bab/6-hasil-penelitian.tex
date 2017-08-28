@@ -199,7 +199,7 @@ Klasifikasi dilakukan pada tiga ponsel cerdas yang berbeda, yaitu Xiaomi Mi4c da
     \caption{Spesifikasi ponsel cerdas untuk pengujian}
     \begin{tabular}{ |l|l|c|c| }
         \hline
-        Ponsel & CPU & Memori & Total Prediksi \\
+        Ponsel & CPU & Memori & Total Klasifikasi \\
 
         \hline
         Xiaomi Mi4c & Snapdragon 805 & 2 GB & 887 \\
@@ -218,6 +218,8 @@ Klasifikasi dilakukan pada tiga ponsel cerdas yang berbeda, yaitu Xiaomi Mi4c da
 Pengujian dilakukan dengan mencatat waktu komputasi yang diperlukan pada setiap iterasi klasifikasi. Perhitungan waktu dimulai saat jendela data sensor siap digunakan sampai diperoleh prediksi aktivitas. Kecepatan klasifikasi pada ponsel Xiaomi Mi4c diukur oleh tiga partisipan dengan total 887 sampel, kecepatan pada LG G5 SE diukur oleh dua partisipan dengan total 413 sampel, sedangkan kecepatan pada vivo V5 diukur oleh satu partisipan dengan total 332 sampel. Nilai minimum, maksimum, median dan rata-rata diambil dari data yang telah dikumpulkan.
 
 Hasil pengujian dapat dilihat pada Gambar~\ref{gambar:hasil-kecepatan}. Dari 887 klasifikasi yang dilakukan pada ponsel Xiaomi Mi4c, diperoleh waktu komputasi minimal 78 ms, median 148 ms, maksimal 280 ms dan rata-rata 147 ms. Pada ponsel LG G5 SE, dari 413 klasifikasi yang dilakukan, diperoleh waktu komputasi minimal 83 ms, median 176 ms, maksimal 271 ms dan rata-rata 167 ms. Dari 332 klasifikasi yang dilakukan pada ponsel vivo V5, diperoleh waktu komputasi minimal 161 ms, median 229 ms, maksimal 389 ms dan rata-rata 255 ms.
+
+Dari seluruh sampel yang diambil pada ketiga ponsel cerdas, diperoleh waktu komputasi minimal 78 ms, median 174 ms, maksimal 389 ms dan rata-rata 174 ms. Mengingat proses klasifikasi dilakukan setiap minimal satu detik, maka kecepatan tersebut dinilai cukup baik untuk melakukan klasifikasi secara \textit{realtime}.
 
 \begin{figure}[h!]
     \begin{tikzpicture}
@@ -254,7 +256,5 @@ Hasil pengujian dapat dilihat pada Gambar~\ref{gambar:hasil-kecepatan}. Dari 887
     \caption{Hasil pengujian kecepatan klasifikasi pada ponsel cerdas}
     \label{gambar:hasil-kecepatan}
 \end{figure}
-
-Dari seluruh sampel yang diambil pada ketiga ponsel cerdas, diperoleh waktu komputasi minimal 78 ms, median 174 ms, maksimal 389 ms dan rata-rata 174 ms. Mengingat proses klasifikasi dilakukan setiap minimal satu detik, maka kecepatan tersebut dinilai cukup baik untuk melakukan klasifikasi secara \textit{realtime}.
 
 % Perlu dicatat bahwa kecepatan ini hanyalah pendekatan dari waktu komputasi yang sebenarnya. Waktu komputasi diukur dengan ponsel dalam keadaan seperti pada penggunaan sehari-hari, sehingga dipengaruhi oleh beberapa faktor lain seperti penjadwalan sistem operasi dan adanya aplikasi lain yang sedang berjalan di latar belakang.
