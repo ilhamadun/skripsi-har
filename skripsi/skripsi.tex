@@ -20,6 +20,7 @@
 \usepackage{pgfplots}
 \usepackage[justification=centering, font=bf, labelsep=period]{caption}
 \usepackage{subcaption}
+\usepackage{xpatch}
 
 \usepackage{tikz}
 \usepackage{flowchart}
@@ -119,6 +120,13 @@
 \input{bab/6-hasil-penelitian.tex}
 \input{bab/7-kesimpulan.tex}
 
-\printbibliography
+\setquotestyle{english}
+\xpatchbibmacro{date+extrayear}{%
+\printtext[parens]%
+}{%
+\setunit{\addperiod\space}%
+\printtext%
+}{}{}
+\printbibliography[title=DAFTAR PUSTAKA]
 
 \end{document}
