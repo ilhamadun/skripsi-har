@@ -229,7 +229,7 @@ Dropout merupakan salah satu metode regularisasi yang bekerja dengan baik tanpa 
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=12cm]{gambar/landasan-teori/dropout.png}
+    \includegraphics[width=10cm]{gambar/landasan-teori/dropout.png}
     \caption{Dropout melatih kelompok jaringan dengan menghilangkan unit non-output dari jaringan dasarnya \Parencite{Goodfellow-2016}}
     \label{gambar:dropout}
 \end{figure}
@@ -242,9 +242,9 @@ Kebanyakan algoritma \textit{deep learning} membutuhkan proses optimasi, yaitu p
 
 Jika diberikan fungsi $y = f(x)$ dengan $x$ dan $y$ bilangan real, derivatif dari fungsi ini adalah gradien $f(x)$ pada titik $x$, dinotasikan dengan $f'(x)$ atau $\frac{dy}{dx}$. Fungsi $f(x)$ dapat diminimalkan dengan membuat perubahan $x$ ke arah yang berlawanan dengan derivatifnya. Cara ini disebut \textit{gradient descent}, diilustrasikan pada Gambar~\ref{gambar:gradient-descent}.
 
-\begin{figure}
+\begin{figure}[h!]
     \centering
-    \includegraphics[width=12cm]{gambar/landasan-teori/gradient-descent.png}
+    \includegraphics[width=10cm]{gambar/landasan-teori/gradient-descent.png}
     \caption{\textit{Gradient descent} menggunakan derivatif untuk meminimalkan sebuah fungsi \Parencite{Goodfellow-2016}}.
     \label{gambar:gradient-descent}
 \end{figure}
@@ -253,6 +253,13 @@ Ketika \textit{feedforward neural network} menerima input $\pmb{x}$ dan menghasi
 
 Pada RNN, aktivasi \textit{hidden layer} tidak hanya mempengaruhi \textit{loss function} pada \textit{output layer}, namun juga mempengaruhi \textit{hidden layer} pada langkah waktu selanjutnya. Maka, gradien dihitung dengan menggunakan \textit{backpropagation} pada graf yang telah dibentangkan. Metode ini bernama \textit{Backpropagation Through Time (BPTT)} \Parencite{graves-2012}.
 
+%------------------------------------------------------------------------------
+% Pencarian Hyperparameter
+%------------------------------------------------------------------------------
+\section{Pemilihan \textit{Hyperparameter}}
+Hyperparameter adalah pengaturan dalam algoritme pembelajara mesin yang perlu ditentuan di luar algoritme pembelajaran itu sendiri. Beberapa \textit{hyperparameter} berpengaruh pada waktu dan memori yang dibutuhkan untuk menjalanakan algoritme pembelajaran, sedangkan beberapa \textit{hyperparameter} lain mempengaruhi kemampuan model untuk memprediksi dengan tepat \Parencite{Goodfellow-2016}.
+
+Beberapa metode yang populer untuk memilih \textit{hyperparameter} secara otomatis adalah \textit{grid search} dan \textit{random search}. Pada \textit{grid search}, variasi hyperparameter dipilih dari himpunan nilai yang akan diuji, lalu algoritme \textit{grid search} akan menguji setiap kombinasi nilai-nilai \textit{hyperparameter} tersebut. Pada \textit{random search}, algoritme menguji variasi \textit{hyperparameter} yang nilainya diambil secara acak dari sebuah distribusi marginal. Dibandingkan dengan \textit{grid search}, algoritme \textit{random search} dapat menghasilkan model yang sama baiknya atau lebih baik dengan waktu komputasi yang lebih singkat \Parencite{bergstra-2015}.
 
 %------------------------------------------------------------------------------
 % Tensorflow
