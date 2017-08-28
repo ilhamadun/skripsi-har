@@ -55,15 +55,6 @@ Peralatan yang digunakan untuk mendukung penelitian ini terdiri dari perangkat k
 
 %------------------------------------------------------------------------------
 % Rancangan Perangkat Lunak
-%
-% TODO:
-% - Offline:
-%   - Model klasifikasi
-%   - Pelatihan
-%   - Test
-% - Online:
-%   - Klasifikasi
-%
 %------------------------------------------------------------------------------
 \subsection{Rancangan Perangkat Lunak}
 Sistem dirancang untuk mengklasifikasikan aktivitas manusia berdasarkan data dari sensor akselerometer dan giroskop pada ponsel cerdas. Aliran data sensor pada proses klasifikasi dan pelatihan ditunjukkan pada Gambar~\ref{gambar:aliran-data-klasifikasi}. Diagram tersebut menggambarkan graf komputasi model klasifikasi serta proses pelatihan yang dilakukan untuk mengoptimasi parameter-paramter pada model.
@@ -75,7 +66,7 @@ Sistem dirancang untuk mengklasifikasikan aktivitas manusia berdasarkan data dar
         \node (cnn) [state, above of=input, yshift=0.5cm] {Konvolusi};
         \node (lstm) [state, above of=cnn, yshift=0.8cm] {LSTM};
         \node (dropout) [state, above of=lstm, yshift=0.6cm] {Dropout};
-        \node (softmax) [state, above of=dropout, yshift=0.6cm] {Softmax};
+        \node (softmax) [state, above of=dropout, yshift=0.6cm] {Classifier};
         \node (output) [state, above of=softmax, yshift=0.5cm] {Output};
         \node (loss) [state, right of=softmax, xshift=3cm] {Loss};
         \node (akurasi) [state, right of=output, , xshift=3cm] {Akurasi};
@@ -103,7 +94,7 @@ Sistem dirancang untuk mengklasifikasikan aktivitas manusia berdasarkan data dar
 
 \section{Model Klasifikasi}
 
-Proses klasifikasi dilakukan dalam beberapa langkah. Pertama, pra pengolahan dilakukan pada data masukan untuk pengondisian. Data tersebut kemudian dimasukkan ke dalam beberapa lapisan konvolusi. Setelah itu hasil lapisan konvolusi dimasukkan ke dalam beberapa lapisan LSTM\@. Kedua lapisan ini menghasilkan fitur-fitur abstrak yang merepresentasikan data sensor. Fitur-fitur ini kemudian diklasifikasikan dalam lapisan \textit{softmax}. Lapisan \textit{softmax} menghasilkan keluaran distribusi peluang kelas aktivitas dari data masukan. Hubungan antara lapisan LSTM dan lapisan \textit{sotfmax} diregulasi dengan \textit{dropout} untuk mengurangi \textit{overfitting}.
+Proses klasifikasi dilakukan dalam beberapa langkah. Pertama, pra pengolahan dilakukan pada data masukan untuk pengondisian. Data tersebut kemudian dimasukkan ke dalam beberapa lapisan konvolusi. Setelah itu hasil lapisan konvolusi dimasukkan ke dalam beberapa lapisan LSTM\@. Kedua lapisan ini menghasilkan fitur-fitur abstrak yang merepresentasikan data sensor. Fitur-fitur ini kemudian diklasifikasikan dalam lapisan \textit{classifier}. Lapisan ini menggunakan fungsi \textit{softmax} yang menghasilkan distribusi peluang kelas aktivitas dari data masukan. Hubungan antara lapisan LSTM dan lapisan \textit{classifier} diregulasi dengan \textit{dropout} untuk mengurangi \textit{overfitting}.
 
 \subsection{Data Masukan}
 Data masukan adalah rangkaian data \textit{time series} dari sensor akselerometer dan giroskop. Rangkaian data tersebut diambil dari ponsel cerdas dan dikelompokkan menggunakan \textit{sliding window} pada setiap 100 langkah waktu dengan \textit{overlap} 50\%.
@@ -261,12 +252,12 @@ Output dari lapisan konvolusi dilewatkan melalui lapisan LSTM\@. Jumlah lapisan 
 
 Sel-sel LSTM pada lapisan pertama sampai lapisan ke $L-1$ disusun dengan arsitektur \textit{many-to-many} seperti pada Gambar~\ref{gambar:many-to-many}, sedangkan sel-sel LSTM pada lapisan ke-$L$ disusun dengan arsitektur \textit{many-to-one} seperti pada Gambar~\ref{gambar:many-to-one}. Input lapisan LSTM pertama diambil dari output lapisan konvolusi, sedangkan input lapisan LSTM selanjutnya diambil dari output lapisan LSTM sebelumnya. Output dari lapisan LSTM terakhir hanya diambil dari keluaran pada langkah waktu terakhir, yaitu $\pmb{h}^{(t)}$ pada saat $t = m$.
 
-\subsection{Dropout dan Lapisan Softmax}
-Output dari lapisan LSTM masuk ke lapisan \textit{softmax} dan diregulasi dengan Dropout untuk mencegah \textit{overfitting}. Lapisan \textit{softmax} adalah jaringan padat yang menggunakan fungsi \textit{softmax} sebagai fungsi aktivasinya. Fungsi aktivasi \textit{softmax} digunakan untuk mencari distribusi peluang seluruh kelas aktivitas manusia.
+\subsection{\textit{Classifier}}
+Output dari lapisan LSTM masuk ke lapisan \textit{classifier} dan diregulasi dengan \textit{dropout} untuk mencegah \textit{overfitting}. Lapisan \textit{classifier} adalah jaringan padat yang menggunakan fungsi \textit{softmax} sebagai fungsi aktivasinya. Fungsi aktivasi \textit{softmax} digunakan untuk mencari distribusi peluang seluruh kelas aktivitas manusia.
 
 Jaringan padat adalah jaringan dengan neuron yang seluruhnya terhubung dengan neuron pada lapisan sebelum atau sesudahnya. Jaringan padat dengan enam neuron dibuat dengan masukan dari hasil lapisan LSTM terakhir. Jumlah neuron tersebut dipilih sesuai dengan jumlah aktivitas yang akan diklasifikasikan.
 
-Lapisan \textit{softmax} menerima masukan vektor $\pmb{x}$. Dengan bobot $\pmb{W}$ dan bias $\pmb{b}$, keluaran lapisan ini dihitung menggunakan persamaan
+Lapisan \textit{classifier} menerima masukan vektor $\pmb{x}$. Dengan bobot $\pmb{W}$ dan bias $\pmb{b}$, keluaran lapisan ini dihitung menggunakan persamaan
 
 \begin{equation}
     \pmb{y} = softmax(\pmb{W} \pmb{x} + \pmb{b})
@@ -281,17 +272,7 @@ dan fungsi \textit{softmax} didefinisikan sebagai
 
 Persamaan di atas menghasilkan vektor distribusi peluang dari enam kelas aktivitas. Aktivitas yang dikenali adalah aktivitas dengan peluang tertinggi.
 
-
-\section{Pelatihan}
-Proses pelatihan jaringan dilakukan untuk mencari bobot dan bias yang optimal pada seluruh neuron dalam setiap lapisan. Optimasi bobot dan bias tersebut dilakukan dengan meminimal \textit{cost function} menggunakan algoritma optimasi berbasis \textit{gradient descent}. \textit{Cost function} yang digunakan adalah \textit{cross entropy} dan algoritma \textit{gradient descent} yang digunakan adalah RMSProp \Parencite{Dauphin-2015}.
-
-% \subsection{Perhitungan \textit{loss} dengan Cross Entropy}
-
-% \subsection{Optimasi dengan RMSProp}
-
-% \section{Pemilihan Hyperparameter dengan Pencarian Acak}
-
-\section{Data Pelatihan}
+\section{Dataset Aktivitas Manusia}
 Model klasifikasi dilatih dengan dataset yang dikumpulkan dari 48 parisipan (36 laki-laki dan 12 perempuan) dalam rentang usia antara 20 sampai 28 tahun. Setiap partisipan melakukan aktivitas duduk, berdiri, berjalan, berlari, menaiki tangga dan menuruni tangga dengan menempatkan ponsel cerdas di saku celana. Data sensor akselerometer dan giroskop diambil dengan \textit{sampling rate} 50 Hz, lalu \textit{sliding window} dibuat dari setiap 100 sample dengan \textit{overlap} 50\%. Dengan aturan tersebut, diperoleh data aktivitas seperti pada Tabel~\ref{table:jumlah-dataset}.
 
 \begin{table}[h!]
@@ -353,26 +334,101 @@ Proses pelatihan membutuhkan tiga jenis data, yaitu data latih, data validasi da
     \label{table:pembagian-data}
 \end{table}
 
+\section{Pelatihan}
+Proses pelatihan jaringan dilakukan untuk mencari bobot dan bias yang optimal pada seluruh neuron dalam setiap lapisan. Optimasi bobot dan bias tersebut dilakukan dengan meminimal \textit{cost function} dengan proses \textit{backpropagation}. Diagram alir proses pelatihan ditunjukkan pada gambar~\ref{gambar:diagram-alir-pelatihan}. Model klasifikasi disusun sebagai graf yang sesuai dengan masukan \textit{hyperparameter}. Kemudian model ini dilatih dalam sebuah iterasi.
+
+\begin{figure}[h]
+    \centering
+    \scalebox{0.8}{
+        \begin{tikzpicture}[node distance=1.5cm]
+            \node (mulai) [startstop] {Mulai};
+            \node (hyperparameter) [io, below of=mulai] {\textit{Hyperparameter}};
+            \node (graf) [process, below of=hyperparameter] {Susun graf model};
+            \node (input) [io, below of=graf] {Data latih, Iterasi = 0, MaxIterasi};
+            \node (minibatch) [process, below of=input, yshift=-0.5cm] {Ambil \textit{minibatch}};
+            \node (forward-propagation) [process, below of=minibatch] {\textit{Forward-propagation}};
+            \node (loss) [process, below of=forward-propagation] {Hitung \textit{Loss}};
+            \node (backpropagation) [process, below of=loss] {\textit{Backpropagation}};
+            \node (validasi) [external-process, below of=backpropagation] {\nodepart{two}\shortstack{Validasi}};
+            \node (iterasi) [decision, below of=validasi, yshift=-1cm] {\scriptsize{Iterasi < MaxIterasi}};
+            \node (increment) [process, left of=loss, xshift=-3cm] {Naikkan Iterasi};
+            \node (output) [io, below of=iterasi, yshift=-1cm] {Model Optimal};
+            \node (selesai) [startstop, below of=output] {Selesai};
+
+            \draw [arrow] (mulai) -- (hyperparameter);
+            \draw [arrow] (hyperparameter) -- (graf);
+            \draw [arrow] (graf) -- (input);
+            \draw [arrow] (input) -- (minibatch);
+            \draw [arrow] (minibatch) -- (forward-propagation);
+            \draw [arrow] (forward-propagation) -- (loss);
+            \draw [arrow] (loss) -- (backpropagation);
+            \draw [arrow] (iterasi) -- node[anchor=south] {ya} (-4.5,-15) -- (increment);
+            \draw [arrow] (increment) -- (-4.5, -5.5) -- (0, -5.5);
+            \draw [arrow] (backpropagation) -- (validasi);
+            \draw [arrow] (validasi) -- (iterasi);
+            \draw [arrow] (iterasi) -- (output);
+            \draw [arrow] (output) -- (selesai);
+        \end{tikzpicture}
+    }
+    \caption{Diagram alir proses pelatihan}
+    \label{gambar:diagram-alir-pelatihan}
+\end{figure}
+
+Pada setiap iterasi pelatihan, \textit{minibatch} data diambil dari data latih dan dimasukkan sebagai input model. Lalu model melakukan \textit{forward propagation} untuk menghasilkan klasifikasi aktivitas dari setiap data pada \textit{minibatch}. \textit{Loss} dari hasil klasifikasi dihitung dengan \textit{cost function}. Berdasarkan \textit{loss} tersebut model dioptimasi dengan \textit{backpropagation}.
+
+\textit{Cost function} yang digunakan adalah \textit{cross entropy}. Jika $x$ input, $a$ output jaringan dan $y$ output yang diinginkan, maka fungsi \textit{cross entropy} didefinisikan sebagai Persamaan~\ref{eq:cross-entropy} \Parencite{nielsen-2015}.
+
+\begin{equation}
+    C = -\frac{1}{n} \sum_{x}(y \ln{a} + (1 - y) \ln(1 - a))
+    \label{eq:cross-entropy}
+\end{equation}
+
+Iterasi pelatihan juga malakukan proses validasi. Proses ini dilakukan untuk mengukur kemampuan model dalam mengklasifikasikan aktivitas pada data yang belum pernah ditemui sebelumnya. Diagram alir proses validasi dapat dilihat pada Gambar~\ref{gambar:diagram-alir-validasi}.
+
+\begin{figure}[h]
+    \centering
+    \scalebox{0.8}{
+        \begin{tikzpicture}[node distance=1.5cm]
+            \node (mulai) [startstop] {Mulai};
+            \node (data) [io, below of=mulai] {Data validasi};
+            \node (forward-propagation) [process, below of=data] {\textit{Forward-propagation}};
+            \node (akurasi) [io, below of=forward-propagation] {Akurasi};
+            \node (selesai) [startstop, below of=akurasi] {Selesai};
+
+            \draw [arrow] (mulai) -- (data);
+            \draw [arrow] (data) -- (forward-propagation);
+            \draw [arrow] (forward-propagation) -- (akurasi);
+            \draw [arrow] (akurasi) -- (selesai);
+        \end{tikzpicture}
+    }
+    \caption{Diagram alir proses validasi}
+    \label{gambar:diagram-alir-validasi}
+\end{figure}
+
+Proses validasi menggunakan data validasi sebagai masukan model. \textit{Forward propagation} dilakukan pada data validasi untuk menghasilkan klasifikasi aktivitas. Kemudian hasil klasifikasi tersebut dibandingkan dengan label aktivitas pada dataset untuk mengukur akurasi. Pada akhir iterasi, parameter model optimal dipilih berdasarkan parameter yang menghasilkan akurasi terbaik pada proses validasi.
+
 \section{Klasifikasi Pada Ponsel Cerdas}
 Proses klasifikasi pada ponsel cerdas ditunjukkan pada Gambar~\ref{gambar:diagram-alir-klasifikasi-ponsel-cerdas}. Sensor akselerometer dan giroskop dibaca dengan \textit{sampling rate} 50 Hz. Masing-masing sensor menghasilkan data dengan tiga sumbu, sehingga satu kali pembacaan menghasilkan enam data. Hasil bacaannya dikumpulkan menjadi jendela berisi 100 sample dengan tumpang tindih 50\%. Dengan begitu, satu jendela data terdiri dari pembacaan sensor selama dua detik dan jendela baru dibuat setiap satu detik. Setelah jendela terpenuhi, jendela tersebut dijadikan sebagai masukan model klasifikasi yang telah dibuat. Proses ini menghasilkan kelas aktivitas manusia yang sesuai dengan bacaan sensor.
 
 \begin{figure}[h]
     \centering
-    \begin{tikzpicture}[node distance=2cm]
-        \node (mulai) [startstop] {Mulai};
-        \node (baca-sensor) [io, below of=mulai] {Baca sensor};
-        \node (susun-jendela) [process, below of=baca-sensor] {Susun jendela};
-        \node (jendela-siap) [decision, below of=susun-jendela, yshift=-1cm] {\footnotesize{Ukuran jendela == 100}};
-        \node (klasifikasi) [process, below of=jendela-siap, yshift=-1cm] {Klasifikasi};
-        \node (selesai) [startstop, below of=klasifikasi] {Selesai};
+    \scalebox{0.8}{
+        \begin{tikzpicture}[node distance=1.5cm]
+            \node (mulai) [startstop] {Mulai};
+            \node (baca-sensor) [io, below of=mulai] {Baca sensor};
+            \node (susun-jendela) [process, below of=baca-sensor] {Susun jendela};
+            \node (jendela-siap) [decision, below of=susun-jendela, yshift=-1cm] {\footnotesize{Jendela penuh}};
+            \node (klasifikasi) [process, below of=jendela-siap, yshift=-1cm] {Klasifikasi};
+            \node (selesai) [startstop, below of=klasifikasi] {Selesai};
 
-        \draw [arrow] (mulai) -- (baca-sensor);
-        \draw [arrow] (baca-sensor) -- (susun-jendela);
-        \draw [arrow] (susun-jendela) -- (jendela-siap);
-        \draw [arrow] (jendela-siap) -- node[anchor=south] {tidak} (4,-7) -- (4,-2) -- (baca-sensor);
-        \draw [arrow] (jendela-siap) -- node[anchor=west] {ya} (klasifikasi);
-        \draw [arrow] (klasifikasi) -- (selesai);
-    \end{tikzpicture}
+            \draw [arrow] (mulai) -- (baca-sensor);
+            \draw [arrow] (baca-sensor) -- (susun-jendela);
+            \draw [arrow] (susun-jendela) -- (jendela-siap);
+            \draw [arrow] (jendela-siap) -- node[anchor=south] {tidak} (4,-5.5) -- (4,-1.5) -- (baca-sensor);
+            \draw [arrow] (jendela-siap) -- node[anchor=west] {ya} (klasifikasi);
+            \draw [arrow] (klasifikasi) -- (selesai);
+        \end{tikzpicture}
+    }
     \caption{Diagram alir klasifikasi pada ponsel cerdas}
     \label{gambar:diagram-alir-klasifikasi-ponsel-cerdas}
 \end{figure}
@@ -386,11 +442,42 @@ Proses klasifikasi pada ponsel cerdas ditunjukkan pada Gambar~\ref{gambar:diagra
 \section{Rencana Pengujian}
 Pengujian dilakukan untuk mengetahui kemampuan klasifikasi dari model yang telah dibuat. Terdapat dua pengujian yang dilakukan, yaitu pengujian \textit{hyperparameter} dan pengujian kecepatan klasifikasi pada ponsel cerdas. Kedua pengujian ini dilakukan dengan indikator pencapaian yang ditunjukkan pada Tabel~\ref{table:rencana-pengujian}.
 
-Pada pengujian \textit{hyperparameter}, berbagai konfigurasi model diuji untuk mencari hyperparameter terbaik. Kemampuan model klasifikasi diukur berdasarkan akurasi klasifikasi pada data uji. Model klasifikasi menerima data uji yang diambil secara acak dari dataset dan terpisah dari data latih. Output dari proses klasifikasi dibandingkan dengan label data tersebut.
+{Pengujian} \textit{hyperparameter} dilakukan dengan diagram alir pada Gambar~\ref{gambar:diagram-alir-pengujian-hyperparameter}. Pada pengujian ini, model klasifikasi dengan berbagai variasi \textit{hyperparameter} diuji untuk mencari model paling optimal. Masing-masing variasi \textit{hyperparameter} memiliki nilai acak yang diambil dari distribusi seragam. Kemampuan model klasifikasi diukur berdasarkan akurasi klasifikasi pada data uji. Model menerima masukan data uji, lalu \textit{forward-propagation} dilakukan pada data uji untuk menghasilkan klasifikasi aktivitas. Kemudian akurasi diukur dengan membandingkan hasil klasifikasi dengan label aktivitas pada dataset.
 
-Pengujian kecepatan klasifikasi pada ponsel cerdas dilakukan dengan mengukur waktu yang dibutuhkan oleh setiap siklus klasifikasi, dimulai dari selesainya pengambilan data sensor sampai diperoleh kelas aktivitas dari data tersebut. Pengukuran ini dilakukan dengan beberapa model ponsel cerdas dengan kemampuan pemrosesan yang berbeda.
+\begin{figure}[h]
+    \centering
+    \scalebox{0.8}{
+        \begin{tikzpicture}[node distance=1.5cm]
+            \node (mulai) [startstop] {Mulai};
+            \node (input) [io, below of=mulai] {Data Uji, Variasi = 0, MaxVariasi};
+            \node (acak-hyperparameter) [process, below of=input, yshift=-0.5cm] {Acak \textit{hyperparameter}};
+            \node (latih) [external-process, below of=acak-hyperparameter] {\nodepart{two}\shortstack{Pelatihan}};
+            \node (forward-propagation) [process, below of=latih] {\textit{Forward-propagation}};
+            \node (akurasi) [io, below of=forward-propagation] {Akurasi};
+            \node (iterasi) [decision, below of=akurasi, yshift=-1cm] {\scriptsize{Variasi < MaxVariasi}};
+            \node (increment) [process, left of=forward-propagation, xshift=-3cm] {Naikkan Variasi};
+            \node (output) [io, below of=iterasi, yshift=-1cm] {\textit{Hyperparameter} optimal};
+            \node (selesai) [startstop, below of=output] {Selesai};
 
-\begin{table}[ht]
+            \draw [arrow] (mulai) -- (input);
+            \draw [arrow] (input) -- (acak-hyperparameter);
+            \draw [arrow] (acak-hyperparameter) -- (latih);
+            \draw [arrow] (latih) -- (forward-propagation);
+            \draw [arrow] (forward-propagation) -- (akurasi);
+            \draw [arrow] (akurasi) -- (iterasi);
+            \draw [arrow] (iterasi) -- node[anchor=south] {ya} (-4.5,-10.5) -- (increment);
+            \draw [arrow] (increment) -- (-4.5, -2.5) -- (0, -2.5);
+            \draw [arrow] (iterasi) -- (output);
+            \draw [arrow] (output) -- (selesai);
+        \end{tikzpicture}
+    }
+    \caption{Diagram alir pengujian \textit{hyperparameter}}
+    \label{gambar:diagram-alir-pengujian-hyperparameter}
+\end{figure}
+
+Pengujian kecepatan klasifikasi pada ponsel cerdas dilakukan dengan mengukur waktu yang dibutuhkan oleh setiap siklus klasifikasi, dimulai dari selesainya pengambilan data sensor sampai diperoleh kelas aktivitas dari data tersebut. Pengukuran ini dilakukan dengan beberapa jenis ponsel cerdas dengan kemampuan pemrosesan yang berbeda.
+
+\begin{table}[h!]
     \centering
     \caption{Rencana Pengujian}
     \begin{tabular}{ |p{0.5cm}|p{5cm}|p{7.5cm}| }
@@ -398,7 +485,7 @@ Pengujian kecepatan klasifikasi pada ponsel cerdas dilakukan dengan mengukur wak
         \textbf{No} & \textbf{Parameter} & \textbf{Pencapaian} \\
 
         \hline
-        1 & Pengujian Hyperparameter & Didapatkan hyperparameter yang menghasilkan klasifikasi terbaik pada data uji \\
+        1 & Pengujian \textit{hyperparameter} & Didapatkan \textit{hyperparameter} yang menghasilkan klasifikasi terbaik pada data uji \\
         
         \hline
         2 & Pengujian kecepatan klasifikasi pada ponsel cerdas & Klasifikasi dapat dilakukan secara \textit{realtime} pada ponsel cerdas \\
