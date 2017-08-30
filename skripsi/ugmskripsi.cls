@@ -38,15 +38,38 @@
   backend=biber,
   sorting=nty,
   maxnames=2,
+  maxcitenames=1,
   language=english,
   citestyle=authoryear,
-  bibstyle=authoryear
+  bibstyle=authoryear,
+  giveninits=true
 ]{biblatex}
-\renewcommand*{\nameyeardelim}{\addcomma\space}
+% \renewcommand{\nameyeardelim}{\addcomma\space}
 \DefineBibliographyStrings{english}{
-  and = {dan},
+  and = {\&},
   andothers = {dkk\adddot}
 }
+\renewbibmacro{in:}{}
+\DeclareFieldFormat[inproceedings]{citetitle}{#1}
+\DeclareFieldFormat[inproceedings]{title}{#1} 
+\DeclareFieldFormat[article]{citetitle}{#1}
+\DeclareFieldFormat[article]{title}{#1} 
+\DeclareFieldFormat[article,inproceedings]{pages}{#1}%
+\DeclareFieldFormat{journaltitle}{\mkbibemph{#1}\isdot}
+\renewbibmacro*{journal+issuetitle}{%
+\usebibmacro{journal}%
+\setunit*{\addcomma\space}%
+\iffieldundef{series}
+  {}
+  {\newunit
+   \printfield{series}%
+   \setunit{\addspace}}%
+\usebibmacro{volume+number+eid}%
+\setunit{\addspace}%
+\usebibmacro{issue+date}%
+\setunit{\addcolon\space}%
+\usebibmacro{issue}%
+\newunit}
 \makeglossary%
 
 %------------------------------------------------------------
@@ -134,7 +157,7 @@
 %                                    {\normalfont\normalsize\bfseries}}
 \renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{\z@}%
                                     {3.25ex \@plus1ex \@minus.2ex}%
-                                    {-1em}%
+                                    {1.5ex}%
                                     {\normalfont\normalsize\bfseries}}
 \renewcommand{\paragraph}{\subparagraph}
 

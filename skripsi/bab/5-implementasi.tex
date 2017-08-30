@@ -290,9 +290,9 @@ def random_learning_rate(lr_min, lr_max):
 \label{listing:har-random-learning-rate}
 \end{figure}
 
-\section{Implementasi Pengujian Klasifikasi Online}
+\section{Implementasi Pengujian Kecepatan Klasifikasi pada Ponsel Cerdas}
 
-Pengujian klasifikasi online diimplementasikan pada ponsel cerdas Android. Proses klasifikasi dimulai dengan pengambilan dan pengondisian data sensor, kemudian data tersebut dijadikan sebagai input model \mintinline{python}{ConvLSTM}.
+Pengujian kecepatan klasifikasi diimplementasikan pada ponsel cerdas Android. Proses klasifikasi dimulai dengan pengambilan dan pengondisian data sensor, kemudian data tersebut dijadikan sebagai input model \mintinline{python}{ConvLSTM}.
 
 Data dari sensor diorganisir dalam dua kelas, yaitu kelas \mintinline{java}{SensorData} dan kelas \mintinline{java}{SensorDataSequence}. Kelas \mintinline{java}{SensorData} digunakan untuk menyimpan data sensor pada satu waktu, sedangkan kelas \mintinline{java}{SensorDataSequence} digunakan untuk menyimpan kumpulan \mintinline{java}{SensorData} pada langkah waktu yang berbeda.
 
@@ -611,6 +611,8 @@ public class HumanActivityClassifier {
 \label{listing:aktvtas-humanactivityclassifier}
 \end{figure}
 
-\section{Implementasi Pengujian Kecepatan Klasifikasi pada Ponsel Cerdas}
+Pengujian kecepatan klasifikasi pada ponsel cerdas dilakukan dengan mengukur waktu yang dilewati selama proses dalam metode \mintinline{java}{classifier.classify()} berjalan. Waktu klasifikasi yang diperoleh kemudian disimpan dalam file dengan instruksi \mintinline{java}{logWriter.write()}. Pengukuran kecepatan ini dilakukan dalam metode \mintinline{java}{onSensorDataReady()} (Gambar~\ref{listing:aktvtas-predictionservice}) selama \mintinline{java}{PredictionService} berjalan.
 
-Pengujian kecepatan klasifikasi pada ponsel cerdas dilakukan bersamaan dengan pengujian klasifikasi online. Pada kelas \mintinline{java}{PredictionService} dalam metode \mintinline{java}{onSensorDataReady()} (Gambar~\ref{listing:aktvtas-predictionservice}), diukur waktu yang dibutuhkan untuk menjalankan instruksi \mintinline{java}{classifier.classify()}. Waktu yang diperoleh kemudian disimpan dalam file dengan instruksi \mintinline{java}{logWriter.write()}. Pengukuran ini dilakukan selama \mintinline{java}{PredictionService} berjalan.
+% \section{Implementasi Pengujian Kecepatan Klasifikasi pada Ponsel Cerdas}
+
+% Pengujian kecepatan klasifikasi pada ponsel cerdas dilakukan bersamaan dengan pengujian klasifikasi online. Pada kelas \mintinline{java}{PredictionService} dalam metode \mintinline{java}{onSensorDataReady()} (Gambar~\ref{listing:aktvtas-predictionservice}), diukur waktu yang dibutuhkan untuk menjalankan instruksi \mintinline{java}{classifier.classify()}. Waktu yang diperoleh kemudian disimpan dalam file dengan instruksi \mintinline{java}{logWriter.write()}. Pengukuran ini dilakukan selama \mintinline{java}{PredictionService} berjalan.

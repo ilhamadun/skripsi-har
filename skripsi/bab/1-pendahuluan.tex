@@ -20,9 +20,9 @@ Berdasarkan latar belakang di atas, dirumuskan bagaimana cara melakukan pengenal
 Penelitian ini memiliki batasan masalah sebagai berikut:
 
 \begin{enumerate}
-    \item Ponsel cerdas yang digunakan bersistem operasi Android, memiliki sensor akselerometer dan giroskop.
     \item Pengenalan aktivitas dibatas menjadi enam aktivitas sederhana, yaitu duduk, berdiri, berjalan, berlari, menaiki tangga dan menuruni tangga.
-    \item Pada saat proses pengenalan, ponsel cerdas ditempatkan pada saku celana.
+    \item Ponsel cerdas yang digunakan bersistem operasi Android, memiliki sensor akselerometer dan giroskop.
+    \item Pada saat pengambilan data, ponsel cerdas ditempatkan pada saku celana.
 \end{enumerate}
 
 \section{Tujuan Penelitian}
@@ -39,7 +39,7 @@ Penelitian ini dilakukan dalam beberapa tahap yang meliputi studi pustaka dan li
     \item Diskusi dan konsultasi dilakukan bersama dosen pembimbing untuk mempelajari lebih lanjut topik yang dibahas. Pada tahap ini dicari metode-metode yang sebaiknya digunakan untuk menyelesaikan masalah dalam penelitian ini.
     \item Perancangan sistem dibuat sesuai dengan analisis kebutuhan. Rancangan yang dibuat terdiri dari model klasifikasi, proses pelatihan model, proses klasifikasi pada ponsel cerdas, dan rencana pengujian.
     \item Implementasi dibuat untuk rancangan sistem yang telah disusun. Pembuatan dan pelatihan model diimplementasikan dengan bahasa Python pada sistem operasi Ubuntu 16.04, sedangkan sistem klasifikasi \textit{online} diimplementasikan pada ponsel cerdas dengan sistem operasi Android menggunakan bahasa Java. Keduanya memanfaatkan TensorFlow sebagai pustaka komputasi numerik.
-    \item Pengujian dilakukan untuk mengetahui kemampuan klasifikasi dari model yang telah dibuat. Parameter yang diuji adalah \textit{hyperparameter} jaringan, akurasi klasifikasi \textit{online} dan kecepatan klasifikasi pada ponsel cerdas.
+    \item Pengujian dilakukan untuk mengetahui kemampuan klasifikasi dari model yang telah dibuat. Parameter yang diuji adalah \textit{hyperparameter} jaringan dan kecepatan klasifikasi model dengan \textit{hyperparameter} optimal pada ponsel cerdas.
 \end{enumerate}
 
 \section{Sistematika Penulisan}
@@ -52,7 +52,7 @@ Bab ini berisi latar belakang penelitian, rumusan masalah, batasan masalah, tuju
 Bab ini memuat uraian penelitian-penelitian terkait yang sudah pernah dilakukan dalam penelitian lain dan hubungannya dengan masalah penelitian yang sedang dilakukan.
 
 \subsubsection{BAB III DASAR TEORI}
-Bab ini berisi teori-teori dasar yang mendukung penelitan yang akan dilakukan.
+Bab ini berisi teori-teori dasar yang mendukung penelitan yang dilakukan.
 
 \subsubsection{BAB IV ANALISIS DAN PERANCANGAN SISTEM}
 Bab ini menjelaskan analisis kebutuhan dan perancangan sistem yang akan digunakan. Pada bab ini dibahas pembuatan model klasifikasi, proses pelatihan model dari data latih, pengaplikasiannya pada ponsel cerdas serta rencana pengujian sistem.
@@ -61,7 +61,7 @@ Bab ini menjelaskan analisis kebutuhan dan perancangan sistem yang akan digunaka
 Bab ini membahas implementasi dari rancangan sistem yang telah dibuat, meliputi implementasi model klasifikasi, implementasi pengambilan dan pengondisian data, implementasi klasifikasi pada ponsel cerdas dan implementasi pengujian.
 
 \subsubsection{BAB VI HASIL DAN PEMBAHASAN}
-Bab ini menjelaskan hasil dari pengujian \textit{hyperparameter}, akurasi klasifikasi \textit{offline} dan kecepatan klasifikasi pada ponsel cerdas.
+Bab ini menjelaskan hasil dari pengujian \textit{hyperparameter} dan kecepatan klasifikasi pada ponsel cerdas.
 
 \subsubsection{BAB VII PENUTUP}
 Bab ini berisi kesimpulan dari penelitian yang telah dilakukan serta saran untuk pengembangan sistem selanjutnya.
